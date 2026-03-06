@@ -1,0 +1,119 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Teko:wght@300;400;500;600;700&family=Sora:wght@100;200;300;400;500;600;700;800&display=swap');
+
+@layer base {
+  :root {
+    --background: 210 50% 8%;
+    --foreground: 0 0% 98%;
+    --card: 210 50% 10%;
+    --card-foreground: 0 0% 98%;
+    --popover: 210 50% 10%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 205 100% 52%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 40% 15%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 210 40% 15%;
+    --muted-foreground: 0 0% 60%;
+    --accent: 205 100% 52%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 210 40% 20%;
+    --input: 210 40% 20%;
+    --ring: 205 100% 52%;
+    --radius: 0.625rem;
+    
+    /* ICE-CUBO Colors */
+    --ice-blue: #0d99ff;
+    --ice-blue-light: #36b6ff;
+    --ice-blue-dark: #0c78c8;
+    --ice-white: #f0f9ff;
+    --ice-dark: #0a1628;
+    --ice-darker: #070f1a;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply bg-[#0a1628] text-white antialiased;
+    font-family: 'Sora', sans-serif;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Teko', sans-serif;
+    letter-spacing: 0.02em;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-gradient-to-r from-[#0d99ff] to-[#36b6ff] text-white font-semibold px-6 py-3 rounded-lg transition-all duration-300;
+  }
+  
+  .btn-primary:hover {
+    @apply from-[#36b6ff] to-[#0d99ff] shadow-lg shadow-[#0d99ff]/30;
+  }
+  
+  .card-ice {
+    @apply bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl;
+  }
+  
+  .input-ice {
+    @apply bg-white/5 border-white/10 text-white placeholder:text-white/30 focus:border-[#0d99ff] focus:ring-[#0d99ff]/20;
+  }
+  
+  .text-gradient {
+    @apply bg-gradient-to-r from-[#0d99ff] to-[#36b6ff] bg-clip-text text-transparent;
+  }
+  
+  .glow-blue {
+    box-shadow: 0 0 20px rgba(13, 153, 255, 0.3);
+  }
+  
+  .glow-blue-strong {
+    box-shadow: 0 0 40px rgba(13, 153, 255, 0.5);
+  }
+}
+
+@layer utilities {
+  .animation-delay-100 {
+    animation-delay: 100ms;
+  }
+  
+  .animation-delay-200 {
+    animation-delay: 200ms;
+  }
+  
+  .animation-delay-300 {
+    animation-delay: 300ms;
+  }
+  
+  .animation-delay-500 {
+    animation-delay: 500ms;
+  }
+  
+  .animation-delay-700 {
+    animation-delay: 700ms;
+  }
+  
+  .animation-delay-1000 {
+    animation-delay: 1000ms;
+  }
+}
+
+/* Progress Bar Styling */
+[data-slot="progress-indicator"] {
+  background: linear-gradient(to right, #0d99ff, #36b6ff) !important;
+}
