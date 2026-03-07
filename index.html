@@ -1,12 +1,197 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ICE-CUBO / BLUE</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ICE - Trocas</title>
+
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:#0b1b2e;
+color:white;
+}
+
+header{
+background:#071322;
+padding:15px;
+text-align:center;
+font-size:22px;
+font-weight:bold;
+border-bottom:2px solid #00cfff;
+}
+
+.container{
+padding:15px;
+max-width:600px;
+margin:auto;
+}
+
+.card{
+background:#11243a;
+padding:15px;
+border-radius:12px;
+margin-bottom:15px;
+}
+
+button{
+padding:10px 15px;
+border:none;
+border-radius:8px;
+background:#00cfff;
+color:black;
+font-weight:bold;
+cursor:pointer;
+}
+
+input,textarea{
+width:100%;
+padding:10px;
+margin-top:6px;
+margin-bottom:10px;
+border-radius:6px;
+border:none;
+}
+
+#timeline img{
+width:100%;
+border-radius:10px;
+margin-top:10px;
+}
+
+.star-admin{
+color:gold;
+}
+
+.star-mod{
+color:#00cfff;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+ICE - Plataforma de Trocas
+</header>
+
+<div class="container">
+
+<div class="card">
+<h3>Login</h3>
+
+<input id="user" placeholder="Usuário">
+<input id="pass" placeholder="Senha" type="password">
+
+<button onclick="login()">Entrar</button>
+
+<p id="status"></p>
+</div>
+
+
+<div class="card">
+<h3>Publicar item para troca</h3>
+
+<input id="titulo" placeholder="Nome do item">
+
+<textarea id="desc" placeholder="Descrição"></textarea>
+
+<input type="file" id="foto" accept="image/*,video/*">
+
+<button onclick="publicar()">Publicar</button>
+
+</div>
+
+
+<div class="card">
+<h3>Timeline de Trocas</h3>
+
+<div id="timeline"></div>
+
+</div>
+
+</div>
+
+
+<script>
+
+let usuario = null;
+
+function login(){
+
+let u = document.getElementById("user").value;
+let p = document.getElementById("pass").value;
+
+if(u === "ADM" && p === "1533"){
+
+usuario = {
+nome:"ADM",
+tipo:"admin"
+};
+
+document.getElementById("status").innerHTML =
+"<span class='star-admin'>★ ADM logado</span>";
+
+}else{
+
+usuario = {
+nome:u,
+tipo:"normal"
+};
+
+document.getElementById("status").innerText =
+"Usuário logado";
+
+}
+
+}
+
+function publicar(){
+
+if(!usuario){
+alert("Faça login primeiro");
+return;
+}
+
+let titulo = document.getElementById("titulo").value;
+let desc = document.getElementById("desc").value;
+let file = document.getElementById("foto").files[0];
+
+let post = document.createElement("div");
+post.className = "card";
+
+let nome = usuario.nome;
+
+if(usuario.tipo === "admin"){
+nome = "★ " + nome;
+}
+
+post.innerHTML =
+"<b>"+titulo+"</b><br>"+desc+"<br><small>por "+nome+"</small>";
+
+if(file){
+
+let reader = new FileReader();
+
+reader.onload = function(e){
+
+let img = document.createElement("img");
+img.src = e.target.result;
+post.appendChild(img);
+
+}
+
+reader.readAsDataURL(file);
+
+}
+
+document.getElementById("timeline").prepend(post);
+
+}
+
+</script>
+
+</body>
 </html>
