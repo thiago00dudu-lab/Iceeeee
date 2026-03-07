@@ -77,6 +77,7 @@ button{
 button.alt{background:#20374b;color:#dff7ff;border:1px solid #3a5a78}
 button.danger{background:var(--bad);color:#fff}
 button.ok{background:var(--ok);color:#001a14}
+button.gold{background:var(--gold);color:#1b1200}
 .post{
   background:#0f2134;border:1px solid #284662;border-radius:14px;
   padding:12px;margin-top:10px;cursor:pointer;
@@ -123,6 +124,23 @@ button.ok{background:var(--ok);color:#001a14}
   background:var(--ice);color:#001320;font-size:24px;font-weight:900;
   box-shadow:0 0 18px rgba(103,215,255,.35);
 }
+.promo{
+  position:fixed;
+  left:50%;
+  top:18%;
+  transform:translateX(-50%);
+  z-index:60;
+  min-width:280px;
+  max-width:90vw;
+  padding:12px 14px;
+  border-radius:14px;
+  background:linear-gradient(180deg,#173149,#0b2033);
+  border:1px solid #4f7aa0;
+  box-shadow:0 0 24px rgba(103,215,255,.25);
+  display:none;
+  text-align:center;
+}
+.promo b{color:#ffd166}
 .modal{
   position:fixed;inset:0;background:rgba(0,0,0,.72);
   display:none;align-items:center;justify-content:center;z-index:50;padding:10px;
@@ -194,6 +212,8 @@ h2,h3,h4{margin:0 0 10px}
   </div>
 </header>
 
+<div class="promo" id="promoBox"></div>
+
 <div class="wrap">
   <div class="card">
     <h3>Login</h3>
@@ -226,7 +246,7 @@ h2,h3,h4{margin:0 0 10px}
 <div class="floating-share" onclick="sharePage()">↗</div>
 
 <div class="nav">
-  <button onclick="abrirTrocas()">🔁 Trocas</button>
+  <button onclick="abrirMinhasTrocas()">🔁 Trocas</button>
   <button onclick="abrirMeuPerfil()">👤 Perfil</button>
 </div>
 
@@ -293,7 +313,6 @@ let avaliacoes = JSON.parse(localStorage.getItem("ice_avaliacoes") || "[]");
 
 let postAtual = null;
 let chatAtual = null;
-let perfilAtual = null;
 
 function salvarTudo(){
   localStorage.setItem("ice_postagens", JSON.stringify(postagens));
@@ -327,14 +346,14 @@ function login(){
   let p = document.getElementById("pass").value.trim();
   if(!u) return alert("Digite um usuário");
 
+  garantirUsuario(u);
+
   if(u === "ADM" && p === "1533"){
     usuario = { nome:"ADM", tipo:"admin" };
+    usuarios["ADM"].tipo = "admin";
   } else {
-    usuario = { nome:u, tipo:"normal" };
+    usuario = { nome:u, tipo:usuarios[u].tipo || "normal" };
   }
-
-  garantirUsuario(usuario.nome, usuario.tipo);
-  usuarios[usuario.nome].tipo = usuario.tipo;
 
   salvarTudo();
   atualizarStatus();
@@ -352,7 +371,6 @@ function nomeExibicao(nome){
   else estrela = "<span class='blue-star faint'>★</span> ";
 
   if(u.familia) estrela += "<span class='black-star'>★</span> ";
-
   return estrela + nome;
 }
 
@@ -371,7 +389,6 @@ function publicar(){
   let titulo = document.getElementById("titulo").value.trim();
   let desc = document.getElementById("desc").value.trim();
   let file = document.getElementById("foto").files[0];
-
   if(!titulo || !desc) return alert("Preencha título e descrição");
 
   let nova = {
@@ -430,14 +447,37 @@ function renderTimeline(){
       <span class="badge" onclick="event.stopPropagation();abrirPerfil('${p.dono}')">Ver perfil</span>
     `;
     if(p.imagem) html += `<img src="${p.imagem}">`;
-
     post.innerHTML = html;
     timeline.appendChild(post);
   });
 }
 
-function abrirTrocas(){
-  window.scrollTo({top:document.body.scrollHeight,behavior:"smooth"});
+function abrirMinhasTrocas(){
+  if(!usuario) return alert("Faça login primeiro");
+  const minhas = postagens.filter(p=>p.dono === usuario.nome);
+  const timeline = document.getElementById("timeline");
+  timeline.innerHTML = "";
+
+  if(minhas.length === 0){
+    timeline.innerHTML = "<div class='small'>Você ainda não tem postagens de troca.</div>";
+    return;
+  }
+
+  minhas.forEach(p=>{
+    let post = document.createElement("div");
+    post.className = "post";
+    post.onclick = ()=>abrirTroca(p.id);
+
+    let html = `
+      <b>${p.titulo}</b><br>
+      ${p.desc}<br>
+      <small>por ${nomeExibicao(p.dono)} • ${p.criadoEm}</small><br>
+      <span class="badge" onclick="event.stopPropagation();abrirPerfil('${p.dono}')">Ver perfil</span>
+    `;
+    if(p.imagem) html += `<img src="${p.imagem}">`;
+    post.innerHTML = html;
+    timeline.appendChild(post);
+  });
 }
 
 function sharePage(){
@@ -545,7 +585,6 @@ function renderPropostasDoPost(){
     if(usuario && usuario.nome===postAtual.dono && p.status==="pendente"){
       html += `<br><button onclick="aceitarProposta('${p.id}')">Aceitar troca</button>`;
     }
-
     if(usuario && (usuario.nome===p.autor || usuario.nome===postAtual.dono) && p.status==="aceita"){
       html += `<br><button onclick="abrirChat('${p.id}')">Abrir chat</button>`;
     }
@@ -641,7 +680,6 @@ function renderNotificacoes(){
 
 function abrirPerfil(nome){
   garantirUsuario(nome);
-  perfilAtual = nome;
   let u = usuarios[nome];
   let minhasAval = avaliacoes.filter(a=>a.para===nome);
   let postsDoUsuario = postagens.filter(p=>p.dono===nome);
@@ -666,8 +704,6 @@ function abrirPerfil(nome){
           : (u.bio ? u.bio : "<span class='small'>Sem bio ainda.</span>")
         }
       </div>
-      <div class="badge">Filhos: ${u.filhos||0}</div>
-      <div class="badge">Família: ${u.familia ? "Sim" : "Não"}</div>
       <div class="badge">Confiável: ${u.confiavel||0}</div>
       <div class="badge">Não confiável: ${u.naoConfiavel||0}</div>
       <input type="file" id="avatarInput" accept="image/*" style="display:none">
@@ -689,9 +725,6 @@ function abrirPerfil(nome){
         </div>
       `;
     }
-  }
-
-  if(usuario && usuario.tipo === "admin" && nome !== "ADM"){
     html += `
       <div class="profile-actions">
         <button class="danger" onclick="bloquearUsuario('${nome}')">Bloquear usuário</button>
@@ -868,6 +901,21 @@ function ocultarUsuario(nome){
   abrirPerfil(nome);
   renderTimeline();
 }
+
+function mostrarPromo(){
+  const box = document.getElementById("promoBox");
+  const msgs = [
+    "Quer <b>moderação</b>? Chame no suporte: <b>11983602504</b>",
+    "Promoção: para comprar <b>ADM / moderação</b>, fale com <b>11983602504</b>",
+    "Suporte ICE: compra de moderação e ADM no número <b>11983602504</b>"
+  ];
+  box.innerHTML = msgs[Math.floor(Math.random()*msgs.length)];
+  box.style.display = "block";
+  setTimeout(()=> box.style.display = "none", 5000);
+}
+
+setInterval(mostrarPromo, 18000);
+setTimeout(mostrarPromo, 6000);
 
 renderTimeline();
 renderNotificacoes();
