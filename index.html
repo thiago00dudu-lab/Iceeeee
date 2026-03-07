@@ -250,6 +250,7 @@ button{
   margin-bottom:10px;
   overflow:hidden;
   border:1px solid #8fd2ea;
+  position:relative;
 }
 
 .profile-cover img{
@@ -272,12 +273,25 @@ button{
   overflow:hidden;
   color:#0f3452;
   font-weight:bold;
+  position:relative;
 }
 
 .profile-avatar img{
   width:100%;
   height:100%;
   object-fit:cover;
+}
+
+.editTag{
+  position:absolute;
+  right:8px;
+  bottom:8px;
+  font-size:12px;
+  background:rgba(234,249,255,.95);
+  color:#0f3452;
+  border:1px solid #8fd2ea;
+  padding:4px 8px;
+  border-radius:999px;
 }
 
 .nav{
@@ -670,13 +684,20 @@ function abrirPerfil(nome){
   let postsUser = posts.filter(p=>p.dono === nome);
 
   let html = `
-    <div class="profile-cover">
+    <div class="profile-cover" ${usuario && usuario.nome === nome ? `onclick="document.getElementById('coverFile').click()"` : ""}>
       ${u.capa ? `<img src="${u.capa}">` : ""}
+      ${usuario && usuario.nome === nome ? `<span class="editTag">Trocar capa</span>` : ""}
     </div>
 
-    <div class="profile-avatar">
+    <div class="profile-avatar" ${usuario && usuario.nome === nome ? `onclick="document.getElementById('avatarFile').click()"` : ""}>
       ${u.foto ? `<img src="${u.foto}">` : nome[0]}
+      ${usuario && usuario.nome === nome ? `<span class="editTag">Foto</span>` : ""}
     </div>
+
+    ${usuario && usuario.nome === nome ? `
+      <input id="avatarFile" type="file" accept="image/*" style="display:none">
+      <input id="coverFile" type="file" accept="image/*" style="display:none">
+    ` : ""}
 
     <h2>${nomeExibicao(nome)}</h2>
     <div class="small">Perfil do usuário</div>
@@ -725,6 +746,18 @@ function abrirPerfil(nome){
 
   document.getElementById("perfilBody").innerHTML = html;
   document.getElementById("perfilModal").style.display = "flex";
+
+  if(usuario && usuario.nome === nome){
+    const avatarInput = document.getElementById("avatarFile");
+    const coverInput = document.getElementById("coverFile");
+
+    if(avatarInput){
+      avatarInput.onchange = e => trocarFoto(nome, e);
+    }
+    if(coverInput){
+      coverInput.onchange = e => trocarCapa(nome, e);
+    }
+  }
 }
 
 function fecharPerfil(){
@@ -735,6 +768,32 @@ function salvarBio(nome){
   usuarios[nome].bio = document.getElementById("bioInput").value;
   salvar();
   abrirPerfil(nome);
+}
+
+function trocarFoto(nome, e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const r = new FileReader();
+  r.onload = ev=>{
+    usuarios[nome].foto = ev.target.result;
+    salvar();
+    abrirPerfil(nome);
+    renderTimeline();
+    status();
+  };
+  r.readAsDataURL(file);
+}
+
+function trocarCapa(nome, e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const r = new FileReader();
+  r.onload = ev=>{
+    usuarios[nome].capa = ev.target.result;
+    salvar();
+    abrirPerfil(nome);
+  };
+  r.readAsDataURL(file);
 }
 
 function tornarModerador(nome){
