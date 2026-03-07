@@ -89,9 +89,26 @@ button.gold{background:var(--gold);color:#1b1200}
   display:inline-block;padding:5px 9px;border-radius:999px;
   background:#173149;border:1px solid #34556e;font-size:12px;margin-right:6px;margin-top:6px;
 }
-.black-star{color:#000;text-shadow:0 0 2px #fff,0 0 8px #fff}
-.blue-star{color:#68caff}
-.gold-star{color:var(--gold)}
+.gold-star{
+  color:#ffd700;
+  text-shadow:0 0 8px #ffd700,0 0 18px #ffd700,0 0 28px rgba(255,215,0,.9);
+  font-size:18px;
+}
+.blue-star{
+  color:#00cfff;
+  text-shadow:0 0 10px #00eaff,0 0 18px #00eaff,0 0 28px rgba(0,234,255,.8);
+  font-size:18px;
+}
+.blue-star.faint{
+  color:#4a7fa0;
+  opacity:.35;
+  text-shadow:none;
+}
+.black-star{
+  color:#000;
+  text-shadow:0 0 2px #fff,0 0 8px #fff;
+  font-size:18px;
+}
 .nav{
   position:fixed;left:10px;right:10px;bottom:10px;z-index:25;
   display:flex;gap:10px;max-width:1000px;margin:auto;
@@ -107,7 +124,6 @@ button.gold{background:var(--gold);color:#1b1200}
   background:var(--ice);color:#001320;font-size:24px;font-weight:900;
   box-shadow:0 0 18px rgba(103,215,255,.35);
 }
-.hidden{display:none}
 .modal{
   position:fixed;inset:0;background:rgba(0,0,0,.72);
   display:none;align-items:center;justify-content:center;z-index:50;padding:10px;
@@ -332,13 +348,22 @@ function atualizarFamilias(){
 function nomeExibicao(nome){
   garantirUsuario(nome);
   let u = usuarios[nome];
-  let txt = nome;
 
-  if(u.tipo === "admin") txt = "<span class='gold-star'>★</span> " + txt;
-  if(u.tipo === "mod") txt = "<span class='blue-star'>★</span> " + txt;
-  if(u.familia) txt = "<span class='black-star'>★</span> " + txt;
+  let estrela = "";
 
-  return txt;
+  if(u.tipo === "admin"){
+    estrela = "<span class='gold-star'>★</span> ";
+  } else if(u.tipo === "mod"){
+    estrela = "<span class='blue-star'>★</span> ";
+  } else {
+    estrela = "<span class='blue-star faint'>★</span> ";
+  }
+
+  if(u.familia){
+    estrela += "<span class='black-star'>★</span> ";
+  }
+
+  return estrela + nome;
 }
 
 function atualizarStatus(){
@@ -649,13 +674,13 @@ function abrirPerfil(nome){
     if(u.tipo !== "mod"){
       html += `
         <div class="profile-actions">
-          <button class="ok" onclick="tornarModerador('${nome}')">⭐ Tornar moderador</button>
+          <button class="ok" onclick="tornarModerador('${nome}')"><span class="blue-star faint">★</span> Ativar moderador</button>
         </div>
       `;
     } else {
       html += `
         <div class="profile-actions">
-          <span class="badge">Esse usuário já é moderador</span>
+          <span class="badge"><span class="blue-star">★</span> Moderador ativo</span>
         </div>
       `;
     }
@@ -670,7 +695,7 @@ function abrirPerfil(nome){
     `;
   }
 
-  if(usuario && usuario.tipo === "mod" && nome !== "ADM" && usuarios[nome].tipo !== "mod" && nome !== usuario.nome){
+  if(usuario && usuario.tipo === "mod" && nome !== "ADM" && usuarios[nome].tipo === "normal" && nome !== usuario.nome){
     html += `
       <div class="profile-actions">
         <button class="danger" onclick="bloquearUsuario('${nome}')">Bloquear usuário</button>
@@ -786,13 +811,19 @@ function avaliarPerfil(nome,tipo){
 
 function tornarModerador(nome){
   if(!usuario || usuario.tipo !== "admin") return;
-  if(nome === "ADM") return;
+  if(nome === "ADM"){
+    alert("ADM é intocável");
+    return;
+  }
+
   garantirUsuario(nome);
   usuarios[nome].tipo = "mod";
+
   salvarTudo();
   abrirPerfil(nome);
   renderTimeline();
   atualizarStatus();
+
   alert(nome + " agora é moderador.");
 }
 
