@@ -1,305 +1,403 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>ICE</title>
 
 <style>
+:root{
+  --bg1:#dff6ff;
+  --bg2:#bfefff;
+  --bg3:#8edcff;
+  --sea:#0f3452;
+  --sea2:#1d5277;
+  --card:#eaf9ff;
+  --card2:#d7f3ff;
+  --line:#7ec8e6;
+  --txt:#12344f;
+  --mut:#4c7695;
+  --ice:#6ed8ff;
+  --ok:#23c79c;
+  --bad:#ff6b7a;
+  --gold:#ffd54f;
+}
+
+*{box-sizing:border-box}
+
 body{
-margin:0;
-font-family:Arial;
-background:#07131f;
-color:white;
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  color:var(--txt);
+  background:
+    radial-gradient(circle at 10% 20%, rgba(255,255,255,.55) 0 8px, transparent 9px),
+    radial-gradient(circle at 22% 80%, rgba(255,255,255,.35) 0 5px, transparent 6px),
+    radial-gradient(circle at 85% 15%, rgba(255,255,255,.38) 0 7px, transparent 8px),
+    radial-gradient(circle at 70% 70%, rgba(255,255,255,.30) 0 4px, transparent 5px),
+    linear-gradient(180deg,var(--bg1) 0%,var(--bg2) 45%,var(--bg3) 100%);
+  min-height:100vh;
+  position:relative;
+  overflow-x:hidden;
+}
+
+/* Enfeites fundo do mar */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  opacity:.22;
+  background-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'><g fill='none' stroke='%230f587e' stroke-width='3' opacity='.7'><path d='M25 150c12-22 12-45 0-67M35 150c12-18 14-36 8-56M15 150c10-14 8-28 0-42'/><path d='M120 150c0-22 8-44 20-62c8 10 10 24 6 40c12-10 20-20 24-34'/><path d='M70 138c10-16 12-28 8-42c16 6 22 18 24 30'/></g><g fill='%231a6a90' opacity='.7'><circle cx='145' cy='35' r='8'/><circle cx='154' cy='28' r='4'/><circle cx='155' cy='43' r='4'/><circle cx='136' cy='43' r='4'/><circle cx='136' cy='28' r='4'/></g><g fill='%232d82ad' opacity='.65'><path d='M92 26c6 10 7 18 2 25c-4-8-5-16-2-25Z'/><path d='M80 38c8 2 13 6 16 12c-8 1-14-2-16-12Z'/><path d='M104 39c-8 2-13 6-16 12c8 1 14-2 16-12Z'/></g></svg>");
+  background-size:220px 220px;
+  background-repeat:repeat;
 }
 
 header{
-padding:15px;
-background:#0c2031;
-border-bottom:1px solid #294861;
-display:flex;
-justify-content:space-between;
-align-items:center;
-position:sticky;
-top:0;
-z-index:20;
+  padding:14px 16px;
+  background:rgba(234,249,255,.88);
+  border-bottom:1px solid var(--line);
+  backdrop-filter:blur(8px);
+  position:sticky;
+  top:0;
+  z-index:20;
 }
 
-h1{
-margin:0;
-font-size:22px;
+.top{
+  max-width:980px;
+  margin:auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.logoBox{
+  width:56px;
+  height:56px;
+  border-radius:18px;
+  position:relative;
+  overflow:hidden;
+  border:1px solid #8bd4ec;
+  background:linear-gradient(180deg,#ffffff,#bdeeff 60%,#6fbce1 100%);
+  box-shadow:0 8px 24px rgba(0,0,0,.08);
+}
+
+.logoBox::before{
+  content:"";
+  position:absolute;
+  left:8px;
+  bottom:8px;
+  width:40px;
+  height:28px;
+  background:linear-gradient(180deg,#fff,#d8f6ff);
+  clip-path:polygon(50% 0,100% 100%,0 100%);
+}
+
+.logoBox::after{
+  content:"";
+  position:absolute;
+  left:23px;
+  bottom:8px;
+  width:22px;
+  height:18px;
+  background:linear-gradient(180deg,#fff,#cbf0ff);
+  clip-path:polygon(50% 0,100% 100%,0 100%);
+}
+
+.brand h1{
+  margin:0;
+  font-size:24px;
+  letter-spacing:1px;
+  color:#0f3452;
+}
+
+.brand small{
+  display:block;
+  color:var(--mut);
 }
 
 .wrap{
-max-width:900px;
-margin:auto;
-padding:15px;
-padding-bottom:90px;
+  max-width:980px;
+  margin:auto;
+  padding:16px;
+  padding-bottom:96px;
 }
 
 .card{
-background:#0d1e31;
-padding:15px;
-border-radius:12px;
-margin-bottom:15px;
-border:1px solid #294861;
+  background:linear-gradient(180deg,var(--card),var(--card2));
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:14px;
+  margin-bottom:14px;
+  box-shadow:0 10px 28px rgba(15,52,82,.07);
 }
 
 input,textarea{
-width:100%;
-padding:10px;
-margin:5px 0;
-background:#081521;
-border:1px solid #294861;
-color:white;
-border-radius:8px;
-box-sizing:border-box;
+  width:100%;
+  padding:11px 12px;
+  margin:6px 0;
+  background:#ffffff;
+  border:1px solid #9ad9ef;
+  color:var(--txt);
+  border-radius:10px;
+  box-sizing:border-box;
 }
 
 button{
-padding:10px 15px;
-border:none;
-border-radius:8px;
-cursor:pointer;
-margin-top:5px;
+  padding:10px 14px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  margin-top:6px;
+  font-weight:700;
 }
 
 .btn{
-background:#67d7ff;
-color:#001320;
-font-weight:bold;
+  background:var(--ice);
+  color:#08314f;
 }
 
 .btn-danger{
-background:#ff6b6b;
-color:white;
+  background:var(--bad);
+  color:#fff;
 }
 
 .btn-ok{
-background:#1dd1a1;
-color:#001a14;
+  background:var(--ok);
+  color:#062d24;
 }
 
 .btn-alt{
-background:#1a3046;
-color:white;
-border:1px solid #31526d;
+  background:#d7f1ff;
+  color:#0f3452;
+  border:1px solid #8fd3ea;
 }
 
 .timeline-post{
-background:#10253b;
-padding:12px;
-border-radius:10px;
-margin-bottom:10px;
-cursor:pointer;
-border:1px solid #294861;
+  background:#f4fdff;
+  padding:12px;
+  border-radius:12px;
+  margin-bottom:10px;
+  cursor:pointer;
+  border:1px solid #98d8ee;
 }
 
 .timeline-post img{
-width:100%;
-border-radius:10px;
-margin-top:8px;
-max-height:280px;
-object-fit:cover;
+  width:100%;
+  border-radius:10px;
+  margin-top:8px;
+  max-height:280px;
+  object-fit:cover;
 }
 
 .star-admin{
-color:#ffd700;
-font-size:18px;
-text-shadow:0 0 8px #ffd700,0 0 18px rgba(255,215,0,.9);
-font-weight:bold;
+  color:#ffd700;
+  font-size:18px;
+  text-shadow:0 0 8px #ffd700,0 0 16px rgba(255,215,0,.8);
+  font-weight:bold;
 }
 
 .star-mod{
-color:#00eaff;
-font-size:18px;
-text-shadow:0 0 8px #00eaff,0 0 18px rgba(0,234,255,.8);
-font-weight:bold;
+  color:#00d9ff;
+  font-size:18px;
+  text-shadow:0 0 8px #00eaff,0 0 16px rgba(0,234,255,.8);
+  font-weight:bold;
 }
 
 .star-user{
-color:#4a7fa0;
-opacity:.4;
-font-size:18px;
-font-weight:bold;
+  color:#69add0;
+  opacity:.45;
+  font-size:18px;
+  font-weight:bold;
 }
 
 .modal{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,.8);
-display:none;
-justify-content:center;
-align-items:center;
-padding:20px;
-z-index:50;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(7,19,31,.65);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  padding:18px;
+  z-index:50;
 }
 
 .modal-content{
-background:#0d1e31;
-padding:15px;
-border-radius:12px;
-width:100%;
-max-width:900px;
-max-height:90vh;
-overflow:auto;
-border:1px solid #294861;
+  background:linear-gradient(180deg,var(--card),var(--card2));
+  padding:16px;
+  border-radius:16px;
+  width:100%;
+  max-width:920px;
+  max-height:90vh;
+  overflow:auto;
+  border:1px solid var(--line);
 }
 
 .profile-cover{
-height:160px;
-background:#24445f;
-border-radius:10px;
-margin-bottom:10px;
-overflow:hidden;
+  height:170px;
+  background:linear-gradient(180deg,#a5e6ff,#67c9ef);
+  border-radius:12px;
+  margin-bottom:10px;
+  overflow:hidden;
+  border:1px solid #8fd2ea;
 }
 
 .profile-cover img{
-width:100%;
-height:100%;
-object-fit:cover;
+  width:100%;
+  height:100%;
+  object-fit:cover;
 }
 
 .profile-avatar{
-width:80px;
-height:80px;
-border-radius:50%;
-background:#274b69;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:28px;
-margin-top:-40px;
-border:3px solid #0d1e31;
-overflow:hidden;
+  width:84px;
+  height:84px;
+  border-radius:50%;
+  background:#82cbe9;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:28px;
+  margin-top:-42px;
+  border:4px solid #eaf9ff;
+  overflow:hidden;
+  color:#0f3452;
+  font-weight:bold;
 }
 
 .profile-avatar img{
-width:100%;
-height:100%;
-object-fit:cover;
+  width:100%;
+  height:100%;
+  object-fit:cover;
 }
 
 .nav{
-position:fixed;
-bottom:10px;
-left:10px;
-right:10px;
-display:flex;
-gap:10px;
-z-index:30;
+  position:fixed;
+  bottom:10px;
+  left:10px;
+  right:10px;
+  display:flex;
+  gap:10px;
+  z-index:30;
 }
 
 .nav button{
-flex:1;
-background:#0d1e31;
-color:white;
-border:1px solid #31526d;
+  flex:1;
+  background:rgba(234,249,255,.95);
+  color:#12344f;
+  border:1px solid #9ad9ef;
 }
 
 .promo{
-position:fixed;
-bottom:80px;
-left:50%;
-transform:translateX(-50%);
-background:#163047;
-padding:12px 20px;
-border-radius:10px;
-border:1px solid #4f7aa0;
-display:none;
-z-index:40;
-text-align:center;
-max-width:92vw;
+  position:fixed;
+  bottom:78px;
+  left:50%;
+  transform:translateX(-50%);
+  background:linear-gradient(180deg,#d7f3ff,#beeaff);
+  color:#0f3452;
+  padding:12px 18px;
+  border-radius:12px;
+  border:1px solid #84cfe9;
+  display:none;
+  z-index:40;
+  text-align:center;
+  max-width:92vw;
+  box-shadow:0 8px 24px rgba(15,52,82,.12);
 }
 
 .split{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:12px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
 }
 
 @media(max-width:700px){
-.split{
-grid-template-columns:1fr;
-}
+  .split{grid-template-columns:1fr;}
 }
 
 .trade-box{
-background:#10253b;
-padding:12px;
-border-radius:10px;
-border:1px solid #294861;
+  background:#f6fdff;
+  padding:12px;
+  border-radius:12px;
+  border:1px solid #98d8ee;
 }
 
 .trade-box img{
-width:100%;
-border-radius:10px;
-margin-top:8px;
-max-height:250px;
-object-fit:cover;
+  width:100%;
+  border-radius:10px;
+  margin-top:8px;
+  max-height:250px;
+  object-fit:cover;
 }
 
 .chat-box{
-background:#081521;
-border:1px solid #294861;
-border-radius:10px;
-padding:10px;
-max-height:250px;
-overflow:auto;
-margin-bottom:10px;
+  background:#ffffff;
+  border:1px solid #9ad9ef;
+  border-radius:10px;
+  padding:10px;
+  max-height:260px;
+  overflow:auto;
+  margin-bottom:10px;
 }
 
 .chat-msg{
-background:#14314d;
-padding:8px 10px;
-border-radius:8px;
-margin-bottom:8px;
+  background:#def5ff;
+  padding:8px 10px;
+  border-radius:8px;
+  margin-bottom:8px;
 }
 
 .chat-msg.me{
-background:#0f5a67;
+  background:#baf2ef;
 }
 
 .badge{
-display:inline-block;
-padding:5px 10px;
-border-radius:999px;
-background:#173149;
-border:1px solid #34556e;
-font-size:12px;
-margin-right:6px;
-margin-top:6px;
+  display:inline-block;
+  padding:5px 10px;
+  border-radius:999px;
+  background:#e2f7ff;
+  border:1px solid #9fddef;
+  font-size:12px;
+  margin-right:6px;
+  margin-top:6px;
 }
 
 .small{
-font-size:12px;
-opacity:.8;
+  font-size:12px;
+  opacity:.8;
+  color:var(--mut);
 }
 
 .profile-actions{
-display:flex;
-gap:10px;
-flex-wrap:wrap;
-margin:10px 0;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin:10px 0;
 }
 
 .post-mini{
-background:#10253b;
-padding:10px;
-border-radius:10px;
-margin-top:8px;
-border:1px solid #294861;
+  background:#f4fdff;
+  padding:10px;
+  border-radius:10px;
+  margin-top:8px;
+  border:1px solid #98d8ee;
 }
 
 .post-mini img{
-width:100%;
-border-radius:10px;
-margin-top:8px;
-max-height:220px;
-object-fit:cover;
+  width:100%;
+  border-radius:10px;
+  margin-top:8px;
+  max-height:220px;
+  object-fit:cover;
 }
 </style>
 </head>
@@ -307,41 +405,49 @@ object-fit:cover;
 <body>
 
 <header>
-<h1>ICE</h1>
-<div id="status">Não logado</div>
+  <div class="top">
+    <div class="brand">
+      <div class="logoBox"></div>
+      <div>
+        <h1>ICE</h1>
+        <small>Plataforma de trocas</small>
+      </div>
+    </div>
+    <div id="status">Não logado</div>
+  </div>
 </header>
 
 <div class="promo" id="promoBox">
-Suporte Ice, compra de moderação, <b>11983602504</b>
+  Suporte Ice, compra de moderação, <b>11983602504</b>
 </div>
 
 <div class="wrap">
 
-<div class="card">
-<h3>Login</h3>
-<input id="user" placeholder="Usuário">
-<input id="pass" type="password" placeholder="Senha">
-<button class="btn" onclick="login()">Entrar</button>
-</div>
+  <div class="card">
+    <h3>Login</h3>
+    <input id="user" placeholder="Usuário">
+    <input id="pass" type="password" placeholder="Senha">
+    <button class="btn" onclick="login()">Entrar</button>
+  </div>
 
-<div class="card">
-<h3>Publicar troca</h3>
-<input id="titulo" placeholder="Nome do item">
-<textarea id="desc" placeholder="Descrição"></textarea>
-<input type="file" id="foto" accept="image/*,video/*">
-<button class="btn" onclick="publicar()">Publicar</button>
-</div>
+  <div class="card">
+    <h3>Publicar troca</h3>
+    <input id="titulo" placeholder="Nome do item">
+    <textarea id="desc" placeholder="Descrição"></textarea>
+    <input type="file" id="foto" accept="image/*,video/*">
+    <button class="btn" onclick="publicar()">Publicar</button>
+  </div>
 
-<div class="card">
-<h3>Timeline</h3>
-<div id="timeline"></div>
-</div>
+  <div class="card">
+    <h3>Timeline</h3>
+    <div id="timeline"></div>
+  </div>
 
 </div>
 
 <div class="nav">
-<button onclick="minhasTrocas()">Trocas</button>
-<button onclick="abrirPerfil(usuario?.nome)">Perfil</button>
+  <button onclick="minhasTrocas()">Trocas</button>
+  <button onclick="abrirPerfil(usuario?.nome)">Perfil</button>
 </div>
 
 <!-- Perfil -->
@@ -394,25 +500,25 @@ Suporte Ice, compra de moderação, <b>11983602504</b>
 </div>
 
 <script>
-let usuario = null
+let usuario = null;
 
-let usuarios = JSON.parse(localStorage.getItem("usuarios") || "{}")
-let posts = JSON.parse(localStorage.getItem("posts") || "[]")
-let propostas = JSON.parse(localStorage.getItem("propostas") || "[]")
-let chats = JSON.parse(localStorage.getItem("chats") || "[]")
+let usuarios = JSON.parse(localStorage.getItem("usuarios") || "{}");
+let posts = JSON.parse(localStorage.getItem("posts") || "[]");
+let propostas = JSON.parse(localStorage.getItem("propostas") || "[]");
+let chats = JSON.parse(localStorage.getItem("chats") || "[]");
 
-let trocaAtual = null
-let chatAtual = null
+let trocaAtual = null;
+let chatAtual = null;
 
 function salvar(){
-  localStorage.setItem("usuarios", JSON.stringify(usuarios))
-  localStorage.setItem("posts", JSON.stringify(posts))
-  localStorage.setItem("propostas", JSON.stringify(propostas))
-  localStorage.setItem("chats", JSON.stringify(chats))
+  localStorage.setItem("usuarios", JSON.stringify(usuarios));
+  localStorage.setItem("posts", JSON.stringify(posts));
+  localStorage.setItem("propostas", JSON.stringify(propostas));
+  localStorage.setItem("chats", JSON.stringify(chats));
 }
 
 function garantirUser(nome){
-  if(!nome) return
+  if(!nome) return;
   if(!usuarios[nome]){
     usuarios[nome] = {
       nome:nome,
@@ -420,57 +526,57 @@ function garantirUser(nome){
       bio:"",
       foto:"",
       capa:"",
-      bloqueado:false
-    }
+      bloqueado:false,
+      oculto:false
+    };
   }
 }
 
 function login(){
-  let u = document.getElementById("user").value.trim()
-  let p = document.getElementById("pass").value.trim()
-  if(!u) return alert("Digite um usuário")
+  let u = document.getElementById("user").value.trim();
+  let p = document.getElementById("pass").value.trim();
+  if(!u) return alert("Digite um usuário");
 
-  garantirUser(u)
+  garantirUser(u);
 
   if(u === "ADM" && p === "1533"){
-    usuarios[u].tipo = "admin"
-    usuario = { nome:u, tipo:"admin" }
+    usuarios[u].tipo = "admin";
+    usuario = { nome:u, tipo:"admin" };
   } else {
-    usuario = { nome:u, tipo:usuarios[u].tipo || "normal" }
+    usuario = { nome:u, tipo:usuarios[u].tipo || "normal" };
   }
 
-  salvar()
-  status()
-  renderTimeline()
+  salvar();
+  status();
+  renderTimeline();
 }
 
 function status(){
   if(!usuario){
-    document.getElementById("status").innerText = "Não logado"
-    return
+    document.getElementById("status").innerText = "Não logado";
+    return;
   }
-  document.getElementById("status").innerHTML = nomeExibicao(usuario.nome)
+  document.getElementById("status").innerHTML = nomeExibicao(usuario.nome);
 }
 
 function nomeExibicao(nome){
-  garantirUser(nome)
-  let u = usuarios[nome]
+  garantirUser(nome);
+  let u = usuarios[nome];
 
-  if(u.tipo === "admin") return `<span class="star-admin">★</span> ${nome}`
-  if(u.tipo === "mod") return `<span class="star-mod">★</span> ${nome}`
-
-  return `<span class="star-user">★</span> ${nome}`
+  if(u.tipo === "admin") return `<span class="star-admin">★</span> ${nome}`;
+  if(u.tipo === "mod") return `<span class="star-mod">★</span> ${nome}`;
+  return `<span class="star-user">★</span> ${nome}`;
 }
 
 function publicar(){
-  if(!usuario) return alert("login primeiro")
-  if(usuarios[usuario.nome].bloqueado) return alert("Seu usuário está bloqueado")
+  if(!usuario) return alert("login primeiro");
+  if(usuarios[usuario.nome].bloqueado) return alert("Seu usuário está bloqueado");
 
-  let titulo = document.getElementById("titulo").value.trim()
-  let desc = document.getElementById("desc").value.trim()
-  let file = document.getElementById("foto").files[0]
+  let titulo = document.getElementById("titulo").value.trim();
+  let desc = document.getElementById("desc").value.trim();
+  let file = document.getElementById("foto").files[0];
 
-  if(!titulo || !desc) return alert("Preencha título e descrição")
+  if(!titulo || !desc) return alert("Preencha título e descrição");
 
   let post = {
     id: Date.now().toString(),
@@ -479,84 +585,89 @@ function publicar(){
     dono: usuario.nome,
     img: "",
     data: new Date().toLocaleString()
-  }
+  };
 
   const finalizar = ()=>{
-    posts.unshift(post)
-    salvar()
-    renderTimeline()
-    document.getElementById("titulo").value = ""
-    document.getElementById("desc").value = ""
-    document.getElementById("foto").value = ""
-  }
+    posts.unshift(post);
+    salvar();
+    renderTimeline();
+    document.getElementById("titulo").value = "";
+    document.getElementById("desc").value = "";
+    document.getElementById("foto").value = "";
+  };
 
   if(file){
-    let r = new FileReader()
+    let r = new FileReader();
     r.onload = e=>{
-      post.img = e.target.result
-      finalizar()
-    }
-    r.readAsDataURL(file)
+      post.img = e.target.result;
+      finalizar();
+    };
+    r.readAsDataURL(file);
   } else {
-    finalizar()
+    finalizar();
   }
 }
 
 function renderTimeline(){
-  let t = document.getElementById("timeline")
-  t.innerHTML = ""
+  let t = document.getElementById("timeline");
+  t.innerHTML = "";
 
-  posts.forEach(p=>{
-    if(usuarios[p.dono] && usuarios[p.dono].oculto) return
+  const visiveis = posts.filter(p => !(usuarios[p.dono] && usuarios[p.dono].oculto));
 
-    let div = document.createElement("div")
-    div.className = "timeline-post"
-    div.onclick = ()=>abrirTroca(p.id)
+  if(visiveis.length === 0){
+    t.innerHTML = `<div class="small">Nenhuma postagem ainda.</div>`;
+    return;
+  }
+
+  visiveis.forEach(p=>{
+    let div = document.createElement("div");
+    div.className = "timeline-post";
+    div.onclick = ()=>abrirTroca(p.id);
 
     div.innerHTML = `
       <b>${p.titulo}</b><br>
       ${p.desc}<br>
       <small>${nomeExibicao(p.dono)} • ${p.data}</small><br>
-      <button onclick="event.stopPropagation();abrirPerfil('${p.dono}')">Ver perfil</button>
+      <button class="btn-alt" onclick="event.stopPropagation();abrirPerfil('${p.dono}')">Ver perfil</button>
       ${p.img ? `<img src="${p.img}">` : ""}
-    `
-    t.appendChild(div)
-  })
+    `;
+    t.appendChild(div);
+  });
 }
 
 function minhasTrocas(){
-  if(!usuario) return alert("Faça login primeiro")
+  if(!usuario) return alert("Faça login primeiro");
 
-  let t = document.getElementById("timeline")
-  t.innerHTML = ""
+  let t = document.getElementById("timeline");
+  t.innerHTML = "";
 
-  let minhas = posts.filter(p=>p.dono === usuario.nome)
+  let minhas = posts.filter(p=>p.dono === usuario.nome);
 
   if(minhas.length === 0){
-    t.innerHTML = `<div class="small">Você ainda não tem postagens de troca.</div>`
-    return
+    t.innerHTML = `<div class="small">Você ainda não tem postagens de troca.</div>`;
+    return;
   }
 
   minhas.forEach(p=>{
-    let div = document.createElement("div")
-    div.className = "timeline-post"
-    div.onclick = ()=>abrirTroca(p.id)
+    let div = document.createElement("div");
+    div.className = "timeline-post";
+    div.onclick = ()=>abrirTroca(p.id);
     div.innerHTML = `
       <b>${p.titulo}</b><br>
       ${p.desc}<br>
       <small>${nomeExibicao(p.dono)} • ${p.data}</small>
       ${p.img ? `<img src="${p.img}">` : ""}
-    `
-    t.appendChild(div)
-  })
+    `;
+    t.appendChild(div);
+  });
 }
 
 function abrirPerfil(nome){
-  if(!nome) return alert("Faça login primeiro")
+  if(!nome) return alert("Faça login primeiro");
 
-  garantirUser(nome)
-  let u = usuarios[nome]
-  let postsUser = posts.filter(p=>p.dono === nome)
+  garantirUser(nome);
+  let u = usuarios[nome];
+  let postsUser = posts.filter(p=>p.dono === nome);
 
   let html = `
     <div class="profile-cover">
@@ -568,32 +679,32 @@ function abrirPerfil(nome){
     </div>
 
     <h2>${nomeExibicao(nome)}</h2>
-
     <div class="small">Perfil do usuário</div>
 
     <textarea id="bioInput">${u.bio || ""}</textarea>
     ${usuario && usuario.nome === nome ? `<button class="btn" onclick="salvarBio('${nome}')">Salvar bio</button>` : ""}
 
     <div class="profile-actions">
-  `
+  `;
 
   if(usuario?.nome === "ADM" && nome !== "ADM"){
     if(u.tipo !== "mod"){
-      html += `<button class="btn-ok" onclick="tornarModerador('${nome}')"><span class="star-user">★</span> Tornar moderador</button>`
+      html += `<button class="btn-ok" onclick="tornarModerador('${nome}')"><span class="star-user">★</span> Tornar moderador</button>`;
     } else {
-      html += `<span class="badge"><span class="star-mod">★</span> Moderador ativo</span>`
+      html += `<span class="badge"><span class="star-mod">★</span> Moderador ativo</span>`;
     }
 
-    html += `<button class="btn-danger" onclick="bloquear('${nome}')">Bloquear</button>`
+    html += `<button class="btn-danger" onclick="bloquear('${nome}')">Bloquear</button>`;
+    html += `<button class="btn-alt" onclick="ocultar('${nome}')">${u.oculto ? "Mostrar" : "Ocultar"}</button>`;
   }
 
   if(usuario?.tipo === "mod" && usuarios[nome].tipo === "normal" && nome !== usuario.nome){
-    html += `<button class="btn-danger" onclick="bloquear('${nome}')">Bloquear</button>`
+    html += `<button class="btn-danger" onclick="bloquear('${nome}')">Bloquear</button>`;
   }
 
-  html += `</div>`
+  html += `</div>`;
 
-  html += `<div class="card"><h4>Postagens</h4>`
+  html += `<div class="card"><h4>Postagens</h4>`;
 
   if(postsUser.length){
     postsUser.forEach(p=>{
@@ -604,104 +715,114 @@ function abrirPerfil(nome){
           <small>${p.data}</small>
           ${p.img ? `<img src="${p.img}">` : ""}
         </div>
-      `
-    })
+      `;
+    });
   } else {
-    html += `<div class="small">Sem postagens ainda.</div>`
+    html += `<div class="small">Sem postagens ainda.</div>`;
   }
 
-  html += `</div>`
+  html += `</div>`;
 
-  document.getElementById("perfilBody").innerHTML = html
-  document.getElementById("perfilModal").style.display = "flex"
+  document.getElementById("perfilBody").innerHTML = html;
+  document.getElementById("perfilModal").style.display = "flex";
 }
 
 function fecharPerfil(){
-  document.getElementById("perfilModal").style.display = "none"
+  document.getElementById("perfilModal").style.display = "none";
 }
 
 function salvarBio(nome){
-  usuarios[nome].bio = document.getElementById("bioInput").value
-  salvar()
-  abrirPerfil(nome)
+  usuarios[nome].bio = document.getElementById("bioInput").value;
+  salvar();
+  abrirPerfil(nome);
 }
 
 function tornarModerador(nome){
-  if(usuario?.nome !== "ADM") return alert("Só o ADM pode fazer isso")
-  if(nome === "ADM") return alert("ADM é intocável")
+  if(usuario?.nome !== "ADM") return alert("Só o ADM pode fazer isso");
+  if(nome === "ADM") return alert("ADM é intocável");
 
-  garantirUser(nome)
-  usuarios[nome].tipo = "mod"
-  salvar()
+  garantirUser(nome);
+  usuarios[nome].tipo = "mod";
+  salvar();
 
-  abrirPerfil(nome)
-  renderTimeline()
-  status()
+  abrirPerfil(nome);
+  renderTimeline();
+  status();
 
-  alert(nome + " agora é moderador")
+  alert(nome + " agora é moderador");
 }
 
 function bloquear(nome){
-  if(nome === "ADM") return alert("ADM é intocável")
-  if(!usuario) return
+  if(nome === "ADM") return alert("ADM é intocável");
+  if(!usuario) return;
 
   if(usuario.nome === "ADM"){
-    usuarios[nome].bloqueado = true
-    salvar()
-    abrirPerfil(nome)
-    alert("Usuário bloqueado")
-    return
+    usuarios[nome].bloqueado = true;
+    salvar();
+    abrirPerfil(nome);
+    alert("Usuário bloqueado");
+    return;
   }
 
   if(usuario.tipo === "mod"){
     if(usuarios[nome].tipo === "normal"){
-      usuarios[nome].bloqueado = true
-      salvar()
-      abrirPerfil(nome)
-      alert("Usuário bloqueado")
+      usuarios[nome].bloqueado = true;
+      salvar();
+      abrirPerfil(nome);
+      alert("Usuário bloqueado");
     } else {
-      alert("Moderador só pode bloquear usuários normais")
+      alert("Moderador só pode bloquear usuários normais");
     }
   }
 }
 
+function ocultar(nome){
+  if(usuario?.nome !== "ADM") return;
+  if(nome === "ADM") return alert("ADM é intocável");
+
+  usuarios[nome].oculto = !usuarios[nome].oculto;
+  salvar();
+  abrirPerfil(nome);
+  renderTimeline();
+}
+
 function abrirTroca(id){
-  if(!usuario) return alert("Faça login primeiro")
-  if(usuarios[usuario.nome].bloqueado) return alert("Seu usuário está bloqueado")
+  if(!usuario) return alert("Faça login primeiro");
+  if(usuarios[usuario.nome].bloqueado) return alert("Seu usuário está bloqueado");
 
-  let post = posts.find(p=>String(p.id) === String(id))
-  if(!post) return alert("Post não encontrado")
+  let post = posts.find(p=>String(p.id) === String(id));
+  if(!post) return alert("Post não encontrado");
 
-  trocaAtual = post
+  trocaAtual = post;
 
   document.getElementById("tradeOriginal").innerHTML = `
     <b>${post.titulo}</b><br>
     ${post.desc}<br>
     <small>${nomeExibicao(post.dono)} • ${post.data}</small>
     ${post.img ? `<img src="${post.img}">` : ""}
-  `
+  `;
 
-  document.getElementById("propTitulo").value = ""
-  document.getElementById("propDesc").value = ""
-  document.getElementById("propFoto").value = ""
+  document.getElementById("propTitulo").value = "";
+  document.getElementById("propDesc").value = "";
+  document.getElementById("propFoto").value = "";
 
-  renderPropostas()
-  document.getElementById("trocaModal").style.display = "flex"
+  renderPropostas();
+  document.getElementById("trocaModal").style.display = "flex";
 }
 
 function fecharTroca(){
-  document.getElementById("trocaModal").style.display = "none"
+  document.getElementById("trocaModal").style.display = "none";
 }
 
 function enviarProposta(){
-  if(!usuario || !trocaAtual) return
-  if(usuario.nome === trocaAtual.dono) return alert("Você não pode propor no seu próprio item")
+  if(!usuario || !trocaAtual) return;
+  if(usuario.nome === trocaAtual.dono) return alert("Você não pode propor no seu próprio item");
 
-  let titulo = document.getElementById("propTitulo").value.trim()
-  let desc = document.getElementById("propDesc").value.trim()
-  let file = document.getElementById("propFoto").files[0]
+  let titulo = document.getElementById("propTitulo").value.trim();
+  let desc = document.getElementById("propDesc").value.trim();
+  let file = document.getElementById("propFoto").files[0];
 
-  if(!titulo || !desc) return alert("Preencha a proposta")
+  if(!titulo || !desc) return alert("Preencha a proposta");
 
   let prop = {
     id: "prop_" + Date.now(),
@@ -712,41 +833,41 @@ function enviarProposta(){
     desc,
     img: "",
     status: "pendente"
-  }
+  };
 
   const finalizar = ()=>{
-    propostas.unshift(prop)
-    salvar()
-    renderPropostas()
-    alert("Proposta enviada")
-  }
+    propostas.unshift(prop);
+    salvar();
+    renderPropostas();
+    alert("Proposta enviada");
+  };
 
   if(file){
-    let r = new FileReader()
+    let r = new FileReader();
     r.onload = e=>{
-      prop.img = e.target.result
-      finalizar()
-    }
-    r.readAsDataURL(file)
+      prop.img = e.target.result;
+      finalizar();
+    };
+    r.readAsDataURL(file);
   } else {
-    finalizar()
+    finalizar();
   }
 }
 
 function renderPropostas(){
-  let box = document.getElementById("listaPropostas")
-  let lista = propostas.filter(p=>String(p.postId) === String(trocaAtual.id))
+  let box = document.getElementById("listaPropostas");
+  let lista = propostas.filter(p=>String(p.postId) === String(trocaAtual.id));
 
   if(lista.length === 0){
-    box.innerHTML = "Nenhuma proposta ainda."
-    return
+    box.innerHTML = "Nenhuma proposta ainda.";
+    return;
   }
 
-  box.innerHTML = ""
+  box.innerHTML = "";
 
   lista.forEach(p=>{
-    let div = document.createElement("div")
-    div.className = "card"
+    let div = document.createElement("div");
+    div.className = "card";
 
     div.innerHTML = `
       <b>${p.titulo}</b><br>
@@ -764,16 +885,16 @@ function renderPropostas(){
         ? `<br><button class="btn" onclick="abrirChat('${p.id}')">Abrir chat</button>`
         : ""
       }
-    `
-    box.appendChild(div)
-  })
+    `;
+    box.appendChild(div);
+  });
 }
 
 function aceitarProposta(id){
-  let p = propostas.find(x=>x.id === id)
-  if(!p) return
+  let p = propostas.find(x=>x.id === id);
+  if(!p) return;
 
-  p.status = "aceita"
+  p.status = "aceita";
 
   if(!chats.find(c=>c.propId === id)){
     chats.push({
@@ -783,71 +904,70 @@ function aceitarProposta(id){
       msgs: [
         {autor:"sistema", texto:"Troca aceita. Agora vocês podem conversar."}
       ]
-    })
+    });
   }
 
-  salvar()
-  renderPropostas()
+  salvar();
+  renderPropostas();
 }
 
 function abrirChat(propId){
-  let c = chats.find(x=>x.propId === propId)
-  if(!c || !c.users.includes(usuario.nome)) return alert("Chat privado")
+  let c = chats.find(x=>x.propId === propId);
+  if(!c || !c.users.includes(usuario.nome)) return alert("Chat privado");
 
-  chatAtual = c
-  document.getElementById("chatInfo").innerText = "Chat entre: " + c.users.join(" e ")
-  renderMensagens()
-  document.getElementById("chatModal").style.display = "flex"
+  chatAtual = c;
+  document.getElementById("chatInfo").innerText = "Chat entre: " + c.users.join(" e ");
+  renderMensagens();
+  document.getElementById("chatModal").style.display = "flex";
 }
 
 function fecharChat(){
-  document.getElementById("chatModal").style.display = "none"
+  document.getElementById("chatModal").style.display = "none";
 }
 
 function renderMensagens(){
-  let box = document.getElementById("chatMensagens")
-  box.innerHTML = ""
+  let box = document.getElementById("chatMensagens");
+  box.innerHTML = "";
 
-  if(!chatAtual) return
+  if(!chatAtual) return;
 
   chatAtual.msgs.forEach(m=>{
-    let div = document.createElement("div")
-    div.className = "chat-msg" + (m.autor === usuario.nome ? " me" : "")
-    div.innerHTML = `<b>${m.autor}</b><br>${m.texto}`
-    box.appendChild(div)
-  })
+    let div = document.createElement("div");
+    div.className = "chat-msg" + (m.autor === usuario.nome ? " me" : "");
+    div.innerHTML = `<b>${m.autor}</b><br>${m.texto}`;
+    box.appendChild(div);
+  });
 
-  box.scrollTop = box.scrollHeight
+  box.scrollTop = box.scrollHeight;
 }
 
 function enviarMensagem(){
-  let txt = document.getElementById("chatInput").value.trim()
-  if(!txt || !chatAtual) return
+  let txt = document.getElementById("chatInput").value.trim();
+  if(!txt || !chatAtual) return;
 
   chatAtual.msgs.push({
     autor: usuario.nome,
     texto: txt
-  })
+  });
 
-  document.getElementById("chatInput").value = ""
-  salvar()
-  renderMensagens()
+  document.getElementById("chatInput").value = "";
+  salvar();
+  renderMensagens();
 }
 
 function promo(){
-  let p = document.getElementById("promoBox")
-  p.style.display = "block"
+  let p = document.getElementById("promoBox");
+  p.style.display = "block";
   setTimeout(()=>{
-    p.style.display = "none"
-  },7000)
+    p.style.display = "none";
+  },7000);
 }
 
-setTimeout(promo,8000)
-setInterval(promo,240000)
+setTimeout(promo,8000);
+setInterval(promo,240000);
 
-renderTimeline()
-status()
-
+renderTimeline();
+status();
 </script>
 
 </body>
