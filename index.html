@@ -170,6 +170,13 @@ h2,h3,h4{margin:0 0 10px}
   padding:10px;border-radius:12px;background:#0f2134;border:1px solid #284662;margin-top:10px;
 }
 .postMini img{width:100%;border-radius:10px;margin-top:8px;max-height:240px;object-fit:cover}
+.bio{
+  margin-top:10px;
+  padding:10px;
+  border-radius:12px;
+  background:#11253a;
+  border:1px solid #294861;
+}
 </style>
 </head>
 <body>
@@ -306,6 +313,7 @@ function garantirUsuario(nome,tipo="normal"){
       familia:false,
       fotoPerfil:"",
       fotoCapa:"",
+      bio:"",
       confiavel:0,
       naoConfiavel:0,
       bloqueado:false,
@@ -328,20 +336,10 @@ function login(){
   garantirUsuario(usuario.nome, usuario.tipo);
   usuarios[usuario.nome].tipo = usuario.tipo;
 
-  atualizarFamilias();
   salvarTudo();
   atualizarStatus();
   renderNotificacoes();
   renderTimeline();
-}
-
-function atualizarFamilias(){
-  Object.values(usuarios).forEach(u=>{
-    if((u.filhos||0) > 3000) u.familia = true;
-  });
-  Object.values(usuarios).forEach(u=>{
-    if(u.pai && usuarios[u.pai] && usuarios[u.pai].familia) u.familia = true;
-  });
 }
 
 function nomeExibicao(nome){
@@ -349,17 +347,11 @@ function nomeExibicao(nome){
   let u = usuarios[nome];
   let estrela = "";
 
-  if(u.tipo === "admin"){
-    estrela = "<span class='gold-star'>★</span> ";
-  } else if(u.tipo === "mod"){
-    estrela = "<span class='blue-star'>★</span> ";
-  } else {
-    estrela = "<span class='blue-star faint'>★</span> ";
-  }
+  if(u.tipo === "admin") estrela = "<span class='gold-star'>★</span> ";
+  else if(u.tipo === "mod") estrela = "<span class='blue-star'>★</span> ";
+  else estrela = "<span class='blue-star faint'>★</span> ";
 
-  if(u.familia){
-    estrela += "<span class='black-star'>★</span> ";
-  }
+  if(u.familia) estrela += "<span class='black-star'>★</span> ";
 
   return estrela + nome;
 }
@@ -391,7 +383,7 @@ function publicar(){
     criadoEm:new Date().toLocaleString()
   };
 
-  const salvarPost=()=>{
+  const salvarPost = ()=>{
     postagens.unshift(nova);
     salvarTudo();
     document.getElementById("titulo").value = "";
@@ -429,8 +421,7 @@ function renderTimeline(){
   visiveis.forEach(p=>{
     let post = document.createElement("div");
     post.className = "post";
-    post.dataset.id = p.id;
-    post.addEventListener("click", () => abrirTroca(p.id));
+    post.onclick = ()=>abrirTroca(p.id);
 
     let html = `
       <b>${p.titulo}</b><br>
@@ -453,7 +444,7 @@ function sharePage(){
   const texto = window.location.href + (usuario ? "?ref="+usuario.nome : "");
   if(navigator.share){
     navigator.share({title:"ICE",text:texto,url:texto});
-  }else{
+  } else {
     navigator.clipboard.writeText(texto);
     alert("Link copiado: " + texto);
   }
@@ -463,11 +454,8 @@ function abrirTroca(postId){
   if(!usuario) return alert("Faça login primeiro");
   if(usuarios[usuario.nome].bloqueado) return alert("Seu usuário está bloqueado.");
 
-  postAtual = postagens.find(p=>String(p.id) === String(postId));
-  if(!postAtual){
-    alert("Post não encontrado.");
-    return;
-  }
+  postAtual = postagens.find(p=>String(p.id)===String(postId));
+  if(!postAtual) return alert("Post não encontrado.");
 
   let html = `
     <b>${postAtual.titulo}</b><br>
@@ -506,7 +494,7 @@ function enviarProposta(){
     status:"pendente"
   };
 
-  const salvarProposta=()=>{
+  const salvarProposta = ()=>{
     propostas.unshift(proposta);
     notificacoes.unshift({
       id:"n_"+Date.now(),
@@ -656,6 +644,7 @@ function abrirPerfil(nome){
   perfilAtual = nome;
   let u = usuarios[nome];
   let minhasAval = avaliacoes.filter(a=>a.para===nome);
+  let postsDoUsuario = postagens.filter(p=>p.dono===nome);
 
   let html = `
     <div class="profile-head">
@@ -669,6 +658,14 @@ function abrirPerfil(nome){
 
     <div class="profileInfo">
       <h2>${nomeExibicao(nome)}</h2>
+      <div class="small">Perfil do usuário</div>
+      <div class="bio">
+        ${nome===usuario?.nome
+          ? `<textarea id="bioInput" placeholder="Escreva sua bio...">${u.bio||""}</textarea>
+             <button class="ok" onclick="salvarBio('${nome}')">Salvar bio</button>`
+          : (u.bio ? u.bio : "<span class='small'>Sem bio ainda.</span>")
+        }
+      </div>
       <div class="badge">Filhos: ${u.filhos||0}</div>
       <div class="badge">Família: ${u.familia ? "Sim" : "Não"}</div>
       <div class="badge">Confiável: ${u.confiavel||0}</div>
@@ -682,7 +679,7 @@ function abrirPerfil(nome){
     if(u.tipo !== "mod"){
       html += `
         <div class="profile-actions">
-          <button class="ok" onclick="tornarModerador('${nome}')"><span class="blue-star faint">★</span> Ativar moderador</button>
+          <button class="ok" onclick="tornarModerador('${nome}')"><span class="blue-star faint">★</span> Tornar moderador</button>
         </div>
       `;
     } else {
@@ -735,7 +732,6 @@ function abrirPerfil(nome){
     </div>
   `;
 
-  const postsDoUsuario = postagens.filter(p=>p.dono===nome);
   html += `
     <div class="card">
       <h4>Postagens</h4>
@@ -798,6 +794,14 @@ function salvarFotoCapa(e,nome){
   reader.readAsDataURL(file);
 }
 
+function salvarBio(nome){
+  const el = document.getElementById("bioInput");
+  if(!el) return;
+  usuarios[nome].bio = el.value.trim();
+  salvarTudo();
+  abrirPerfil(nome);
+}
+
 function avaliarPerfil(nome,tipo){
   const comentario = document.getElementById("avalComentario").value.trim();
   if(!comentario) return alert("Escreva um comentário");
@@ -823,11 +827,11 @@ function tornarModerador(nome){
 
   garantirUsuario(nome);
   usuarios[nome].tipo = "mod";
-
   salvarTudo();
-  renderTimeline();
+
   abrirPerfil(nome);
   atualizarStatus();
+  renderTimeline();
 
   alert(nome + " agora é moderador.");
 }
@@ -865,7 +869,6 @@ function ocultarUsuario(nome){
   renderTimeline();
 }
 
-atualizarFamilias();
 renderTimeline();
 renderNotificacoes();
 atualizarStatus();
