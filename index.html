@@ -77,12 +77,11 @@ button{
 button.alt{background:#20374b;color:#dff7ff;border:1px solid #3a5a78}
 button.danger{background:var(--bad);color:#fff}
 button.ok{background:var(--ok);color:#001a14}
-button.gold{background:var(--gold);color:#1b1200}
-#timeline .post{
+.post{
   background:#0f2134;border:1px solid #284662;border-radius:14px;
   padding:12px;margin-top:10px;cursor:pointer;
 }
-#timeline img,.preview,.coverImg{
+.post img,.preview,.coverImg{
   width:100%;border-radius:12px;margin-top:10px;max-height:320px;object-fit:cover;
 }
 .badge{
@@ -348,7 +347,6 @@ function atualizarFamilias(){
 function nomeExibicao(nome){
   garantirUsuario(nome);
   let u = usuarios[nome];
-
   let estrela = "";
 
   if(u.tipo === "admin"){
@@ -431,7 +429,8 @@ function renderTimeline(){
   visiveis.forEach(p=>{
     let post = document.createElement("div");
     post.className = "post";
-    post.onclick = ()=>abrirTroca(p.id);
+    post.dataset.id = p.id;
+    post.addEventListener("click", () => abrirTroca(p.id));
 
     let html = `
       <b>${p.titulo}</b><br>
@@ -464,8 +463,11 @@ function abrirTroca(postId){
   if(!usuario) return alert("Faça login primeiro");
   if(usuarios[usuario.nome].bloqueado) return alert("Seu usuário está bloqueado.");
 
-  postAtual = postagens.find(p=>p.id===postId);
-  if(!postAtual) return;
+  postAtual = postagens.find(p=>String(p.id) === String(postId));
+  if(!postAtual){
+    alert("Post não encontrado.");
+    return;
+  }
 
   let html = `
     <b>${postAtual.titulo}</b><br>
@@ -479,7 +481,9 @@ function abrirTroca(postId){
   document.getElementById("trocaModal").style.display = "flex";
 }
 
-function fecharTroca(){ document.getElementById("trocaModal").style.display = "none"; }
+function fecharTroca(){
+  document.getElementById("trocaModal").style.display = "none";
+}
 
 function enviarProposta(){
   if(!usuario || !postAtual) return;
@@ -530,7 +534,7 @@ function enviarProposta(){
 
 function renderPropostasDoPost(){
   let lista = document.getElementById("listaPropostas");
-  let props = propostas.filter(x=>x.postId===postAtual.id);
+  let props = propostas.filter(x=>String(x.postId)===String(postAtual.id));
 
   if(props.length===0){
     lista.innerHTML = "Nenhuma proposta ainda.";
@@ -568,12 +572,14 @@ function aceitarProposta(id){
   if(!p) return;
   p.status = "aceita";
 
-  chats.push({
-    id:"chat_"+id,
-    propId:id,
-    users:[p.autor,p.donoPost],
-    msgs:[{autor:"sistema",texto:"Troca aceita. Agora vocês podem conversar."}]
-  });
+  if(!chats.find(x=>x.propId===id)){
+    chats.push({
+      id:"chat_"+id,
+      propId:id,
+      users:[p.autor,p.donoPost],
+      msgs:[{autor:"sistema",texto:"Troca aceita. Agora vocês podem conversar."}]
+    });
+  }
 
   notificacoes.unshift({
     id:"n_"+Date.now(),
@@ -596,7 +602,9 @@ function abrirChat(propId){
   document.getElementById("chatModal").style.display = "flex";
 }
 
-function fecharChat(){ document.getElementById("chatModal").style.display = "none"; }
+function fecharChat(){
+  document.getElementById("chatModal").style.display = "none";
+}
 
 function renderMensagens(){
   let box = document.getElementById("chatMsgs");
@@ -811,17 +819,14 @@ function avaliarPerfil(nome,tipo){
 
 function tornarModerador(nome){
   if(!usuario || usuario.tipo !== "admin") return;
-  if(nome === "ADM"){
-    alert("ADM é intocável");
-    return;
-  }
+  if(nome === "ADM") return alert("ADM é intocável.");
 
   garantirUsuario(nome);
   usuarios[nome].tipo = "mod";
 
   salvarTudo();
-  abrirPerfil(nome);
   renderTimeline();
+  abrirPerfil(nome);
   atualizarStatus();
 
   alert(nome + " agora é moderador.");
