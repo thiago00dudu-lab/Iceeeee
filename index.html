@@ -40,7 +40,6 @@ body{
   overflow-x:hidden;
 }
 
-/* Enfeites fundo do mar */
 body::before{
   content:"";
   position:fixed;
@@ -504,7 +503,7 @@ button{
 <!-- Chat -->
 <div class="modal" id="chatModal">
   <div class="modal-content">
-    <h3>Chat privado</h3>
+    <h3>Chat</h3>
     <div id="chatInfo" class="small"></div>
     <div id="chatMensagens" class="chat-box"></div>
     <input id="chatInput" placeholder="Digite sua mensagem">
@@ -544,6 +543,37 @@ function garantirUser(nome){
       oculto:false
     };
   }
+}
+
+function getChatKey(a,b){
+  return [a,b].sort().join("__");
+}
+
+function abrirChatDireto(outroUsuario){
+  if(!usuario) return alert("Faça login primeiro");
+  if(!outroUsuario || outroUsuario === usuario.nome) return;
+
+  const key = getChatKey(usuario.nome, outroUsuario);
+  let chat = chats.find(c => c.key === key && c.tipo === "perfil");
+
+  if(!chat){
+    chat = {
+      id: "chatperfil_" + Date.now(),
+      key,
+      tipo: "perfil",
+      users: [usuario.nome, outroUsuario],
+      msgs: [
+        {autor:"sistema", texto:"Chat privado iniciado entre vocês."}
+      ]
+    };
+    chats.push(chat);
+    salvar();
+  }
+
+  chatAtual = chat;
+  document.getElementById("chatInfo").innerText = "Chat entre: " + chat.users.join(" e ");
+  renderMensagens();
+  document.getElementById("chatModal").style.display = "flex";
 }
 
 function login(){
@@ -707,6 +737,10 @@ function abrirPerfil(nome){
 
     <div class="profile-actions">
   `;
+
+  if(usuario && usuario.nome !== nome){
+    html += `<button class="btn" onclick="abrirChatDireto('${nome}')">Chat</button>`;
+  }
 
   if(usuario?.nome === "ADM" && nome !== "ADM"){
     if(u.tipo !== "mod"){
@@ -955,10 +989,11 @@ function aceitarProposta(id){
 
   p.status = "aceita";
 
-  if(!chats.find(c=>c.propId === id)){
+  if(!chats.find(c=>c.propId === id && c.tipo === "troca")){
     chats.push({
       id: "chat_" + id,
       propId: id,
+      tipo: "troca",
       users: [p.autor, p.donoPost],
       msgs: [
         {autor:"sistema", texto:"Troca aceita. Agora vocês podem conversar."}
@@ -968,10 +1003,11 @@ function aceitarProposta(id){
 
   salvar();
   renderPropostas();
+  abrirChat(id);
 }
 
 function abrirChat(propId){
-  let c = chats.find(x=>x.propId === propId);
+  let c = chats.find(x=>x.propId === propId && x.tipo === "troca");
   if(!c || !c.users.includes(usuario.nome)) return alert("Chat privado");
 
   chatAtual = c;
