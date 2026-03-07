@@ -6,7 +6,6 @@
 <title>ICE</title>
 
 <style>
-
 body{
 margin:0;
 font-family:Arial;
@@ -21,6 +20,9 @@ border-bottom:1px solid #294861;
 display:flex;
 justify-content:space-between;
 align-items:center;
+position:sticky;
+top:0;
+z-index:20;
 }
 
 h1{
@@ -32,6 +34,7 @@ font-size:22px;
 max-width:900px;
 margin:auto;
 padding:15px;
+padding-bottom:90px;
 }
 
 .card{
@@ -50,6 +53,7 @@ background:#081521;
 border:1px solid #294861;
 color:white;
 border-radius:8px;
+box-sizing:border-box;
 }
 
 button{
@@ -73,6 +77,13 @@ color:white;
 
 .btn-ok{
 background:#1dd1a1;
+color:#001a14;
+}
+
+.btn-alt{
+background:#1a3046;
+color:white;
+border:1px solid #31526d;
 }
 
 .timeline-post{
@@ -81,27 +92,36 @@ padding:12px;
 border-radius:10px;
 margin-bottom:10px;
 cursor:pointer;
+border:1px solid #294861;
 }
 
 .timeline-post img{
 width:100%;
 border-radius:10px;
 margin-top:8px;
+max-height:280px;
+object-fit:cover;
 }
 
 .star-admin{
 color:#ffd700;
 font-size:18px;
+text-shadow:0 0 8px #ffd700,0 0 18px rgba(255,215,0,.9);
+font-weight:bold;
 }
 
 .star-mod{
 color:#00eaff;
 font-size:18px;
+text-shadow:0 0 8px #00eaff,0 0 18px rgba(0,234,255,.8);
+font-weight:bold;
 }
 
 .star-user{
 color:#4a7fa0;
 opacity:.4;
+font-size:18px;
+font-weight:bold;
 }
 
 .modal{
@@ -115,6 +135,7 @@ display:none;
 justify-content:center;
 align-items:center;
 padding:20px;
+z-index:50;
 }
 
 .modal-content{
@@ -122,9 +143,10 @@ background:#0d1e31;
 padding:15px;
 border-radius:12px;
 width:100%;
-max-width:600px;
+max-width:900px;
 max-height:90vh;
 overflow:auto;
+border:1px solid #294861;
 }
 
 .profile-cover{
@@ -168,6 +190,7 @@ left:10px;
 right:10px;
 display:flex;
 gap:10px;
+z-index:30;
 }
 
 .nav button{
@@ -187,8 +210,97 @@ padding:12px 20px;
 border-radius:10px;
 border:1px solid #4f7aa0;
 display:none;
+z-index:40;
+text-align:center;
+max-width:92vw;
 }
 
+.split{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:12px;
+}
+
+@media(max-width:700px){
+.split{
+grid-template-columns:1fr;
+}
+}
+
+.trade-box{
+background:#10253b;
+padding:12px;
+border-radius:10px;
+border:1px solid #294861;
+}
+
+.trade-box img{
+width:100%;
+border-radius:10px;
+margin-top:8px;
+max-height:250px;
+object-fit:cover;
+}
+
+.chat-box{
+background:#081521;
+border:1px solid #294861;
+border-radius:10px;
+padding:10px;
+max-height:250px;
+overflow:auto;
+margin-bottom:10px;
+}
+
+.chat-msg{
+background:#14314d;
+padding:8px 10px;
+border-radius:8px;
+margin-bottom:8px;
+}
+
+.chat-msg.me{
+background:#0f5a67;
+}
+
+.badge{
+display:inline-block;
+padding:5px 10px;
+border-radius:999px;
+background:#173149;
+border:1px solid #34556e;
+font-size:12px;
+margin-right:6px;
+margin-top:6px;
+}
+
+.small{
+font-size:12px;
+opacity:.8;
+}
+
+.profile-actions{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+margin:10px 0;
+}
+
+.post-mini{
+background:#10253b;
+padding:10px;
+border-radius:10px;
+margin-top:8px;
+border:1px solid #294861;
+}
+
+.post-mini img{
+width:100%;
+border-radius:10px;
+margin-top:8px;
+max-height:220px;
+object-fit:cover;
+}
 </style>
 </head>
 
@@ -200,43 +312,29 @@ display:none;
 </header>
 
 <div class="promo" id="promoBox">
-Suporte Ice, compra de moderação, 11983602504
+Suporte Ice, compra de moderação, <b>11983602504</b>
 </div>
 
 <div class="wrap">
 
 <div class="card">
-
 <h3>Login</h3>
-
 <input id="user" placeholder="Usuário">
 <input id="pass" type="password" placeholder="Senha">
-
 <button class="btn" onclick="login()">Entrar</button>
-
 </div>
 
-
 <div class="card">
-
 <h3>Publicar troca</h3>
-
 <input id="titulo" placeholder="Nome do item">
 <textarea id="desc" placeholder="Descrição"></textarea>
-
-<input type="file" id="foto">
-
+<input type="file" id="foto" accept="image/*,video/*">
 <button class="btn" onclick="publicar()">Publicar</button>
-
 </div>
 
-
 <div class="card">
-
 <h3>Timeline</h3>
-
 <div id="timeline"></div>
-
 </div>
 
 </div>
@@ -246,327 +344,508 @@ Suporte Ice, compra de moderação, 11983602504
 <button onclick="abrirPerfil(usuario?.nome)">Perfil</button>
 </div>
 
-
+<!-- Perfil -->
 <div class="modal" id="perfilModal">
-
-<div class="modal-content">
-
-<div id="perfilBody"></div>
-
-<button onclick="fecharPerfil()">Fechar</button>
-
+  <div class="modal-content">
+    <div id="perfilBody"></div>
+    <button class="btn-alt" onclick="fecharPerfil()">Fechar</button>
+  </div>
 </div>
 
+<!-- Troca dupla -->
+<div class="modal" id="trocaModal">
+  <div class="modal-content">
+    <h3>Troca</h3>
+
+    <div class="split">
+      <div class="trade-box">
+        <h4>Postagem original</h4>
+        <div id="tradeOriginal"></div>
+      </div>
+
+      <div class="trade-box">
+        <h4>Sua proposta</h4>
+        <input id="propTitulo" placeholder="Nome do item que você oferece">
+        <textarea id="propDesc" placeholder="Descrição da sua proposta"></textarea>
+        <input type="file" id="propFoto" accept="image/*,video/*">
+        <button class="btn" onclick="enviarProposta()">Enviar proposta</button>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:12px">
+      <h4>Propostas recebidas</h4>
+      <div id="listaPropostas">Nenhuma proposta ainda.</div>
+    </div>
+
+    <button class="btn-alt" onclick="fecharTroca()">Fechar</button>
+  </div>
+</div>
+
+<!-- Chat -->
+<div class="modal" id="chatModal">
+  <div class="modal-content">
+    <h3>Chat privado</h3>
+    <div id="chatInfo" class="small"></div>
+    <div id="chatMensagens" class="chat-box"></div>
+    <input id="chatInput" placeholder="Digite sua mensagem">
+    <button class="btn" onclick="enviarMensagem()">Enviar</button>
+    <button class="btn-alt" onclick="fecharChat()">Fechar</button>
+  </div>
 </div>
 
 <script>
+let usuario = null
 
-let usuario=null
+let usuarios = JSON.parse(localStorage.getItem("usuarios") || "{}")
+let posts = JSON.parse(localStorage.getItem("posts") || "[]")
+let propostas = JSON.parse(localStorage.getItem("propostas") || "[]")
+let chats = JSON.parse(localStorage.getItem("chats") || "[]")
 
-let usuarios=JSON.parse(localStorage.getItem("usuarios")||"{}")
-let posts=JSON.parse(localStorage.getItem("posts")||"[]")
+let trocaAtual = null
+let chatAtual = null
 
 function salvar(){
-
-localStorage.setItem("usuarios",JSON.stringify(usuarios))
-localStorage.setItem("posts",JSON.stringify(posts))
-
+  localStorage.setItem("usuarios", JSON.stringify(usuarios))
+  localStorage.setItem("posts", JSON.stringify(posts))
+  localStorage.setItem("propostas", JSON.stringify(propostas))
+  localStorage.setItem("chats", JSON.stringify(chats))
 }
 
 function garantirUser(nome){
-
-if(!usuarios[nome]){
-
-usuarios[nome]={
-
-nome:nome,
-tipo:"normal",
-bio:"",
-foto:"",
-capa:"",
-bloqueado:false
-
-}
-
-}
-
+  if(!nome) return
+  if(!usuarios[nome]){
+    usuarios[nome] = {
+      nome:nome,
+      tipo:"normal",
+      bio:"",
+      foto:"",
+      capa:"",
+      bloqueado:false
+    }
+  }
 }
 
 function login(){
+  let u = document.getElementById("user").value.trim()
+  let p = document.getElementById("pass").value.trim()
+  if(!u) return alert("Digite um usuário")
 
-let u=document.getElementById("user").value.trim()
-let p=document.getElementById("pass").value.trim()
+  garantirUser(u)
 
-garantirUser(u)
+  if(u === "ADM" && p === "1533"){
+    usuarios[u].tipo = "admin"
+    usuario = { nome:u, tipo:"admin" }
+  } else {
+    usuario = { nome:u, tipo:usuarios[u].tipo || "normal" }
+  }
 
-if(u==="ADM" && p==="1533"){
-
-usuarios[u].tipo="admin"
-
-usuario={nome:u,tipo:"admin"}
-
-}else{
-
-usuario={nome:u,tipo:usuarios[u].tipo}
-
-}
-
-salvar()
-
-status()
-
-renderTimeline()
-
+  salvar()
+  status()
+  renderTimeline()
 }
 
 function status(){
-
-if(!usuario){
-
-document.getElementById("status").innerText="Não logado"
-
-return
-
-}
-
-document.getElementById("status").innerHTML=nomeExibicao(usuario.nome)
-
+  if(!usuario){
+    document.getElementById("status").innerText = "Não logado"
+    return
+  }
+  document.getElementById("status").innerHTML = nomeExibicao(usuario.nome)
 }
 
 function nomeExibicao(nome){
+  garantirUser(nome)
+  let u = usuarios[nome]
 
-let u=usuarios[nome]
+  if(u.tipo === "admin") return `<span class="star-admin">★</span> ${nome}`
+  if(u.tipo === "mod") return `<span class="star-mod">★</span> ${nome}`
 
-if(u.tipo==="admin")return "⭐ "+nome
-if(u.tipo==="mod")return "🔷 "+nome
-
-return nome
-
+  return `<span class="star-user">★</span> ${nome}`
 }
 
 function publicar(){
+  if(!usuario) return alert("login primeiro")
+  if(usuarios[usuario.nome].bloqueado) return alert("Seu usuário está bloqueado")
 
-if(!usuario)return alert("login primeiro")
+  let titulo = document.getElementById("titulo").value.trim()
+  let desc = document.getElementById("desc").value.trim()
+  let file = document.getElementById("foto").files[0]
 
-let titulo=document.getElementById("titulo").value
-let desc=document.getElementById("desc").value
+  if(!titulo || !desc) return alert("Preencha título e descrição")
 
-let file=document.getElementById("foto").files[0]
+  let post = {
+    id: Date.now().toString(),
+    titulo,
+    desc,
+    dono: usuario.nome,
+    img: "",
+    data: new Date().toLocaleString()
+  }
 
-let post={
+  const finalizar = ()=>{
+    posts.unshift(post)
+    salvar()
+    renderTimeline()
+    document.getElementById("titulo").value = ""
+    document.getElementById("desc").value = ""
+    document.getElementById("foto").value = ""
+  }
 
-id:Date.now(),
-titulo,
-desc,
-dono:usuario.nome,
-img:"",
-data:new Date().toLocaleString()
-
-}
-
-if(file){
-
-let r=new FileReader()
-
-r.onload=e=>{
-
-post.img=e.target.result
-
-posts.unshift(post)
-
-salvar()
-
-renderTimeline()
-
-}
-
-r.readAsDataURL(file)
-
-}else{
-
-posts.unshift(post)
-
-salvar()
-
-renderTimeline()
-
-}
-
+  if(file){
+    let r = new FileReader()
+    r.onload = e=>{
+      post.img = e.target.result
+      finalizar()
+    }
+    r.readAsDataURL(file)
+  } else {
+    finalizar()
+  }
 }
 
 function renderTimeline(){
+  let t = document.getElementById("timeline")
+  t.innerHTML = ""
 
-let t=document.getElementById("timeline")
+  posts.forEach(p=>{
+    if(usuarios[p.dono] && usuarios[p.dono].oculto) return
 
-t.innerHTML=""
+    let div = document.createElement("div")
+    div.className = "timeline-post"
+    div.onclick = ()=>abrirTroca(p.id)
 
-posts.forEach(p=>{
-
-let div=document.createElement("div")
-
-div.className="timeline-post"
-
-div.onclick=()=>abrirTroca(p.id)
-
-div.innerHTML=`
-
-<b>${p.titulo}</b><br>
-
-${p.desc}<br>
-
-<small>${nomeExibicao(p.dono)}</small>
-
-<br>
-
-<button onclick="event.stopPropagation();abrirPerfil('${p.dono}')">Ver perfil</button>
-
-${p.img?`<img src="${p.img}">`:""}
-
-`
-
-t.appendChild(div)
-
-})
-
+    div.innerHTML = `
+      <b>${p.titulo}</b><br>
+      ${p.desc}<br>
+      <small>${nomeExibicao(p.dono)} • ${p.data}</small><br>
+      <button onclick="event.stopPropagation();abrirPerfil('${p.dono}')">Ver perfil</button>
+      ${p.img ? `<img src="${p.img}">` : ""}
+    `
+    t.appendChild(div)
+  })
 }
 
 function minhasTrocas(){
+  if(!usuario) return alert("Faça login primeiro")
 
-if(!usuario)return
+  let t = document.getElementById("timeline")
+  t.innerHTML = ""
 
-let t=document.getElementById("timeline")
+  let minhas = posts.filter(p=>p.dono === usuario.nome)
 
-t.innerHTML=""
+  if(minhas.length === 0){
+    t.innerHTML = `<div class="small">Você ainda não tem postagens de troca.</div>`
+    return
+  }
 
-posts.filter(p=>p.dono===usuario.nome).forEach(p=>{
-
-let div=document.createElement("div")
-
-div.className="timeline-post"
-
-div.innerHTML=`<b>${p.titulo}</b><br>${p.desc}`
-
-t.appendChild(div)
-
-})
-
+  minhas.forEach(p=>{
+    let div = document.createElement("div")
+    div.className = "timeline-post"
+    div.onclick = ()=>abrirTroca(p.id)
+    div.innerHTML = `
+      <b>${p.titulo}</b><br>
+      ${p.desc}<br>
+      <small>${nomeExibicao(p.dono)} • ${p.data}</small>
+      ${p.img ? `<img src="${p.img}">` : ""}
+    `
+    t.appendChild(div)
+  })
 }
 
 function abrirPerfil(nome){
+  if(!nome) return alert("Faça login primeiro")
 
-garantirUser(nome)
+  garantirUser(nome)
+  let u = usuarios[nome]
+  let postsUser = posts.filter(p=>p.dono === nome)
 
-let u=usuarios[nome]
+  let html = `
+    <div class="profile-cover">
+      ${u.capa ? `<img src="${u.capa}">` : ""}
+    </div>
 
-let html=`
+    <div class="profile-avatar">
+      ${u.foto ? `<img src="${u.foto}">` : nome[0]}
+    </div>
 
+    <h2>${nomeExibicao(nome)}</h2>
 
-<div class="profile-cover">
+    <div class="small">Perfil do usuário</div>
 
-${u.capa?`<img src="${u.capa}">`:""}
+    <textarea id="bioInput">${u.bio || ""}</textarea>
+    ${usuario && usuario.nome === nome ? `<button class="btn" onclick="salvarBio('${nome}')">Salvar bio</button>` : ""}
 
-</div>
+    <div class="profile-actions">
+  `
 
-<div class="profile-avatar">
+  if(usuario?.nome === "ADM" && nome !== "ADM"){
+    if(u.tipo !== "mod"){
+      html += `<button class="btn-ok" onclick="tornarModerador('${nome}')"><span class="star-user">★</span> Tornar moderador</button>`
+    } else {
+      html += `<span class="badge"><span class="star-mod">★</span> Moderador ativo</span>`
+    }
 
-${u.foto?`<img src="${u.foto}">`:nome[0]}
+    html += `<button class="btn-danger" onclick="bloquear('${nome}')">Bloquear</button>`
+  }
 
-</div>
+  if(usuario?.tipo === "mod" && usuarios[nome].tipo === "normal" && nome !== usuario.nome){
+    html += `<button class="btn-danger" onclick="bloquear('${nome}')">Bloquear</button>`
+  }
 
-<h2>${nomeExibicao(nome)}</h2>
+  html += `</div>`
 
-<textarea id="bioInput">${u.bio}</textarea>
+  html += `<div class="card"><h4>Postagens</h4>`
 
-<button onclick="salvarBio('${nome}')">Salvar bio</button>
+  if(postsUser.length){
+    postsUser.forEach(p=>{
+      html += `
+        <div class="post-mini">
+          <b>${p.titulo}</b><br>
+          ${p.desc}<br>
+          <small>${p.data}</small>
+          ${p.img ? `<img src="${p.img}">` : ""}
+        </div>
+      `
+    })
+  } else {
+    html += `<div class="small">Sem postagens ainda.</div>`
+  }
 
-`
+  html += `</div>`
 
-if(usuario?.nome==="ADM" && nome!=="ADM"){
-
-html+=`
-
-<button onclick="tornarModerador('${nome}')">Tornar moderador</button>
-
-<button class="btn-danger" onclick="bloquear('${nome}')">Bloquear</button>
-
-`
-
-}
-
-if(usuario?.tipo==="mod" && usuarios[nome].tipo==="normal"){
-
-html+=`<button class="btn-danger" onclick="bloquear('${nome}')">Bloquear</button>`
-
-}
-
-document.getElementById("perfilBody").innerHTML=html
-
-document.getElementById("perfilModal").style.display="flex"
-
+  document.getElementById("perfilBody").innerHTML = html
+  document.getElementById("perfilModal").style.display = "flex"
 }
 
 function fecharPerfil(){
-
-document.getElementById("perfilModal").style.display="none"
-
+  document.getElementById("perfilModal").style.display = "none"
 }
 
 function salvarBio(nome){
-
-usuarios[nome].bio=document.getElementById("bioInput").value
-
-salvar()
-
+  usuarios[nome].bio = document.getElementById("bioInput").value
+  salvar()
+  abrirPerfil(nome)
 }
 
 function tornarModerador(nome){
+  if(usuario?.nome !== "ADM") return alert("Só o ADM pode fazer isso")
+  if(nome === "ADM") return alert("ADM é intocável")
 
-if(usuario?.nome!=="ADM")return
+  garantirUser(nome)
+  usuarios[nome].tipo = "mod"
+  salvar()
 
-usuarios[nome].tipo="mod"
+  abrirPerfil(nome)
+  renderTimeline()
+  status()
 
-salvar()
-
-alert(nome+" agora é moderador")
-
+  alert(nome + " agora é moderador")
 }
 
 function bloquear(nome){
+  if(nome === "ADM") return alert("ADM é intocável")
+  if(!usuario) return
 
-usuarios[nome].bloqueado=true
+  if(usuario.nome === "ADM"){
+    usuarios[nome].bloqueado = true
+    salvar()
+    abrirPerfil(nome)
+    alert("Usuário bloqueado")
+    return
+  }
 
-salvar()
-
-alert("Usuário bloqueado")
-
+  if(usuario.tipo === "mod"){
+    if(usuarios[nome].tipo === "normal"){
+      usuarios[nome].bloqueado = true
+      salvar()
+      abrirPerfil(nome)
+      alert("Usuário bloqueado")
+    } else {
+      alert("Moderador só pode bloquear usuários normais")
+    }
+  }
 }
 
 function abrirTroca(id){
+  if(!usuario) return alert("Faça login primeiro")
+  if(usuarios[usuario.nome].bloqueado) return alert("Seu usuário está bloqueado")
 
-alert("Sistema de troca aqui")
+  let post = posts.find(p=>String(p.id) === String(id))
+  if(!post) return alert("Post não encontrado")
 
+  trocaAtual = post
+
+  document.getElementById("tradeOriginal").innerHTML = `
+    <b>${post.titulo}</b><br>
+    ${post.desc}<br>
+    <small>${nomeExibicao(post.dono)} • ${post.data}</small>
+    ${post.img ? `<img src="${post.img}">` : ""}
+  `
+
+  document.getElementById("propTitulo").value = ""
+  document.getElementById("propDesc").value = ""
+  document.getElementById("propFoto").value = ""
+
+  renderPropostas()
+  document.getElementById("trocaModal").style.display = "flex"
+}
+
+function fecharTroca(){
+  document.getElementById("trocaModal").style.display = "none"
+}
+
+function enviarProposta(){
+  if(!usuario || !trocaAtual) return
+  if(usuario.nome === trocaAtual.dono) return alert("Você não pode propor no seu próprio item")
+
+  let titulo = document.getElementById("propTitulo").value.trim()
+  let desc = document.getElementById("propDesc").value.trim()
+  let file = document.getElementById("propFoto").files[0]
+
+  if(!titulo || !desc) return alert("Preencha a proposta")
+
+  let prop = {
+    id: "prop_" + Date.now(),
+    postId: trocaAtual.id,
+    autor: usuario.nome,
+    donoPost: trocaAtual.dono,
+    titulo,
+    desc,
+    img: "",
+    status: "pendente"
+  }
+
+  const finalizar = ()=>{
+    propostas.unshift(prop)
+    salvar()
+    renderPropostas()
+    alert("Proposta enviada")
+  }
+
+  if(file){
+    let r = new FileReader()
+    r.onload = e=>{
+      prop.img = e.target.result
+      finalizar()
+    }
+    r.readAsDataURL(file)
+  } else {
+    finalizar()
+  }
+}
+
+function renderPropostas(){
+  let box = document.getElementById("listaPropostas")
+  let lista = propostas.filter(p=>String(p.postId) === String(trocaAtual.id))
+
+  if(lista.length === 0){
+    box.innerHTML = "Nenhuma proposta ainda."
+    return
+  }
+
+  box.innerHTML = ""
+
+  lista.forEach(p=>{
+    let div = document.createElement("div")
+    div.className = "card"
+
+    div.innerHTML = `
+      <b>${p.titulo}</b><br>
+      ${p.desc}<br>
+      <small>${nomeExibicao(p.autor)}</small><br>
+      <span class="badge">Status: ${p.status}</span>
+      ${p.img ? `<img class="preview" src="${p.img}">` : ""}
+      ${
+        usuario && usuario.nome === trocaAtual.dono && p.status === "pendente"
+        ? `<br><button class="btn-ok" onclick="aceitarProposta('${p.id}')">Aceitar troca</button>`
+        : ""
+      }
+      ${
+        usuario && (usuario.nome === p.autor || usuario.nome === trocaAtual.dono) && p.status === "aceita"
+        ? `<br><button class="btn" onclick="abrirChat('${p.id}')">Abrir chat</button>`
+        : ""
+      }
+    `
+    box.appendChild(div)
+  })
+}
+
+function aceitarProposta(id){
+  let p = propostas.find(x=>x.id === id)
+  if(!p) return
+
+  p.status = "aceita"
+
+  if(!chats.find(c=>c.propId === id)){
+    chats.push({
+      id: "chat_" + id,
+      propId: id,
+      users: [p.autor, p.donoPost],
+      msgs: [
+        {autor:"sistema", texto:"Troca aceita. Agora vocês podem conversar."}
+      ]
+    })
+  }
+
+  salvar()
+  renderPropostas()
+}
+
+function abrirChat(propId){
+  let c = chats.find(x=>x.propId === propId)
+  if(!c || !c.users.includes(usuario.nome)) return alert("Chat privado")
+
+  chatAtual = c
+  document.getElementById("chatInfo").innerText = "Chat entre: " + c.users.join(" e ")
+  renderMensagens()
+  document.getElementById("chatModal").style.display = "flex"
+}
+
+function fecharChat(){
+  document.getElementById("chatModal").style.display = "none"
+}
+
+function renderMensagens(){
+  let box = document.getElementById("chatMensagens")
+  box.innerHTML = ""
+
+  if(!chatAtual) return
+
+  chatAtual.msgs.forEach(m=>{
+    let div = document.createElement("div")
+    div.className = "chat-msg" + (m.autor === usuario.nome ? " me" : "")
+    div.innerHTML = `<b>${m.autor}</b><br>${m.texto}`
+    box.appendChild(div)
+  })
+
+  box.scrollTop = box.scrollHeight
+}
+
+function enviarMensagem(){
+  let txt = document.getElementById("chatInput").value.trim()
+  if(!txt || !chatAtual) return
+
+  chatAtual.msgs.push({
+    autor: usuario.nome,
+    texto: txt
+  })
+
+  document.getElementById("chatInput").value = ""
+  salvar()
+  renderMensagens()
 }
 
 function promo(){
-
-let p=document.getElementById("promoBox")
-
-p.style.display="block"
-
-setTimeout(()=>{
-
-p.style.display="none"
-
-},6000)
-
+  let p = document.getElementById("promoBox")
+  p.style.display = "block"
+  setTimeout(()=>{
+    p.style.display = "none"
+  },7000)
 }
 
+setTimeout(promo,8000)
 setInterval(promo,240000)
 
-setTimeout(promo,8000)
-
 renderTimeline()
-
 status()
 
 </script>
