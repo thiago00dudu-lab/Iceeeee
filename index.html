@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>ICE</title>
 <style>
 :root{
@@ -34,9 +34,7 @@ header{
   max-width:1000px;margin:auto;
   display:flex;align-items:center;justify-content:space-between;gap:10px;
 }
-.brand{
-  display:flex;align-items:center;gap:10px;
-}
+.brand{display:flex;align-items:center;gap:10px}
 .mountain{
   width:56px;height:56px;border-radius:16px;
   background:linear-gradient(180deg,#dff7ff,#8edcff 45%,#1e4764 100%);
@@ -45,15 +43,13 @@ header{
 }
 .mountain:before{
   content:"";
-  position:absolute;left:6px;bottom:8px;
-  width:42px;height:30px;
+  position:absolute;left:6px;bottom:8px;width:42px;height:30px;
   background:linear-gradient(180deg,#fff,#c7efff);
   clip-path:polygon(50% 0,100% 100%,0 100%);
 }
 .mountain:after{
   content:"";
-  position:absolute;left:20px;bottom:8px;
-  width:28px;height:22px;
+  position:absolute;left:20px;bottom:8px;width:28px;height:22px;
   background:linear-gradient(180deg,#fff,#b8eaff);
   clip-path:polygon(50% 0,100% 100%,0 100%);
 }
@@ -81,6 +77,7 @@ button{
 button.alt{background:#20374b;color:#dff7ff;border:1px solid #3a5a78}
 button.danger{background:var(--bad);color:#fff}
 button.ok{background:var(--ok);color:#001a14}
+button.gold{background:var(--gold);color:#1b1200}
 #timeline .post{
   background:#0f2134;border:1px solid #284662;border-radius:14px;
   padding:12px;margin-top:10px;cursor:pointer;
@@ -133,9 +130,7 @@ button.ok{background:var(--ok);color:#001a14}
 }
 .msg{background:#14314d;padding:8px 10px;border-radius:10px;margin:8px 0}
 .msg.me{background:#0f5a67}
-.profile-head{
-  position:relative;
-}
+.profile-head{position:relative}
 .coverBox{
   height:180px;border-radius:16px;overflow:hidden;
   background:linear-gradient(180deg,#24445f,#0d1f31);
@@ -155,6 +150,11 @@ button.ok{background:var(--ok);color:#001a14}
 }
 .small{font-size:12px;color:var(--mut)}
 h2,h3,h4{margin:0 0 10px}
+.profile-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.postMini{
+  padding:10px;border-radius:12px;background:#0f2134;border:1px solid #284662;margin-top:10px;
+}
+.postMini img{width:100%;border-radius:10px;margin-top:8px;max-height:240px;object-fit:cover}
 </style>
 </head>
 <body>
@@ -173,7 +173,6 @@ h2,h3,h4{margin:0 0 10px}
 </header>
 
 <div class="wrap">
-
   <div class="card">
     <h3>Login</h3>
     <div class="row">
@@ -200,7 +199,6 @@ h2,h3,h4{margin:0 0 10px}
     <h3>Timeline do ICE</h3>
     <div id="timeline"></div>
   </div>
-
 </div>
 
 <div class="floating-share" onclick="sharePage()">↗</div>
@@ -294,7 +292,9 @@ function garantirUsuario(nome,tipo="normal"){
       fotoPerfil:"",
       fotoCapa:"",
       confiavel:0,
-      naoConfiavel:0
+      naoConfiavel:0,
+      bloqueado:false,
+      oculto:false
     };
   }
 }
@@ -311,15 +311,7 @@ function login(){
   }
 
   garantirUsuario(usuario.nome, usuario.tipo);
-
-  const params = new URLSearchParams(window.location.search);
-  const ref = params.get("ref");
-  if(ref && ref !== usuario.nome && usuarios[ref]){
-    if(!usuarios[usuario.nome].pai){
-      usuarios[usuario.nome].pai = ref;
-      usuarios[ref].filhos = (usuarios[ref].filhos || 0) + 1;
-    }
-  }
+  usuarios[usuario.nome].tipo = usuario.tipo;
 
   atualizarFamilias();
   salvarTudo();
@@ -330,15 +322,10 @@ function login(){
 
 function atualizarFamilias(){
   Object.values(usuarios).forEach(u=>{
-    if((u.filhos||0) > 3000){
-      u.familia = true;
-    }
+    if((u.filhos||0) > 3000) u.familia = true;
   });
-
   Object.values(usuarios).forEach(u=>{
-    if(u.pai && usuarios[u.pai] && usuarios[u.pai].familia){
-      u.familia = true;
-    }
+    if(u.pai && usuarios[u.pai] && usuarios[u.pai].familia) u.familia = true;
   });
 }
 
@@ -364,6 +351,7 @@ function atualizarStatus(){
 
 function publicar(){
   if(!usuario) return alert("Faça login primeiro");
+  if(usuarios[usuario.nome].bloqueado) return alert("Seu usuário está bloqueado.");
 
   let titulo = document.getElementById("titulo").value.trim();
   let desc = document.getElementById("desc").value.trim();
@@ -380,7 +368,7 @@ function publicar(){
     criadoEm:new Date().toLocaleString()
   };
 
-  const salvarPost = ()=>{
+  const salvarPost=()=>{
     postagens.unshift(nova);
     salvarTudo();
     document.getElementById("titulo").value = "";
@@ -404,12 +392,18 @@ function publicar(){
 function renderTimeline(){
   let timeline = document.getElementById("timeline");
   timeline.innerHTML = "";
-  if(postagens.length === 0){
+
+  const visiveis = postagens.filter(p=>{
+    garantirUsuario(p.dono);
+    return !usuarios[p.dono].oculto;
+  });
+
+  if(visiveis.length === 0){
     timeline.innerHTML = "<div class='small'>Nenhuma postagem ainda.</div>";
     return;
   }
 
-  postagens.forEach(p=>{
+  visiveis.forEach(p=>{
     let post = document.createElement("div");
     post.className = "post";
     post.onclick = ()=>abrirTroca(p.id);
@@ -420,7 +414,6 @@ function renderTimeline(){
       <small>por ${nomeExibicao(p.dono)} • ${p.criadoEm}</small><br>
       <span class="badge" onclick="event.stopPropagation();abrirPerfil('${p.dono}')">Ver perfil</span>
     `;
-
     if(p.imagem) html += `<img src="${p.imagem}">`;
 
     post.innerHTML = html;
@@ -433,7 +426,7 @@ function abrirTrocas(){
 }
 
 function sharePage(){
-  const texto = window.location.href + "?ref=" + (usuario ? usuario.nome : "");
+  const texto = window.location.href + (usuario ? "?ref="+usuario.nome : "");
   if(navigator.share){
     navigator.share({title:"ICE",text:texto,url:texto});
   }else{
@@ -444,6 +437,8 @@ function sharePage(){
 
 function abrirTroca(postId){
   if(!usuario) return alert("Faça login primeiro");
+  if(usuarios[usuario.nome].bloqueado) return alert("Seu usuário está bloqueado.");
+
   postAtual = postagens.find(p=>p.id===postId);
   if(!postAtual) return;
 
@@ -464,6 +459,7 @@ function fecharTroca(){ document.getElementById("trocaModal").style.display = "n
 function enviarProposta(){
   if(!usuario || !postAtual) return;
   if(usuario.nome === postAtual.dono) return alert("Você não pode trocar com você mesmo.");
+  if(usuarios[usuario.nome].bloqueado) return alert("Seu usuário está bloqueado.");
 
   let titulo = document.getElementById("propTitulo").value.trim();
   let desc = document.getElementById("propDesc").value.trim();
@@ -520,6 +516,7 @@ function renderPropostasDoPost(){
   props.forEach(p=>{
     let div = document.createElement("div");
     div.className = "card";
+
     let html = `
       <b>${p.titulo}</b><br>
       ${p.desc}<br>
@@ -545,6 +542,7 @@ function aceitarProposta(id){
   let p = propostas.find(x=>x.id===id);
   if(!p) return;
   p.status = "aceita";
+
   chats.push({
     id:"chat_"+id,
     propId:id,
@@ -635,6 +633,7 @@ function abrirPerfil(nome){
         ${u.fotoPerfil ? `<img src="${u.fotoPerfil}">` : (u.nome||nome)[0].toUpperCase()}
       </div>
     </div>
+
     <div class="profileInfo">
       <h2>${nomeExibicao(nome)}</h2>
       <div class="badge">Filhos: ${u.filhos||0}</div>
@@ -644,7 +643,55 @@ function abrirPerfil(nome){
       <input type="file" id="avatarInput" accept="image/*" style="display:none">
       <input type="file" id="coverInput" accept="image/*" style="display:none">
     </div>
+  `;
 
+  if(usuario && usuario.tipo === "admin" && nome !== "ADM"){
+    if(u.tipo !== "mod"){
+      html += `
+        <div class="profile-actions">
+          <button class="ok" onclick="tornarModerador('${nome}')">⭐ Tornar moderador</button>
+        </div>
+      `;
+    } else {
+      html += `
+        <div class="profile-actions">
+          <span class="badge">Esse usuário já é moderador</span>
+        </div>
+      `;
+    }
+  }
+
+  if(usuario && usuario.tipo === "admin" && nome !== "ADM"){
+    html += `
+      <div class="profile-actions">
+        <button class="danger" onclick="bloquearUsuario('${nome}')">Bloquear usuário</button>
+        <button class="alt" onclick="ocultarUsuario('${nome}')">${u.oculto ? "Mostrar usuário" : "Ocultar usuário"}</button>
+      </div>
+    `;
+  }
+
+  if(usuario && usuario.tipo === "mod" && nome !== "ADM" && usuarios[nome].tipo !== "mod" && nome !== usuario.nome){
+    html += `
+      <div class="profile-actions">
+        <button class="danger" onclick="bloquearUsuario('${nome}')">Bloquear usuário</button>
+      </div>
+    `;
+  }
+
+  if(usuario && usuario.nome !== nome){
+    html += `
+      <div class="card">
+        <h4>Avaliar perfil</h4>
+        <textarea id="avalComentario" placeholder="Comentário"></textarea>
+        <div class="row">
+          <button class="ok" onclick="avaliarPerfil('${nome}','confiável')">Pessoa confiável</button>
+          <button class="danger" onclick="avaliarPerfil('${nome}','não confiável')">Pessoa não confiável</button>
+        </div>
+      </div>
+    `;
+  }
+
+  html += `
     <div class="card">
       <h4>Avaliações</h4>
       ${
@@ -655,18 +702,24 @@ function abrirPerfil(nome){
     </div>
   `;
 
-  if(usuario && usuario.nome !== nome){
-    html += `
-      <div class="card">
-        <h4>Avaliar perfil</h4>
-        <textarea id="avalComentario" placeholder="Comentário"></textarea>
-        <div class="row">
-          <button class="ok" onclick="avaliarPerfil('${nome}','confiável')">Confiável</button>
-          <button class="danger" onclick="avaliarPerfil('${nome}','não confiável')">Não confiável</button>
-        </div>
-      </div>
-    `;
-  }
+  const postsDoUsuario = postagens.filter(p=>p.dono===nome);
+  html += `
+    <div class="card">
+      <h4>Postagens</h4>
+      ${
+        postsDoUsuario.length
+          ? postsDoUsuario.map(p=>`
+            <div class="postMini">
+              <b>${p.titulo}</b><br>
+              ${p.desc}<br>
+              <small>${p.criadoEm}</small>
+              ${p.imagem ? `<img src="${p.imagem}">` : ""}
+            </div>
+          `).join("")
+          : "<div class='small'>Sem postagens ainda.</div>"
+      }
+    </div>
+  `;
 
   document.getElementById("perfilBody").innerHTML = html;
   document.getElementById("perfilModal").style.display = "flex";
@@ -715,6 +768,7 @@ function salvarFotoCapa(e,nome){
 function avaliarPerfil(nome,tipo){
   const comentario = document.getElementById("avalComentario").value.trim();
   if(!comentario) return alert("Escreva um comentário");
+
   avaliacoes.unshift({
     id:"a_"+Date.now(),
     de:usuario.nome,
@@ -722,11 +776,57 @@ function avaliarPerfil(nome,tipo){
     tipo,
     comentario
   });
+
   if(tipo==="confiável") usuarios[nome].confiavel = (usuarios[nome].confiavel||0)+1;
   else usuarios[nome].naoConfiavel = (usuarios[nome].naoConfiavel||0)+1;
 
   salvarTudo();
   abrirPerfil(nome);
+}
+
+function tornarModerador(nome){
+  if(!usuario || usuario.tipo !== "admin") return;
+  if(nome === "ADM") return;
+  garantirUsuario(nome);
+  usuarios[nome].tipo = "mod";
+  salvarTudo();
+  abrirPerfil(nome);
+  renderTimeline();
+  atualizarStatus();
+  alert(nome + " agora é moderador.");
+}
+
+function bloquearUsuario(nome){
+  if(nome === "ADM") return alert("ADM é intocável.");
+  if(!usuario) return;
+
+  if(usuario.tipo === "admin"){
+    usuarios[nome].bloqueado = true;
+    salvarTudo();
+    abrirPerfil(nome);
+    alert("Usuário bloqueado.");
+    return;
+  }
+
+  if(usuario.tipo === "mod"){
+    if(usuarios[nome].tipo === "normal"){
+      usuarios[nome].bloqueado = true;
+      salvarTudo();
+      abrirPerfil(nome);
+      alert("Usuário bloqueado.");
+    } else {
+      alert("Moderador só pode bloquear usuários normais.");
+    }
+  }
+}
+
+function ocultarUsuario(nome){
+  if(!usuario || usuario.tipo !== "admin") return;
+  if(nome === "ADM") return alert("ADM é intocável.");
+  usuarios[nome].oculto = !usuarios[nome].oculto;
+  salvarTudo();
+  abrirPerfil(nome);
+  renderTimeline();
 }
 
 atualizarFamilias();
