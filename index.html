@@ -3,194 +3,462 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ICE - Trocas</title>
-
+<title>ICE - Plataforma de Trocas</title>
 <style>
-body{
-margin:0;
-font-family:Arial;
-background:#0b1b2e;
-color:white;
-}
-
-header{
-background:#071322;
-padding:15px;
-text-align:center;
-font-size:22px;
-font-weight:bold;
-border-bottom:2px solid #00cfff;
-}
-
-.container{
-padding:15px;
-max-width:600px;
-margin:auto;
-}
-
-.card{
-background:#11243a;
-padding:15px;
-border-radius:12px;
-margin-bottom:15px;
-}
-
-button{
-padding:10px 15px;
-border:none;
-border-radius:8px;
-background:#00cfff;
-color:black;
-font-weight:bold;
-cursor:pointer;
-}
-
-input,textarea{
-width:100%;
-padding:10px;
-margin-top:6px;
-margin-bottom:10px;
-border-radius:6px;
-border:none;
-}
-
-#timeline img{
-width:100%;
-border-radius:10px;
-margin-top:10px;
-}
-
-.star-admin{
-color:gold;
-}
-
-.star-mod{
-color:#00cfff;
-}
-
+body{margin:0;font-family:Arial;background:#0b1b2e;color:#fff}
+header{background:#071322;padding:15px;text-align:center;font-size:22px;font-weight:bold;border-bottom:2px solid #00cfff;position:sticky;top:0;z-index:5}
+.container{padding:15px;max-width:700px;margin:auto}
+.card{background:#11243a;padding:15px;border-radius:12px;margin-bottom:15px}
+button{padding:10px 15px;border:none;border-radius:8px;background:#00cfff;color:#000;font-weight:bold;cursor:pointer}
+input,textarea{width:100%;padding:10px;margin-top:6px;margin-bottom:10px;border-radius:6px;border:none;box-sizing:border-box}
+#timeline img,.preview{width:100%;border-radius:10px;margin-top:10px;max-height:320px;object-fit:cover}
+.star-admin{color:gold}
+.star-mod{color:#00cfff}
+.hidden{display:none}
+.post{cursor:pointer}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.65);display:none;align-items:center;justify-content:center;z-index:20;padding:10px}
+.modal-content{background:#0f2035;width:100%;max-width:950px;max-height:92vh;overflow:auto;border-radius:14px;padding:12px}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:700px){.split{grid-template-columns:1fr}}
+.badge{display:inline-block;background:#1d3758;padding:6px 10px;border-radius:20px;font-size:12px;margin:4px 4px 0 0}
+.notice{background:#18314f;padding:10px;border-left:4px solid #00cfff;border-radius:8px;margin-bottom:10px}
+.msg-box{max-height:240px;overflow:auto;background:#0a1728;padding:10px;border-radius:10px;margin-bottom:10px}
+.msg{background:#16304d;padding:8px 10px;border-radius:8px;margin:6px 0}
+.me{background:#0e4c5d}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.small{font-size:12px;opacity:.8}
 </style>
 </head>
-
 <body>
 
-<header>
-ICE - Plataforma de Trocas
-</header>
+<header>ICE - Plataforma de Trocas</header>
 
 <div class="container">
 
-<div class="card">
-<h3>Login</h3>
+  <div class="card">
+    <div class="topbar">
+      <h3 style="margin:0">Login</h3>
+      <div id="notifCount" class="badge">0 notificações</div>
+    </div>
+    <input id="user" placeholder="Usuário">
+    <input id="pass" placeholder="Senha" type="password">
+    <button onclick="login()">Entrar</button>
+    <p id="status"></p>
+  </div>
 
-<input id="user" placeholder="Usuário">
-<input id="pass" placeholder="Senha" type="password">
+  <div class="card">
+    <h3>Publicar item para troca</h3>
+    <input id="titulo" placeholder="Nome do item">
+    <textarea id="desc" placeholder="Descrição"></textarea>
+    <input type="file" id="foto" accept="image/*,video/*">
+    <button onclick="publicar()">Publicar</button>
+  </div>
 
-<button onclick="login()">Entrar</button>
+  <div class="card">
+    <h3>Notificações</h3>
+    <div id="notificacoes" class="small">Nenhuma notificação.</div>
+  </div>
 
-<p id="status"></p>
-</div>
-
-
-<div class="card">
-<h3>Publicar item para troca</h3>
-
-<input id="titulo" placeholder="Nome do item">
-
-<textarea id="desc" placeholder="Descrição"></textarea>
-
-<input type="file" id="foto" accept="image/*,video/*">
-
-<button onclick="publicar()">Publicar</button>
-
-</div>
-
-
-<div class="card">
-<h3>Timeline de Trocas</h3>
-
-<div id="timeline"></div>
+  <div class="card">
+    <h3>Timeline de Trocas</h3>
+    <div id="timeline"></div>
+  </div>
 
 </div>
 
+<div class="modal" id="trocaModal">
+  <div class="modal-content">
+    <div class="topbar">
+      <h3 style="margin:0">Proposta de Troca</h3>
+      <button onclick="fecharTroca()">Fechar</button>
+    </div>
+
+    <div class="split">
+      <div class="card">
+        <h4>Postagem original</h4>
+        <div id="detalheOriginal"></div>
+      </div>
+
+      <div class="card">
+        <h4>Sua proposta</h4>
+        <input id="propTitulo" placeholder="Nome do item que você oferece">
+        <textarea id="propDesc" placeholder="Descrição da sua proposta"></textarea>
+        <input type="file" id="propFoto" accept="image/*,video/*">
+        <button onclick="enviarProposta()">Enviar proposta</button>
+        <div id="previewProposta"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h4>Propostas recebidas</h4>
+      <div id="listaPropostas">Nenhuma proposta ainda.</div>
+    </div>
+  </div>
 </div>
 
+<div class="modal" id="chatModal">
+  <div class="modal-content">
+    <div class="topbar">
+      <h3 style="margin:0">Chat da troca</h3>
+      <button onclick="fecharChat()">Fechar</button>
+    </div>
+    <div id="chatInfo" class="small"></div>
+    <div id="chatMsgs" class="msg-box"></div>
+    <input id="chatTexto" placeholder="Digite sua mensagem">
+    <button onclick="enviarMensagem()">Enviar</button>
+  </div>
+</div>
 
 <script>
-
 let usuario = null;
+let postagens = JSON.parse(localStorage.getItem("ice_postagens") || "[]");
+let propostas = JSON.parse(localStorage.getItem("ice_propostas") || "[]");
+let chats = JSON.parse(localStorage.getItem("ice_chats") || "[]");
+let notificacoes = JSON.parse(localStorage.getItem("ice_notificacoes") || "[]");
 
-function login(){
+let postAtual = null;
+let chatAtual = null;
 
-let u = document.getElementById("user").value;
-let p = document.getElementById("pass").value;
-
-if(u === "ADM" && p === "1533"){
-
-usuario = {
-nome:"ADM",
-tipo:"admin"
-};
-
-document.getElementById("status").innerHTML =
-"<span class='star-admin'>★ ADM logado</span>";
-
-}else{
-
-usuario = {
-nome:u,
-tipo:"normal"
-};
-
-document.getElementById("status").innerText =
-"Usuário logado";
-
+function salvarTudo(){
+  localStorage.setItem("ice_postagens", JSON.stringify(postagens));
+  localStorage.setItem("ice_propostas", JSON.stringify(propostas));
+  localStorage.setItem("ice_chats", JSON.stringify(chats));
+  localStorage.setItem("ice_notificacoes", JSON.stringify(notificacoes));
 }
 
+function login(){
+  let u = document.getElementById("user").value.trim();
+  let p = document.getElementById("pass").value.trim();
+  if(!u){ alert("Digite um usuário"); return; }
+
+  if(u === "ADM" && p === "1533"){
+    usuario = { nome:"ADM", tipo:"admin" };
+    document.getElementById("status").innerHTML = "<span class='star-admin'>★ ADM logado</span>";
+  } else {
+    usuario = { nome:u, tipo:"normal" };
+    document.getElementById("status").innerText = "Usuário logado: " + u;
+  }
+  renderNotificacoes();
+  renderTimeline();
+}
+
+function nomeExibicao(u){
+  if(!u) return "";
+  if(u.tipo === "admin" || u.nome === "ADM") return "★ " + u.nome;
+  if(u.tipo === "mod") return "★ " + u.nome;
+  return u.nome;
 }
 
 function publicar(){
+  if(!usuario){ alert("Faça login primeiro"); return; }
 
-if(!usuario){
-alert("Faça login primeiro");
-return;
+  let titulo = document.getElementById("titulo").value.trim();
+  let desc = document.getElementById("desc").value.trim();
+  let file = document.getElementById("foto").files[0];
+
+  if(!titulo || !desc){ alert("Preencha título e descrição"); return; }
+
+  let nova = {
+    id: Date.now().toString(),
+    titulo,
+    desc,
+    dono: { nome: usuario.nome, tipo: usuario.tipo },
+    imagem: "",
+    trocasAceitas: [],
+    criadoEm: new Date().toLocaleString()
+  };
+
+  if(file){
+    let reader = new FileReader();
+    reader.onload = function(e){
+      nova.imagem = e.target.result;
+      postagens.unshift(nova);
+      salvarTudo();
+      limparPostagem();
+      renderTimeline();
+    };
+    reader.readAsDataURL(file);
+  } else {
+    postagens.unshift(nova);
+    salvarTudo();
+    limparPostagem();
+    renderTimeline();
+  }
 }
 
-let titulo = document.getElementById("titulo").value;
-let desc = document.getElementById("desc").value;
-let file = document.getElementById("foto").files[0];
-
-let post = document.createElement("div");
-post.className = "card";
-
-let nome = usuario.nome;
-
-if(usuario.tipo === "admin"){
-nome = "★ " + nome;
+function limparPostagem(){
+  document.getElementById("titulo").value = "";
+  document.getElementById("desc").value = "";
+  document.getElementById("foto").value = "";
 }
 
-post.innerHTML =
-"<b>"+titulo+"</b><br>"+desc+"<br><small>por "+nome+"</small>";
+function renderTimeline(){
+  let timeline = document.getElementById("timeline");
+  timeline.innerHTML = "";
 
-if(file){
+  if(postagens.length === 0){
+    timeline.innerHTML = "<div class='small'>Nenhuma postagem ainda.</div>";
+    return;
+  }
 
-let reader = new FileReader();
+  postagens.forEach(p => {
+    let post = document.createElement("div");
+    post.className = "card post";
+    post.onclick = () => abrirTroca(p.id);
 
-reader.onload = function(e){
+    let html = `
+      <b>${p.titulo}</b><br>
+      ${p.desc}<br>
+      <small>por ${nomeExibicao(p.dono)} • ${p.criadoEm}</small><br>
+    `;
 
-let img = document.createElement("img");
-img.src = e.target.result;
-post.appendChild(img);
+    if(p.imagem){
+      html += `<img src="${p.imagem}" alt="produto">`;
+    }
 
+    if(p.trocasAceitas && p.trocasAceitas.length){
+      html += `<div class="badge">${p.trocasAceitas.length} troca(s) ativa(s)</div>`;
+    }
+
+    post.innerHTML = html;
+    timeline.appendChild(post);
+  });
 }
 
-reader.readAsDataURL(file);
+function abrirTroca(postId){
+  if(!usuario){ alert("Faça login primeiro"); return; }
+  postAtual = postagens.find(p => p.id === postId);
+  if(!postAtual) return;
 
+  let box = document.getElementById("detalheOriginal");
+  let html = `
+    <b>${postAtual.titulo}</b><br>
+    ${postAtual.desc}<br>
+    <small>por ${nomeExibicao(postAtual.dono)}</small>
+  `;
+  if(postAtual.imagem){
+    html += `<img class="preview" src="${postAtual.imagem}">`;
+  }
+  box.innerHTML = html;
+
+  document.getElementById("propTitulo").value = "";
+  document.getElementById("propDesc").value = "";
+  document.getElementById("propFoto").value = "";
+  document.getElementById("previewProposta").innerHTML = "";
+
+  renderPropostasDoPost();
+  document.getElementById("trocaModal").style.display = "flex";
 }
 
-document.getElementById("timeline").prepend(post);
-
+function fecharTroca(){
+  document.getElementById("trocaModal").style.display = "none";
 }
 
+function enviarProposta(){
+  if(!usuario || !postAtual) return;
+
+  if(usuario.nome === postAtual.dono.nome){
+    alert("Você não pode propor troca no seu próprio anúncio.");
+    return;
+  }
+
+  let titulo = document.getElementById("propTitulo").value.trim();
+  let desc = document.getElementById("propDesc").value.trim();
+  let file = document.getElementById("propFoto").files[0];
+
+  if(!titulo || !desc){
+    alert("Preencha sua proposta.");
+    return;
+  }
+
+  let proposta = {
+    id: "prop_" + Date.now(),
+    postId: postAtual.id,
+    donoPost: postAtual.dono.nome,
+    autor: { nome: usuario.nome, tipo: usuario.tipo },
+    titulo,
+    desc,
+    imagem: "",
+    status: "pendente"
+  };
+
+  const salvarProposta = () => {
+    propostas.unshift(proposta);
+    notificacoes.unshift({
+      id: "n_" + Date.now(),
+      para: postAtual.dono.nome,
+      texto: `${usuario.nome} enviou uma proposta para seu item "${postAtual.titulo}"`,
+      lida: false
+    });
+    salvarTudo();
+    renderPropostasDoPost();
+    renderNotificacoes();
+    alert("Proposta enviada.");
+  };
+
+  if(file){
+    let reader = new FileReader();
+    reader.onload = function(e){
+      proposta.imagem = e.target.result;
+      salvarProposta();
+    };
+    reader.readAsDataURL(file);
+  } else {
+    salvarProposta();
+  }
+}
+
+function renderPropostasDoPost(){
+  let lista = document.getElementById("listaPropostas");
+  let props = propostas.filter(x => x.postId === postAtual.id);
+
+  if(props.length === 0){
+    lista.innerHTML = "Nenhuma proposta ainda.";
+    return;
+  }
+
+  lista.innerHTML = "";
+  props.forEach(p => {
+    let div = document.createElement("div");
+    div.className = "card";
+
+    let html = `
+      <b>${p.titulo}</b><br>
+      ${p.desc}<br>
+      <small>por ${nomeExibicao(p.autor)}</small><br>
+      <div class="badge">Status: ${p.status}</div>
+    `;
+
+    if(p.imagem){
+      html += `<img class="preview" src="${p.imagem}">`;
+    }
+
+    if(usuario && usuario.nome === postAtual.dono.nome && p.status === "pendente"){
+      html += `<br><button onclick="aceitarProposta('${p.id}')">Aceitar troca</button>`;
+    }
+
+    if((usuario && (usuario.nome === p.autor.nome || usuario.nome === postAtual.dono.nome)) && p.status === "aceita"){
+      html += `<br><button onclick="abrirChat('${p.id}')">Abrir chat</button>`;
+    }
+
+    div.innerHTML = html;
+    lista.appendChild(div);
+  });
+}
+
+function aceitarProposta(propId){
+  let prop = propostas.find(x => x.id === propId);
+  if(!prop) return;
+
+  prop.status = "aceita";
+
+  let post = postagens.find(x => x.id === prop.postId);
+  if(post){
+    post.trocasAceitas.push(prop.autor.nome);
+  }
+
+  let chat = {
+    id: "chat_" + prop.id,
+    propId: prop.id,
+    users: [prop.autor.nome, post.dono.nome],
+    msgs: [
+      { autor: "sistema", texto: "Troca aceita. Agora vocês podem conversar." }
+    ]
+  };
+  chats.push(chat);
+
+  notificacoes.unshift({
+    id: "n_" + Date.now(),
+    para: prop.autor.nome,
+    texto: `${post.dono.nome} aceitou sua troca no item "${post.titulo}"`,
+    lida: false
+  });
+
+  salvarTudo();
+  renderTimeline();
+  renderPropostasDoPost();
+  renderNotificacoes();
+  alert("Troca aceita e chat aberto.");
+}
+
+function abrirChat(propId){
+  let c = chats.find(x => x.propId === propId);
+  if(!c || !usuario) return;
+
+  if(!c.users.includes(usuario.nome)){
+    alert("Esse chat é privado.");
+    return;
+  }
+
+  chatAtual = c;
+  document.getElementById("chatInfo").innerText =
+    "Chat privado entre: " + c.users.join(" e ");
+
+  renderMensagens();
+  document.getElementById("chatModal").style.display = "flex";
+}
+
+function fecharChat(){
+  document.getElementById("chatModal").style.display = "none";
+}
+
+function renderMensagens(){
+  let box = document.getElementById("chatMsgs");
+  box.innerHTML = "";
+
+  if(!chatAtual) return;
+
+  chatAtual.msgs.forEach(m => {
+    let div = document.createElement("div");
+    div.className = "msg" + (m.autor === usuario.nome ? " me" : "");
+    div.innerHTML = `<b>${m.autor}</b><br>${m.texto}`;
+    box.appendChild(div);
+  });
+
+  box.scrollTop = box.scrollHeight;
+}
+
+function enviarMensagem(){
+  if(!chatAtual || !usuario) return;
+  let txt = document.getElementById("chatTexto").value.trim();
+  if(!txt) return;
+
+  chatAtual.msgs.push({
+    autor: usuario.nome,
+    texto: txt
+  });
+
+  salvarTudo();
+  document.getElementById("chatTexto").value = "";
+  renderMensagens();
+}
+
+function renderNotificacoes(){
+  let minhas = usuario ? notificacoes.filter(n => n.para === usuario.nome) : [];
+  document.getElementById("notifCount").innerText = minhas.length + " notificações";
+
+  let box = document.getElementById("notificacoes");
+  if(!usuario){
+    box.innerHTML = "Faça login para ver notificações.";
+    return;
+  }
+  if(minhas.length === 0){
+    box.innerHTML = "Nenhuma notificação.";
+    return;
+  }
+
+  box.innerHTML = "";
+  minhas.forEach(n => {
+    let div = document.createElement("div");
+    div.className = "notice";
+    div.textContent = n.texto;
+    box.appendChild(div);
+    n.lida = true;
+  });
+  salvarTudo();
+}
+
+renderTimeline();
 </script>
 
 </body>
