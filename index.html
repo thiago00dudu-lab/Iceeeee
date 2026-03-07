@@ -1,925 +1,574 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ICE</title>
+
 <style>
-:root{
-  --bg:#081726;
-  --card:#10253b;
-  --card2:#15314d;
-  --line:#2a4b69;
-  --txt:#eaf6ff;
-  --mut:#9dc2df;
-  --ice:#67d7ff;
-  --ok:#1dd1a1;
-  --bad:#ff6b6b;
-  --gold:#ffd166;
-}
-*{box-sizing:border-box}
+
 body{
-  margin:0;
-  font-family:Arial,Helvetica,sans-serif;
-  background:linear-gradient(180deg,#07131f 0%,#0c2031 45%,#0b1a2a 100%);
-  color:var(--txt);
+margin:0;
+font-family:Arial;
+background:#07131f;
+color:white;
 }
+
 header{
-  position:sticky;top:0;z-index:20;
-  background:rgba(5,14,24,.95);
-  border-bottom:1px solid var(--line);
-  padding:12px;
+padding:15px;
+background:#0c2031;
+border-bottom:1px solid #294861;
+display:flex;
+justify-content:space-between;
+align-items:center;
 }
-.top{
-  max-width:1000px;margin:auto;
-  display:flex;align-items:center;justify-content:space-between;gap:10px;
+
+h1{
+margin:0;
+font-size:22px;
 }
-.brand{display:flex;align-items:center;gap:10px}
-.mountain{
-  width:56px;height:56px;border-radius:16px;
-  background:linear-gradient(180deg,#dff7ff,#8edcff 45%,#1e4764 100%);
-  position:relative;overflow:hidden;border:1px solid #3e6b8b;
-  box-shadow:0 0 20px rgba(103,215,255,.15);
+
+.wrap{
+max-width:900px;
+margin:auto;
+padding:15px;
 }
-.mountain:before{
-  content:"";
-  position:absolute;left:6px;bottom:8px;width:42px;height:30px;
-  background:linear-gradient(180deg,#fff,#c7efff);
-  clip-path:polygon(50% 0,100% 100%,0 100%);
-}
-.mountain:after{
-  content:"";
-  position:absolute;left:20px;bottom:8px;width:28px;height:22px;
-  background:linear-gradient(180deg,#fff,#b8eaff);
-  clip-path:polygon(50% 0,100% 100%,0 100%);
-}
-.brand h1{margin:0;font-size:24px;letter-spacing:1px;color:#dff7ff}
-.brand small{display:block;color:var(--mut)}
-.wrap{max-width:1000px;margin:auto;padding:14px}
+
 .card{
-  background:linear-gradient(180deg,var(--card),var(--card2));
-  border:1px solid var(--line);
-  border-radius:16px;
-  padding:14px;
-  margin-bottom:14px;
+background:#0d1e31;
+padding:15px;
+border-radius:12px;
+margin-bottom:15px;
+border:1px solid #294861;
 }
-.row{display:flex;gap:10px;flex-wrap:wrap}
-.col{flex:1;min-width:220px}
+
 input,textarea{
-  width:100%;padding:12px;border:none;outline:none;
-  border-radius:10px;margin-top:6px;margin-bottom:10px;
-  background:#0a1725;color:#fff;border:1px solid #29455e;
+width:100%;
+padding:10px;
+margin:5px 0;
+background:#081521;
+border:1px solid #294861;
+color:white;
+border-radius:8px;
 }
+
 button{
-  padding:10px 14px;border:none;border-radius:10px;
-  background:var(--ice);color:#001320;font-weight:700;cursor:pointer;
+padding:10px 15px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+margin-top:5px;
 }
-button.alt{background:#20374b;color:#dff7ff;border:1px solid #3a5a78}
-button.danger{background:var(--bad);color:#fff}
-button.ok{background:var(--ok);color:#001a14}
-button.gold{background:var(--gold);color:#1b1200}
-.post{
-  background:#0f2134;border:1px solid #284662;border-radius:14px;
-  padding:12px;margin-top:10px;cursor:pointer;
+
+.btn{
+background:#67d7ff;
+color:#001320;
+font-weight:bold;
 }
-.post img,.preview,.coverImg{
-  width:100%;border-radius:12px;margin-top:10px;max-height:320px;object-fit:cover;
+
+.btn-danger{
+background:#ff6b6b;
+color:white;
 }
-.badge{
-  display:inline-block;padding:5px 9px;border-radius:999px;
-  background:#173149;border:1px solid #34556e;font-size:12px;margin-right:6px;margin-top:6px;
+
+.btn-ok{
+background:#1dd1a1;
 }
-.gold-star{
-  color:#ffd700;
-  text-shadow:0 0 8px #ffd700,0 0 18px #ffd700,0 0 28px rgba(255,215,0,.9);
-  font-size:18px;
+
+.timeline-post{
+background:#10253b;
+padding:12px;
+border-radius:10px;
+margin-bottom:10px;
+cursor:pointer;
 }
-.blue-star{
-  color:#00cfff;
-  text-shadow:0 0 10px #00eaff,0 0 18px #00eaff,0 0 28px rgba(0,234,255,.8);
-  font-size:18px;
+
+.timeline-post img{
+width:100%;
+border-radius:10px;
+margin-top:8px;
 }
-.blue-star.faint{
-  color:#4a7fa0;
-  opacity:.35;
-  text-shadow:none;
+
+.star-admin{
+color:#ffd700;
+font-size:18px;
 }
-.black-star{
-  color:#000;
-  text-shadow:0 0 2px #fff,0 0 8px #fff;
-  font-size:18px;
+
+.star-mod{
+color:#00eaff;
+font-size:18px;
 }
-.nav{
-  position:fixed;left:10px;right:10px;bottom:10px;z-index:25;
-  display:flex;gap:10px;max-width:1000px;margin:auto;
+
+.star-user{
+color:#4a7fa0;
+opacity:.4;
 }
-.nav button{
-  flex:1;padding:14px;border-radius:16px;
-  background:rgba(13,26,39,.95);color:#dff7ff;border:1px solid #31526d;
-}
-.floating-share{
-  position:fixed;right:14px;bottom:82px;z-index:30;
-  width:56px;height:56px;border-radius:50%;
-  display:grid;place-items:center;
-  background:var(--ice);color:#001320;font-size:24px;font-weight:900;
-  box-shadow:0 0 18px rgba(103,215,255,.35);
-}
-.promo{
-  position:fixed;
-  left:50%;
-  top:18%;
-  transform:translateX(-50%);
-  z-index:60;
-  min-width:280px;
-  max-width:90vw;
-  padding:12px 14px;
-  border-radius:14px;
-  background:linear-gradient(180deg,#173149,#0b2033);
-  border:1px solid #4f7aa0;
-  box-shadow:0 0 24px rgba(103,215,255,.25);
-  display:none;
-  text-align:center;
-}
-.promo b{color:#ffd166}
+
 .modal{
-  position:fixed;inset:0;background:rgba(0,0,0,.72);
-  display:none;align-items:center;justify-content:center;z-index:50;padding:10px;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.8);
+display:none;
+justify-content:center;
+align-items:center;
+padding:20px;
 }
+
 .modal-content{
-  width:100%;max-width:1000px;max-height:92vh;overflow:auto;
-  background:#0d1e31;border:1px solid #2f536f;border-radius:18px;padding:12px;
+background:#0d1e31;
+padding:15px;
+border-radius:12px;
+width:100%;
+max-width:600px;
+max-height:90vh;
+overflow:auto;
 }
-.split{
-  display:grid;grid-template-columns:1fr 1fr;gap:12px;
+
+.profile-cover{
+height:160px;
+background:#24445f;
+border-radius:10px;
+margin-bottom:10px;
+overflow:hidden;
 }
-@media(max-width:720px){.split{grid-template-columns:1fr}}
-.notice{
-  background:#163047;border-left:4px solid var(--ice);
-  padding:10px;border-radius:10px;margin-top:8px;
+
+.profile-cover img{
+width:100%;
+height:100%;
+object-fit:cover;
 }
-.msg-box{
-  background:#081521;border:1px solid #294861;border-radius:12px;
-  padding:10px;max-height:260px;overflow:auto;margin-bottom:10px;
+
+.profile-avatar{
+width:80px;
+height:80px;
+border-radius:50%;
+background:#274b69;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:28px;
+margin-top:-40px;
+border:3px solid #0d1e31;
+overflow:hidden;
 }
-.msg{background:#14314d;padding:8px 10px;border-radius:10px;margin:8px 0}
-.msg.me{background:#0f5a67}
-.profile-head{position:relative}
-.coverBox{
-  height:180px;border-radius:16px;overflow:hidden;
-  background:linear-gradient(180deg,#24445f,#0d1f31);
-  border:1px solid #355a77;
+
+.profile-avatar img{
+width:100%;
+height:100%;
+object-fit:cover;
 }
-.coverBox img{width:100%;height:100%;object-fit:cover}
-.avatarBig{
-  width:90px;height:90px;border-radius:50%;
-  border:4px solid #0d1e31;background:#274b69;
-  display:grid;place-items:center;font-size:34px;font-weight:900;
-  position:absolute;left:18px;bottom:-24px;overflow:hidden;
+
+.nav{
+position:fixed;
+bottom:10px;
+left:10px;
+right:10px;
+display:flex;
+gap:10px;
 }
-.avatarBig img{width:100%;height:100%;object-fit:cover}
-.profileInfo{padding-top:36px}
-.comment{
-  padding:10px;border-radius:10px;background:#12283d;border:1px solid #2a4964;margin-top:8px;
+
+.nav button{
+flex:1;
+background:#0d1e31;
+color:white;
+border:1px solid #31526d;
 }
-.small{font-size:12px;color:var(--mut)}
-h2,h3,h4{margin:0 0 10px}
-.profile-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
-.postMini{
-  padding:10px;border-radius:12px;background:#0f2134;border:1px solid #284662;margin-top:10px;
+
+.promo{
+position:fixed;
+bottom:80px;
+left:50%;
+transform:translateX(-50%);
+background:#163047;
+padding:12px 20px;
+border-radius:10px;
+border:1px solid #4f7aa0;
+display:none;
 }
-.postMini img{width:100%;border-radius:10px;margin-top:8px;max-height:240px;object-fit:cover}
-.bio{
-  margin-top:10px;
-  padding:10px;
-  border-radius:12px;
-  background:#11253a;
-  border:1px solid #294861;
-}
+
 </style>
 </head>
+
 <body>
 
 <header>
-  <div class="top">
-    <div class="brand">
-      <div class="mountain"></div>
-      <div>
-        <h1>ICE</h1>
-        <small>Plataforma de trocas</small>
-      </div>
-    </div>
-    <div id="status" class="small">Não logado</div>
-  </div>
+<h1>ICE</h1>
+<div id="status">Não logado</div>
 </header>
 
-<div class="promo" id="promoBox"></div>
+<div class="promo" id="promoBox">
+Suporte Ice, compra de moderação, 11983602504
+</div>
 
 <div class="wrap">
-  <div class="card">
-    <h3>Login</h3>
-    <div class="row">
-      <div class="col"><input id="user" placeholder="Usuário"></div>
-      <div class="col"><input id="pass" placeholder="Senha" type="password"></div>
-    </div>
-    <button onclick="login()">Entrar</button>
-  </div>
 
-  <div class="card">
-    <h3>Publicar item para troca</h3>
-    <input id="titulo" placeholder="Nome do item">
-    <textarea id="desc" placeholder="Descrição"></textarea>
-    <input type="file" id="foto" accept="image/*,video/*">
-    <button onclick="publicar()">Publicar</button>
-  </div>
+<div class="card">
 
-  <div class="card">
-    <h3>Notificações</h3>
-    <div id="notificacoes" class="small">Nenhuma notificação.</div>
-  </div>
+<h3>Login</h3>
 
-  <div class="card">
-    <h3>Timeline do ICE</h3>
-    <div id="timeline"></div>
-  </div>
+<input id="user" placeholder="Usuário">
+<input id="pass" type="password" placeholder="Senha">
+
+<button class="btn" onclick="login()">Entrar</button>
+
 </div>
 
-<div class="floating-share" onclick="sharePage()">↗</div>
+
+<div class="card">
+
+<h3>Publicar troca</h3>
+
+<input id="titulo" placeholder="Nome do item">
+<textarea id="desc" placeholder="Descrição"></textarea>
+
+<input type="file" id="foto">
+
+<button class="btn" onclick="publicar()">Publicar</button>
+
+</div>
+
+
+<div class="card">
+
+<h3>Timeline</h3>
+
+<div id="timeline"></div>
+
+</div>
+
+</div>
 
 <div class="nav">
-  <button onclick="abrirMinhasTrocas()">🔁 Trocas</button>
-  <button onclick="abrirMeuPerfil()">👤 Perfil</button>
+<button onclick="minhasTrocas()">Trocas</button>
+<button onclick="abrirPerfil(usuario?.nome)">Perfil</button>
 </div>
 
-<div class="modal" id="trocaModal">
-  <div class="modal-content">
-    <div class="row" style="justify-content:space-between;align-items:center">
-      <h3>Troca</h3>
-      <button class="alt" onclick="fecharTroca()">Fechar</button>
-    </div>
-
-    <div class="split">
-      <div class="card">
-        <h4>Postagem original</h4>
-        <div id="detalheOriginal"></div>
-      </div>
-
-      <div class="card">
-        <h4>Sua proposta</h4>
-        <input id="propTitulo" placeholder="Nome do que você oferece">
-        <textarea id="propDesc" placeholder="Descrição da sua proposta"></textarea>
-        <input type="file" id="propFoto" accept="image/*,video/*">
-        <button onclick="enviarProposta()">Enviar proposta</button>
-      </div>
-    </div>
-
-    <div class="card">
-      <h4>Propostas recebidas</h4>
-      <div id="listaPropostas">Nenhuma proposta ainda.</div>
-    </div>
-  </div>
-</div>
-
-<div class="modal" id="chatModal">
-  <div class="modal-content">
-    <div class="row" style="justify-content:space-between;align-items:center">
-      <h3>Chat privado</h3>
-      <button class="alt" onclick="fecharChat()">Fechar</button>
-    </div>
-    <div id="chatInfo" class="small"></div>
-    <div id="chatMsgs" class="msg-box"></div>
-    <input id="chatTexto" placeholder="Digite sua mensagem">
-    <button onclick="enviarMensagem()">Enviar</button>
-  </div>
-</div>
 
 <div class="modal" id="perfilModal">
-  <div class="modal-content">
-    <div class="row" style="justify-content:space-between;align-items:center">
-      <h3>Perfil</h3>
-      <button class="alt" onclick="fecharPerfil()">Fechar</button>
-    </div>
-    <div id="perfilBody"></div>
-  </div>
+
+<div class="modal-content">
+
+<div id="perfilBody"></div>
+
+<button onclick="fecharPerfil()">Fechar</button>
+
+</div>
+
 </div>
 
 <script>
-let usuario = null;
-let postagens = JSON.parse(localStorage.getItem("ice_postagens") || "[]");
-let propostas = JSON.parse(localStorage.getItem("ice_propostas") || "[]");
-let chats = JSON.parse(localStorage.getItem("ice_chats") || "[]");
-let notificacoes = JSON.parse(localStorage.getItem("ice_notificacoes") || "[]");
-let usuarios = JSON.parse(localStorage.getItem("ice_usuarios") || "{}");
-let avaliacoes = JSON.parse(localStorage.getItem("ice_avaliacoes") || "[]");
 
-let postAtual = null;
-let chatAtual = null;
+let usuario=null
 
-function salvarTudo(){
-  localStorage.setItem("ice_postagens", JSON.stringify(postagens));
-  localStorage.setItem("ice_propostas", JSON.stringify(propostas));
-  localStorage.setItem("ice_chats", JSON.stringify(chats));
-  localStorage.setItem("ice_notificacoes", JSON.stringify(notificacoes));
-  localStorage.setItem("ice_usuarios", JSON.stringify(usuarios));
-  localStorage.setItem("ice_avaliacoes", JSON.stringify(avaliacoes));
+let usuarios=JSON.parse(localStorage.getItem("usuarios")||"{}")
+let posts=JSON.parse(localStorage.getItem("posts")||"[]")
+
+function salvar(){
+
+localStorage.setItem("usuarios",JSON.stringify(usuarios))
+localStorage.setItem("posts",JSON.stringify(posts))
+
 }
 
-function garantirUsuario(nome,tipo="normal"){
-  if(!usuarios[nome]){
-    usuarios[nome] = {
-      nome,
-      tipo,
-      filhos:0,
-      familia:false,
-      fotoPerfil:"",
-      fotoCapa:"",
-      bio:"",
-      confiavel:0,
-      naoConfiavel:0,
-      bloqueado:false,
-      oculto:false
-    };
-  }
+function garantirUser(nome){
+
+if(!usuarios[nome]){
+
+usuarios[nome]={
+
+nome:nome,
+tipo:"normal",
+bio:"",
+foto:"",
+capa:"",
+bloqueado:false
+
+}
+
+}
+
 }
 
 function login(){
-  let u = document.getElementById("user").value.trim();
-  let p = document.getElementById("pass").value.trim();
-  if(!u) return alert("Digite um usuário");
 
-  garantirUsuario(u);
+let u=document.getElementById("user").value.trim()
+let p=document.getElementById("pass").value.trim()
 
-  if(u === "ADM" && p === "1533"){
-    usuario = { nome:"ADM", tipo:"admin" };
-    usuarios["ADM"].tipo = "admin";
-  } else {
-    usuario = { nome:u, tipo:usuarios[u].tipo || "normal" };
-  }
+garantirUser(u)
 
-  salvarTudo();
-  atualizarStatus();
-  renderNotificacoes();
-  renderTimeline();
+if(u==="ADM" && p==="1533"){
+
+usuarios[u].tipo="admin"
+
+usuario={nome:u,tipo:"admin"}
+
+}else{
+
+usuario={nome:u,tipo:usuarios[u].tipo}
+
+}
+
+salvar()
+
+status()
+
+renderTimeline()
+
+}
+
+function status(){
+
+if(!usuario){
+
+document.getElementById("status").innerText="Não logado"
+
+return
+
+}
+
+document.getElementById("status").innerHTML=nomeExibicao(usuario.nome)
+
 }
 
 function nomeExibicao(nome){
-  garantirUsuario(nome);
-  let u = usuarios[nome];
-  let estrela = "";
 
-  if(u.tipo === "admin") estrela = "<span class='gold-star'>★</span> ";
-  else if(u.tipo === "mod") estrela = "<span class='blue-star'>★</span> ";
-  else estrela = "<span class='blue-star faint'>★</span> ";
+let u=usuarios[nome]
 
-  if(u.familia) estrela += "<span class='black-star'>★</span> ";
-  return estrela + nome;
-}
+if(u.tipo==="admin")return "⭐ "+nome
+if(u.tipo==="mod")return "🔷 "+nome
 
-function atualizarStatus(){
-  if(!usuario){
-    document.getElementById("status").textContent = "Não logado";
-    return;
-  }
-  document.getElementById("status").innerHTML = "Logado como: <b>"+nomeExibicao(usuario.nome)+"</b>";
+return nome
+
 }
 
 function publicar(){
-  if(!usuario) return alert("Faça login primeiro");
-  if(usuarios[usuario.nome].bloqueado) return alert("Seu usuário está bloqueado.");
 
-  let titulo = document.getElementById("titulo").value.trim();
-  let desc = document.getElementById("desc").value.trim();
-  let file = document.getElementById("foto").files[0];
-  if(!titulo || !desc) return alert("Preencha título e descrição");
+if(!usuario)return alert("login primeiro")
 
-  let nova = {
-    id: Date.now().toString(),
-    titulo,
-    desc,
-    dono: usuario.nome,
-    imagem:"",
-    criadoEm:new Date().toLocaleString()
-  };
+let titulo=document.getElementById("titulo").value
+let desc=document.getElementById("desc").value
 
-  const salvarPost = ()=>{
-    postagens.unshift(nova);
-    salvarTudo();
-    document.getElementById("titulo").value = "";
-    document.getElementById("desc").value = "";
-    document.getElementById("foto").value = "";
-    renderTimeline();
-  };
+let file=document.getElementById("foto").files[0]
 
-  if(file){
-    let reader = new FileReader();
-    reader.onload = e=>{
-      nova.imagem = e.target.result;
-      salvarPost();
-    };
-    reader.readAsDataURL(file);
-  } else {
-    salvarPost();
-  }
+let post={
+
+id:Date.now(),
+titulo,
+desc,
+dono:usuario.nome,
+img:"",
+data:new Date().toLocaleString()
+
+}
+
+if(file){
+
+let r=new FileReader()
+
+r.onload=e=>{
+
+post.img=e.target.result
+
+posts.unshift(post)
+
+salvar()
+
+renderTimeline()
+
+}
+
+r.readAsDataURL(file)
+
+}else{
+
+posts.unshift(post)
+
+salvar()
+
+renderTimeline()
+
+}
+
 }
 
 function renderTimeline(){
-  let timeline = document.getElementById("timeline");
-  timeline.innerHTML = "";
 
-  const visiveis = postagens.filter(p=>{
-    garantirUsuario(p.dono);
-    return !usuarios[p.dono].oculto;
-  });
+let t=document.getElementById("timeline")
 
-  if(visiveis.length === 0){
-    timeline.innerHTML = "<div class='small'>Nenhuma postagem ainda.</div>";
-    return;
-  }
+t.innerHTML=""
 
-  visiveis.forEach(p=>{
-    let post = document.createElement("div");
-    post.className = "post";
-    post.onclick = ()=>abrirTroca(p.id);
+posts.forEach(p=>{
 
-    let html = `
-      <b>${p.titulo}</b><br>
-      ${p.desc}<br>
-      <small>por ${nomeExibicao(p.dono)} • ${p.criadoEm}</small><br>
-      <span class="badge" onclick="event.stopPropagation();abrirPerfil('${p.dono}')">Ver perfil</span>
-    `;
-    if(p.imagem) html += `<img src="${p.imagem}">`;
-    post.innerHTML = html;
-    timeline.appendChild(post);
-  });
+let div=document.createElement("div")
+
+div.className="timeline-post"
+
+div.onclick=()=>abrirTroca(p.id)
+
+div.innerHTML=`
+
+<b>${p.titulo}</b><br>
+
+${p.desc}<br>
+
+<small>${nomeExibicao(p.dono)}</small>
+
+<br>
+
+<button onclick="event.stopPropagation();abrirPerfil('${p.dono}')">Ver perfil</button>
+
+${p.img?`<img src="${p.img}">`:""}
+
+`
+
+t.appendChild(div)
+
+})
+
 }
 
-function abrirMinhasTrocas(){
-  if(!usuario) return alert("Faça login primeiro");
-  const minhas = postagens.filter(p=>p.dono === usuario.nome);
-  const timeline = document.getElementById("timeline");
-  timeline.innerHTML = "";
+function minhasTrocas(){
 
-  if(minhas.length === 0){
-    timeline.innerHTML = "<div class='small'>Você ainda não tem postagens de troca.</div>";
-    return;
-  }
+if(!usuario)return
 
-  minhas.forEach(p=>{
-    let post = document.createElement("div");
-    post.className = "post";
-    post.onclick = ()=>abrirTroca(p.id);
+let t=document.getElementById("timeline")
 
-    let html = `
-      <b>${p.titulo}</b><br>
-      ${p.desc}<br>
-      <small>por ${nomeExibicao(p.dono)} • ${p.criadoEm}</small><br>
-      <span class="badge" onclick="event.stopPropagation();abrirPerfil('${p.dono}')">Ver perfil</span>
-    `;
-    if(p.imagem) html += `<img src="${p.imagem}">`;
-    post.innerHTML = html;
-    timeline.appendChild(post);
-  });
-}
+t.innerHTML=""
 
-function sharePage(){
-  const texto = window.location.href + (usuario ? "?ref="+usuario.nome : "");
-  if(navigator.share){
-    navigator.share({title:"ICE",text:texto,url:texto});
-  } else {
-    navigator.clipboard.writeText(texto);
-    alert("Link copiado: " + texto);
-  }
-}
+posts.filter(p=>p.dono===usuario.nome).forEach(p=>{
 
-function abrirTroca(postId){
-  if(!usuario) return alert("Faça login primeiro");
-  if(usuarios[usuario.nome].bloqueado) return alert("Seu usuário está bloqueado.");
+let div=document.createElement("div")
 
-  postAtual = postagens.find(p=>String(p.id)===String(postId));
-  if(!postAtual) return alert("Post não encontrado.");
+div.className="timeline-post"
 
-  let html = `
-    <b>${postAtual.titulo}</b><br>
-    ${postAtual.desc}<br>
-    <small>por ${nomeExibicao(postAtual.dono)}</small>
-  `;
-  if(postAtual.imagem) html += `<img class="preview" src="${postAtual.imagem}">`;
+div.innerHTML=`<b>${p.titulo}</b><br>${p.desc}`
 
-  document.getElementById("detalheOriginal").innerHTML = html;
-  renderPropostasDoPost();
-  document.getElementById("trocaModal").style.display = "flex";
-}
+t.appendChild(div)
 
-function fecharTroca(){
-  document.getElementById("trocaModal").style.display = "none";
-}
+})
 
-function enviarProposta(){
-  if(!usuario || !postAtual) return;
-  if(usuario.nome === postAtual.dono) return alert("Você não pode trocar com você mesmo.");
-  if(usuarios[usuario.nome].bloqueado) return alert("Seu usuário está bloqueado.");
-
-  let titulo = document.getElementById("propTitulo").value.trim();
-  let desc = document.getElementById("propDesc").value.trim();
-  let file = document.getElementById("propFoto").files[0];
-  if(!titulo || !desc) return alert("Preencha a proposta");
-
-  let proposta = {
-    id:"prop_"+Date.now(),
-    postId:postAtual.id,
-    autor:usuario.nome,
-    donoPost:postAtual.dono,
-    titulo,
-    desc,
-    imagem:"",
-    status:"pendente"
-  };
-
-  const salvarProposta = ()=>{
-    propostas.unshift(proposta);
-    notificacoes.unshift({
-      id:"n_"+Date.now(),
-      para:postAtual.dono,
-      texto:usuario.nome+" enviou uma proposta para seu item.",
-      lida:false
-    });
-    salvarTudo();
-    renderPropostasDoPost();
-    renderNotificacoes();
-    alert("Proposta enviada");
-  };
-
-  if(file){
-    let reader = new FileReader();
-    reader.onload = e=>{
-      proposta.imagem = e.target.result;
-      salvarProposta();
-    };
-    reader.readAsDataURL(file);
-  } else {
-    salvarProposta();
-  }
-}
-
-function renderPropostasDoPost(){
-  let lista = document.getElementById("listaPropostas");
-  let props = propostas.filter(x=>String(x.postId)===String(postAtual.id));
-
-  if(props.length===0){
-    lista.innerHTML = "Nenhuma proposta ainda.";
-    return;
-  }
-
-  lista.innerHTML = "";
-  props.forEach(p=>{
-    let div = document.createElement("div");
-    div.className = "card";
-
-    let html = `
-      <b>${p.titulo}</b><br>
-      ${p.desc}<br>
-      <small>por ${nomeExibicao(p.autor)}</small><br>
-      <span class="badge">Status: ${p.status}</span>
-    `;
-    if(p.imagem) html += `<img class="preview" src="${p.imagem}">`;
-
-    if(usuario && usuario.nome===postAtual.dono && p.status==="pendente"){
-      html += `<br><button onclick="aceitarProposta('${p.id}')">Aceitar troca</button>`;
-    }
-    if(usuario && (usuario.nome===p.autor || usuario.nome===postAtual.dono) && p.status==="aceita"){
-      html += `<br><button onclick="abrirChat('${p.id}')">Abrir chat</button>`;
-    }
-
-    div.innerHTML = html;
-    lista.appendChild(div);
-  });
-}
-
-function aceitarProposta(id){
-  let p = propostas.find(x=>x.id===id);
-  if(!p) return;
-  p.status = "aceita";
-
-  if(!chats.find(x=>x.propId===id)){
-    chats.push({
-      id:"chat_"+id,
-      propId:id,
-      users:[p.autor,p.donoPost],
-      msgs:[{autor:"sistema",texto:"Troca aceita. Agora vocês podem conversar."}]
-    });
-  }
-
-  notificacoes.unshift({
-    id:"n_"+Date.now(),
-    para:p.autor,
-    texto:"Sua proposta foi aceita por "+p.donoPost,
-    lida:false
-  });
-
-  salvarTudo();
-  renderPropostasDoPost();
-  renderNotificacoes();
-}
-
-function abrirChat(propId){
-  let c = chats.find(x=>x.propId===propId);
-  if(!c || !c.users.includes(usuario.nome)) return alert("Chat privado.");
-  chatAtual = c;
-  document.getElementById("chatInfo").innerText = "Chat entre: " + c.users.join(" e ");
-  renderMensagens();
-  document.getElementById("chatModal").style.display = "flex";
-}
-
-function fecharChat(){
-  document.getElementById("chatModal").style.display = "none";
-}
-
-function renderMensagens(){
-  let box = document.getElementById("chatMsgs");
-  box.innerHTML = "";
-  chatAtual.msgs.forEach(m=>{
-    let div = document.createElement("div");
-    div.className = "msg" + (m.autor===usuario.nome ? " me" : "");
-    div.innerHTML = "<b>"+m.autor+"</b><br>"+m.texto;
-    box.appendChild(div);
-  });
-  box.scrollTop = box.scrollHeight;
-}
-
-function enviarMensagem(){
-  let txt = document.getElementById("chatTexto").value.trim();
-  if(!txt || !chatAtual) return;
-  chatAtual.msgs.push({autor:usuario.nome,texto:txt});
-  document.getElementById("chatTexto").value = "";
-  salvarTudo();
-  renderMensagens();
-}
-
-function renderNotificacoes(){
-  let box = document.getElementById("notificacoes");
-  if(!usuario){
-    box.innerHTML = "Faça login para ver notificações.";
-    return;
-  }
-
-  let minhas = notificacoes.filter(n=>n.para===usuario.nome);
-  if(minhas.length===0){
-    box.innerHTML = "Nenhuma notificação.";
-    return;
-  }
-
-  box.innerHTML = "";
-  minhas.forEach(n=>{
-    let div = document.createElement("div");
-    div.className = "notice";
-    div.textContent = n.texto;
-    box.appendChild(div);
-    n.lida = true;
-  });
-  salvarTudo();
 }
 
 function abrirPerfil(nome){
-  garantirUsuario(nome);
-  let u = usuarios[nome];
-  let minhasAval = avaliacoes.filter(a=>a.para===nome);
-  let postsDoUsuario = postagens.filter(p=>p.dono===nome);
 
-  let html = `
-    <div class="profile-head">
-      <div class="coverBox" onclick="${nome===usuario?.nome ? "document.getElementById('coverInput').click()" : ""}">
-        ${u.fotoCapa ? `<img class="coverImg" src="${u.fotoCapa}">` : ""}
-      </div>
-      <div class="avatarBig" onclick="${nome===usuario?.nome ? "document.getElementById('avatarInput').click()" : ""}">
-        ${u.fotoPerfil ? `<img src="${u.fotoPerfil}">` : (u.nome||nome)[0].toUpperCase()}
-      </div>
-    </div>
+garantirUser(nome)
 
-    <div class="profileInfo">
-      <h2>${nomeExibicao(nome)}</h2>
-      <div class="small">Perfil do usuário</div>
-      <div class="bio">
-        ${nome===usuario?.nome
-          ? `<textarea id="bioInput" placeholder="Escreva sua bio...">${u.bio||""}</textarea>
-             <button class="ok" onclick="salvarBio('${nome}')">Salvar bio</button>`
-          : (u.bio ? u.bio : "<span class='small'>Sem bio ainda.</span>")
-        }
-      </div>
-      <div class="badge">Confiável: ${u.confiavel||0}</div>
-      <div class="badge">Não confiável: ${u.naoConfiavel||0}</div>
-      <input type="file" id="avatarInput" accept="image/*" style="display:none">
-      <input type="file" id="coverInput" accept="image/*" style="display:none">
-    </div>
-  `;
+let u=usuarios[nome]
 
-  if(usuario && usuario.tipo === "admin" && nome !== "ADM"){
-    if(u.tipo !== "mod"){
-      html += `
-        <div class="profile-actions">
-          <button class="ok" onclick="tornarModerador('${nome}')"><span class="blue-star faint">★</span> Tornar moderador</button>
-        </div>
-      `;
-    } else {
-      html += `
-        <div class="profile-actions">
-          <span class="badge"><span class="blue-star">★</span> Moderador ativo</span>
-        </div>
-      `;
-    }
-    html += `
-      <div class="profile-actions">
-        <button class="danger" onclick="bloquearUsuario('${nome}')">Bloquear usuário</button>
-        <button class="alt" onclick="ocultarUsuario('${nome}')">${u.oculto ? "Mostrar usuário" : "Ocultar usuário"}</button>
-      </div>
-    `;
-  }
+let html=`
 
-  if(usuario && usuario.tipo === "mod" && nome !== "ADM" && usuarios[nome].tipo === "normal" && nome !== usuario.nome){
-    html += `
-      <div class="profile-actions">
-        <button class="danger" onclick="bloquearUsuario('${nome}')">Bloquear usuário</button>
-      </div>
-    `;
-  }
 
-  if(usuario && usuario.nome !== nome){
-    html += `
-      <div class="card">
-        <h4>Avaliar perfil</h4>
-        <textarea id="avalComentario" placeholder="Comentário"></textarea>
-        <div class="row">
-          <button class="ok" onclick="avaliarPerfil('${nome}','confiável')">Pessoa confiável</button>
-          <button class="danger" onclick="avaliarPerfil('${nome}','não confiável')">Pessoa não confiável</button>
-        </div>
-      </div>
-    `;
-  }
+<div class="profile-cover">
 
-  html += `
-    <div class="card">
-      <h4>Avaliações</h4>
-      ${
-        minhasAval.length
-          ? minhasAval.map(a=>`<div class="comment"><b>${a.de}</b> • ${a.tipo}<br>${a.comentario}</div>`).join("")
-          : "<div class='small'>Sem avaliações ainda.</div>"
-      }
-    </div>
-  `;
+${u.capa?`<img src="${u.capa}">`:""}
 
-  html += `
-    <div class="card">
-      <h4>Postagens</h4>
-      ${
-        postsDoUsuario.length
-          ? postsDoUsuario.map(p=>`
-            <div class="postMini">
-              <b>${p.titulo}</b><br>
-              ${p.desc}<br>
-              <small>${p.criadoEm}</small>
-              ${p.imagem ? `<img src="${p.imagem}">` : ""}
-            </div>
-          `).join("")
-          : "<div class='small'>Sem postagens ainda.</div>"
-      }
-    </div>
-  `;
+</div>
 
-  document.getElementById("perfilBody").innerHTML = html;
-  document.getElementById("perfilModal").style.display = "flex";
+<div class="profile-avatar">
 
-  if(usuario && usuario.nome === nome){
-    document.getElementById("avatarInput").onchange = e=>salvarFotoPerfil(e, nome);
-    document.getElementById("coverInput").onchange = e=>salvarFotoCapa(e, nome);
-  }
+${u.foto?`<img src="${u.foto}">`:nome[0]}
+
+</div>
+
+<h2>${nomeExibicao(nome)}</h2>
+
+<textarea id="bioInput">${u.bio}</textarea>
+
+<button onclick="salvarBio('${nome}')">Salvar bio</button>
+
+`
+
+if(usuario?.nome==="ADM" && nome!=="ADM"){
+
+html+=`
+
+<button onclick="tornarModerador('${nome}')">Tornar moderador</button>
+
+<button class="btn-danger" onclick="bloquear('${nome}')">Bloquear</button>
+
+`
+
 }
 
-function abrirMeuPerfil(){
-  if(!usuario) return alert("Faça login primeiro");
-  abrirPerfil(usuario.nome);
+if(usuario?.tipo==="mod" && usuarios[nome].tipo==="normal"){
+
+html+=`<button class="btn-danger" onclick="bloquear('${nome}')">Bloquear</button>`
+
+}
+
+document.getElementById("perfilBody").innerHTML=html
+
+document.getElementById("perfilModal").style.display="flex"
+
 }
 
 function fecharPerfil(){
-  document.getElementById("perfilModal").style.display = "none";
-}
 
-function salvarFotoPerfil(e,nome){
-  const file = e.target.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = ev=>{
-    usuarios[nome].fotoPerfil = ev.target.result;
-    salvarTudo();
-    abrirPerfil(nome);
-    atualizarStatus();
-    renderTimeline();
-  };
-  reader.readAsDataURL(file);
-}
+document.getElementById("perfilModal").style.display="none"
 
-function salvarFotoCapa(e,nome){
-  const file = e.target.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = ev=>{
-    usuarios[nome].fotoCapa = ev.target.result;
-    salvarTudo();
-    abrirPerfil(nome);
-  };
-  reader.readAsDataURL(file);
 }
 
 function salvarBio(nome){
-  const el = document.getElementById("bioInput");
-  if(!el) return;
-  usuarios[nome].bio = el.value.trim();
-  salvarTudo();
-  abrirPerfil(nome);
-}
 
-function avaliarPerfil(nome,tipo){
-  const comentario = document.getElementById("avalComentario").value.trim();
-  if(!comentario) return alert("Escreva um comentário");
+usuarios[nome].bio=document.getElementById("bioInput").value
 
-  avaliacoes.unshift({
-    id:"a_"+Date.now(),
-    de:usuario.nome,
-    para:nome,
-    tipo,
-    comentario
-  });
+salvar()
 
-  if(tipo==="confiável") usuarios[nome].confiavel = (usuarios[nome].confiavel||0)+1;
-  else usuarios[nome].naoConfiavel = (usuarios[nome].naoConfiavel||0)+1;
-
-  salvarTudo();
-  abrirPerfil(nome);
 }
 
 function tornarModerador(nome){
-  if(!usuario || usuario.tipo !== "admin") return;
-  if(nome === "ADM") return alert("ADM é intocável.");
 
-  garantirUsuario(nome);
-  usuarios[nome].tipo = "mod";
-  salvarTudo();
+if(usuario?.nome!=="ADM")return
 
-  abrirPerfil(nome);
-  atualizarStatus();
-  renderTimeline();
+usuarios[nome].tipo="mod"
 
-  alert(nome + " agora é moderador.");
+salvar()
+
+alert(nome+" agora é moderador")
+
 }
 
-function bloquearUsuario(nome){
-  if(nome === "ADM") return alert("ADM é intocável.");
-  if(!usuario) return;
+function bloquear(nome){
 
-  if(usuario.tipo === "admin"){
-    usuarios[nome].bloqueado = true;
-    salvarTudo();
-    abrirPerfil(nome);
-    alert("Usuário bloqueado.");
-    return;
-  }
+usuarios[nome].bloqueado=true
 
-  if(usuario.tipo === "mod"){
-    if(usuarios[nome].tipo === "normal"){
-      usuarios[nome].bloqueado = true;
-      salvarTudo();
-      abrirPerfil(nome);
-      alert("Usuário bloqueado.");
-    } else {
-      alert("Moderador só pode bloquear usuários normais.");
-    }
-  }
+salvar()
+
+alert("Usuário bloqueado")
+
 }
 
-function ocultarUsuario(nome){
-  if(!usuario || usuario.tipo !== "admin") return;
-  if(nome === "ADM") return alert("ADM é intocável.");
-  usuarios[nome].oculto = !usuarios[nome].oculto;
-  salvarTudo();
-  abrirPerfil(nome);
-  renderTimeline();
+function abrirTroca(id){
+
+alert("Sistema de troca aqui")
+
 }
 
-function mostrarPromo(){
-  const box = document.getElementById("promoBox");
-  const msgs = [
-    "Quer <b>moderação</b>? Chame no suporte: <b>11983602504</b>",
-    "Promoção: para comprar <b>ADM / moderação</b>, fale com <b>11983602504</b>",
-    "Suporte ICE: compra de moderação e ADM no número <b>11983602504</b>"
-  ];
-  box.innerHTML = msgs[Math.floor(Math.random()*msgs.length)];
-  box.style.display = "block";
-  setTimeout(()=> box.style.display = "none", 5000);
+function promo(){
+
+let p=document.getElementById("promoBox")
+
+p.style.display="block"
+
+setTimeout(()=>{
+
+p.style.display="none"
+
+},6000)
+
 }
 
-setInterval(mostrarPromo, 18000);
-setTimeout(mostrarPromo, 6000);
+setInterval(promo,240000)
 
-renderTimeline();
-renderNotificacoes();
-atualizarStatus();
+setTimeout(promo,8000)
+
+renderTimeline()
+
+status()
+
 </script>
 
 </body>
