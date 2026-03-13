@@ -3,184 +3,143 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ICE - Trocas e Comando</title>
+<title>ICE - Trocas em Tempo Real</title>
 <style>
-:root { --bg: #dff6ff; --sea: #0f3452; --gold: #ffd700; --yellow: #ffff00; --blue: #007bff; --red: #ff4d4d; --green: #23c79c; }
+:root { --bg: #dff6ff; --sea: #0f3452; --gold: #ffd700; --blue: #007bff; --green: #23c79c; }
 body { margin: 0; font-family: sans-serif; background: var(--bg); color: var(--sea); }
+.header { padding: 15px; background: white; display: flex; justify-content: space-between; border-bottom: 1px solid #7ec8e6; position: sticky; top: 0; z-index: 100; }
+.card { background: white; border-radius: 15px; padding: 15px; margin: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+.btn { cursor: pointer; border: none; border-radius: 8px; font-weight: bold; padding: 10px; color: white; }
 
-/* Cabeçalho */
-.header { padding: 15px; background: rgba(255,255,255,0.8); display: flex; justify-content: space-between; border-bottom: 1px solid #7ec8e6; position: sticky; top: 0; z-index: 100; }
-.star-adm1 { color: var(--gold); font-weight: bold; }
-.star-adm2 { color: var(--yellow); font-weight: bold; }
-.star-mod { color: var(--blue); font-weight: bold; }
+/* TELA DUPLA */
+.dupla { display: flex; gap: 10px; margin: 10px 0; align-items: stretch; }
+.lado { flex: 1; background: #f0faff; padding: 8px; border-radius: 10px; border: 1px solid #ddd; text-align: center; font-size: 12px; }
+.lado img { width: 100%; height: 100px; object-fit: cover; border-radius: 8px; margin-bottom: 5px; background: #eee; }
+.vs { align-self: center; font-weight: bold; color: var(--sea); }
 
-/* Telas */
-.screen { display: none; padding: 15px; }
-.active { display: block; }
-
-/* Cards e Inputs */
-.card { background: white; border-radius: 15px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-input, textarea { padding: 12px; border-radius: 10px; border: 1px solid #ccc; width: 100%; margin-bottom: 10px; box-sizing: border-box; }
-button { cursor: pointer; border: none; border-radius: 8px; font-weight: bold; }
-
-/* Troca Tela Dupla */
-.dupla-container { display: flex; gap: 10px; margin-bottom: 10px; }
-.lado { flex: 1; background: #f0faff; padding: 10px; border-radius: 10px; border: 1px dashed var(--sea); text-align: center; }
-.lado img { width: 100%; height: 100px; object-fit: cover; border-radius: 5px; margin-top: 5px; display: none; }
-.upload-btn { background: #1d5277; color: white; padding: 8px; font-size: 11px; width: 100%; margin-bottom: 5px; }
-
-/* Botões de Comando */
-.btn-cmd { padding: 5px 8px; font-size: 9px; color: white; margin-right: 4px; }
-.btn-chat { background: var(--green); color: white; width: 100%; padding: 12px; margin-top: 10px; }
-
-/* Chat */
-#chatModal { position: fixed; inset: 0; background: white; z-index: 1000; display: none; flex-direction: column; }
-.chat-h { padding: 15px; background: var(--sea); color: white; display: flex; justify-content: space-between; }
-#chatMsgs { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-.m { padding: 10px; border-radius: 12px; max-width: 80%; }
-.m.eu { background: var(--sea); color: white; align-self: flex-end; }
-.m.outro { background: #eee; align-self: flex-start; }
+input, textarea { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
+#loginS { position: fixed; inset: 0; background: white; z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 </style>
 </head>
 <body>
 
-<!-- 1. LOGIN -->
-<div id="loginS" class="active" style="position:fixed; inset:0; background:white; display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:2000;">
-    <h2>ICE SISTEMA</h2>
+<div id="loginS">
+    <h2>ICE LOGIN</h2>
     <input type="text" id="lnome" placeholder="Seu Nome" style="width:80%">
-    <input type="password" id="lpass" placeholder="Senha (ADM1: 1533)" style="width:80%">
-    <button onclick="logar()" style="background:var(--sea); color:white; padding:15px 50px; border-radius:30px;">ENTRAR</button>
+    <input type="password" id="lpass" placeholder="Senha (ADM: 1533)" style="width:80%">
+    <button class="btn" style="background:var(--sea); width:80%" onclick="logar()">ENTRAR</button>
 </div>
 
-<!-- 2. APP PRINCIPAL -->
-<div id="app" class="screen">
+<div id="app" style="display:none">
     <header class="header">
-        <div id="status"></div>
-        <button onclick="location.reload()" style="background:none; color:red">SAIR</button>
+        <div id="meuStatus"></div>
+        <button onclick="location.reload()" style="background:none; border:none; color:red">Sair</button>
     </header>
 
-    <!-- ÁREA DE POSTAR TROCA -->
-    <div class="card" style="margin-top:15px">
-        <h3>Nova Troca (Tela Dupla)</h3>
-        <div class="dupla-container">
-            <div class="lado">
-                <small>TENHO</small>
-                <input type="file" id="foto1" accept="image/*" style="display:none" onchange="preview(this, 'p1')">
-                <button class="upload-btn" onclick="document.getElementById('foto1').click()">FOTO GALERIA</button>
-                <img id="p1">
-                <textarea id="d1" placeholder="Descrição..."></textarea>
-            </div>
-            <div class="lado">
-                <small>QUERO</small>
-                <input type="file" id="foto2" accept="image/*" style="display:none" onchange="preview(this, 'p2')">
-                <button class="upload-btn" onclick="document.getElementById('foto2').click()">FOTO GALERIA</button>
-                <img id="p2">
-                <textarea id="d2" placeholder="Descrição..."></textarea>
-            </div>
-        </div>
-        <button onclick="postar()" style="background:var(--sea); color:white; width:100%; padding:12px;">POSTAR TROCA</button>
+    <div class="card">
+        <h3>Postar o que eu tenho</h3>
+        <input type="file" id="f1" accept="image/*" onchange="lerImg(this, 'pre1')">
+        <img id="pre1" style="width:100%; height:100px; object-fit:contain; display:none">
+        <textarea id="d1" placeholder="Descreva o seu item..."></textarea>
+        <button class="btn" style="background:var(--sea); width:100%" onclick="subirPost()">POSTAR NA TIMELINE</button>
     </div>
 
     <div id="feed"></div>
 </div>
 
-<!-- 3. CHAT -->
-<div id="chatModal">
-    <div class="chat-h"><span id="chatNome">Chat</span> <button onclick="fecharChat()" style="color:white; background:none;">X</button></div>
-    <div id="chatMsgs"></div>
-    <div style="padding:10px; display:flex; gap:5px; border-top:1px solid #ddd;">
-        <input type="text" id="msgIn" placeholder="Escreva..." style="margin:0">
-        <button onclick="enviar()" style="background:var(--green); color:white; padding:10px;">ENVIAR</button>
-    </div>
-</div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com";
+import { getDatabase, ref, push, onValue, update, remove } from "https://www.gstatic.com";
 
-<script>
-let u = { n: "", c: "COMUM" };
+const firebaseConfig = {
+  apiKey: "AIzaSyDM5M1_O-wfcBDGYJIiYgiHVbqhiKC-0dw",
+  authDomain: "icek-9cdd7.firebaseapp.com",
+  databaseURL: "https://icek-9cdd7-default-rtdb.firebaseio.com",
+  projectId: "icek-9cdd7",
+  appId: "1:929781654380:web:ddda1fdf6689ebd7cc8949"
+};
 
-function logar() {
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+window.user = { n: "", c: "COMUM" };
+let imgBase64 = "";
+
+window.logar = () => {
     const n = document.getElementById('lnome').value;
     const p = document.getElementById('lpass').value;
-    if(!n) return alert("Nome vazio");
-    u = { n: n, c: (p==="1533") ? "ADM1" : "COMUM" };
-    document.getElementById('loginS').style.display = 'none';
-    document.getElementById('app').classList.add('active');
-    
-    let e = "";
-    if(u.c==="ADM1") e = '<span class="star-adm1">★ ADM SUPREMO</span>';
-    document.getElementById('status').innerHTML = `${e}<br><strong>${u.n}</strong>`;
-}
+    if(!n) return alert("Nome!");
+    window.user = { n: n, c: (p==="1533"?"ADM1":"COMUM") };
+    document.getElementById('loginS').style.display='none';
+    document.getElementById('app').style.display='block';
+    document.getElementById('meuStatus').innerHTML = `<strong>${window.user.n}</strong> (${window.user.c})`;
+};
 
-// Preview da foto da galeria
-function preview(input, id) {
-    if (input.files && input.files[0]) {
-        let reader = new FileReader();
-        reader.onload = function(e) {
-            let img = document.getElementById(id);
-            img.src = e.target.result;
-            img.style.display = "block";
-        };
-        reader.readAsDataURL(input.files[0]);
-    }
-}
-
-function postar() {
-    const d1 = document.getElementById('d1').value;
-    const d2 = document.getElementById('d2').value;
-    const img1 = document.getElementById('p1').src;
-    const img2 = document.getElementById('p2').src;
-
-    if(!d1 || !d2) return alert("Preencha as descrições!");
-
-    const feed = document.getElementById('feed');
-    const card = document.createElement('div');
-    card.className = 'card';
-
-    // Botões de comando baseados no cargo
-    let cmds = "";
-    if(u.c === "ADM1") {
-        cmds = `
-            <button class="btn-cmd" style="background:var(--red)" onclick="this.closest('.card').remove()">BANIR</button>
-            <button class="btn-cmd" style="background:var(--yellow); color:#000" onclick="alert('Virou ADM 2')">UP ADM 2</button>
-            <button class="btn-cmd" style="background:var(--blue)" onclick="alert('Virou MOD')">UP MOD</button>
-        `;
-    }
-
-    card.innerHTML = `
-        <div style="font-size:12px"><strong>${u.n}</strong> postou uma troca:</div>
-        <div class="dupla-container" style="margin-top:10px;">
-            <div class="lado"><img src="${img1}" style="display:block"><strong>TEM:</strong><br>${d1}</div>
-            <div style="align-self:center; font-weight:bold;">X</div>
-            <div class="lado"><img src="${img2}" style="display:block"><strong>QUER:</strong><br>${d2}</div>
-        </div>
-        <div>${cmds}</div>
-        <button class="btn-chat" onclick="abrirChat('${u.n}')">CHAMAR NO CHAT</button>
-    `;
-    feed.prepend(card);
-    // Limpar
-    document.getElementById('d1').value=""; document.getElementById('d2').value="";
-    document.getElementById('p1').style.display="none"; document.getElementById('p2').style.display="none";
-}
-
-function abrirChat(nome) { document.getElementById('chatNome').innerText = "Chat com " + nome; document.getElementById('chatModal').style.display = 'flex'; }
-function fecharChat() { document.getElementById('chatModal').style.display = 'none'; }
-function enviar() {
-    const i = document.getElementById('msgIn'); if(!i.value) return;
-    const m = document.createElement('div'); m.className = 'm eu'; m.innerText = i.value;
-    document.getElementById('chatMsgs').appendChild(m); i.value = "";
-}
-</script>
-
-<!-- FIREBASE CONECTADO -->
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com";
-    const firebaseConfig = {
-      apiKey: "AIzaSyDM5M1_O-wfcBDGYJIiYgiHVbqhiKC-0dw",
-      authDomain: "icek-9cdd7.firebaseapp.com",
-      projectId: "icek-9cdd7",
-      appId: "1:929781654380:web:ddda1fdf6689ebd7cc8949"
+window.lerImg = (input, id) => {
+    const reader = new FileReader();
+    reader.onload = (e) => { 
+        imgBase64 = e.target.result;
+        document.getElementById(id).src = imgBase64;
+        document.getElementById(id).style.display = "block";
     };
-    initializeApp(firebaseConfig);
+    reader.readAsDataURL(input.files[0]);
+};
+
+window.subirPost = () => {
+    const d = document.getElementById('d1').value;
+    if(!d || !imgBase64) return alert("Coloque foto e descrição!");
+    push(ref(db, 'posts'), {
+        u1: window.user.n,
+        d1: d,
+        i1: imgBase64,
+        u2: "", d2: "", i2: "" // Lado B começa vazio
+    });
+    document.getElementById('d1').value="";
+    document.getElementById('pre1').style.display="none";
+    imgBase64 = "";
+};
+
+// ATUALIZA A TIMELINE PRA TODO MUNDO
+onValue(ref(db, 'posts'), (snapshot) => {
+    const feed = document.getElementById('feed');
+    feed.innerHTML = "";
+    snapshot.forEach((child) => {
+        const p = child.val();
+        const id = child.key;
+        const card = document.createElement('div');
+        card.className = "card";
+        
+        card.innerHTML = `
+            <div style="font-size:11px">Postado por: <strong>${p.u1}</strong></div>
+            <div class="dupla">
+                <div class="lado">
+                    <img src="${p.i1}">
+                    <b>${p.u1} TEM:</b><br>${p.d1}
+                </div>
+                <div class="vs">X</div>
+                <div class="lado" id="ladoB-${id}">
+                    ${p.u2 ? `<img src="${p.i2}"><b>${p.u2} OFERECE:</b><br>${p.d2}` : 
+                    `<button class="btn" style="background:var(--green); font-size:10px" onclick="fazerTroca('${id}')">OFERECER TROCA</button>`}
+                </div>
+            </div>
+            ${window.user.c === "ADM1" ? `<button onclick="removerPost('${id}')" style="color:red; background:none; border:none; font-size:10px">REMOVER</button>` : ""}
+        `;
+        feed.prepend(card);
+    });
+});
+
+window.fazerTroca = (id) => {
+    const desc = prompt("O que você oferece em troca?");
+    if(!desc) return;
+    update(ref(db, `posts/${id}`), {
+        u2: window.user.n,
+        d2: desc,
+        i2: "https://via.placeholder.com" // Aqui poderia ser a foto do segundo
+    });
+};
+
+window.removerPost = (id) => remove(ref(db, `posts/${id}`));
+
 </script>
 </body>
 </html>
-
