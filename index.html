@@ -5,53 +5,64 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ICE - Trocas em Tempo Real</title>
     <style>
-        :root { --bg: #dff6ff; --sea: #0f3452; --gold: #ffd700; --blue: #007bff; --green: #23c79c; }
-        body { margin: 0; font-family: sans-serif; background: var(--bg); color: var(--sea); }
-        .header { padding: 15px; background: white; display: flex; justify-content: space-between; border-bottom: 1px solid #7ec8e6; position: sticky; top: 0; z-index: 100; }
-        .card { background: white; border-radius: 15px; padding: 15px; margin: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .btn { cursor: pointer; border: none; border-radius: 8px; font-weight: bold; padding: 10px; color: white; }
+        :root { --bg: #f0f2f5; --primary: #0f3452; --secondary: #23c79c; --white: #ffffff; }
+        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); color: #333; }
+        
+        /* LOGIN */
+        #loginS { position: fixed; inset: 0; background: var(--white); z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+        .login-box { width: 100%; max-width: 350px; text-align: center; }
+        
+        /* HEADER */
+        .header { padding: 15px; background: var(--primary); color: white; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        
+        /* CARDS */
+        .card { background: var(--white); border-radius: 12px; padding: 15px; margin: 15px auto; max-width: 500px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .btn { cursor: pointer; border: none; border-radius: 8px; font-weight: bold; padding: 12px; color: white; transition: 0.3s; width: 100%; }
+        .btn-post { background: var(--primary); }
+        .btn-offer { background: var(--secondary); margin-top: 10px; font-size: 12px; }
+        
+        /* TIMELINE DUPLA */
+        .dupla { display: flex; gap: 10px; margin: 15px 0; align-items: flex-start; }
+        .lado { flex: 1; background: #f8f9fa; padding: 10px; border-radius: 8px; border: 1px solid #eee; text-align: center; font-size: 13px; min-height: 180px; }
+        .lado img { width: 100%; height: 120px; object-fit: cover; border-radius: 6px; margin-bottom: 8px; background: #ddd; }
+        .vs { align-self: center; font-weight: bold; color: var(--primary); font-size: 18px; }
 
-        /* TELA DUPLA */
-        .dupla { display: flex; gap: 10px; margin: 10px 0; align-items: stretch; }
-        .lado { flex: 1; background: #f0faff; padding: 8px; border-radius: 10px; border: 1px solid #ddd; text-align: center; font-size: 12px; min-height: 150px; }
-        .lado img { width: 100%; height: 100px; object-fit: cover; border-radius: 8px; margin-bottom: 5px; background: #eee; }
-        .vs { align-self: center; font-weight: bold; color: var(--sea); }
-
-        input, textarea { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
-        #loginS { position: fixed; inset: 0; background: white; z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        input, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
     </style>
 </head>
 <body>
 
 <div id="loginS">
-    <h2>ICE LOGIN</h2>
-    <input type="text" id="lnome" placeholder="Seu Nome" style="width:80%">
-    <input type="password" id="lpass" placeholder="Senha (ADM: 1533)" style="width:80%">
-    <button class="btn" style="background:var(--sea); width:80%" onclick="logar()">ENTRAR</button>
+    <div class="login-box">
+        <h1 style="color:var(--primary)">ICE LOGIN</h1>
+        <input type="text" id="lnome" placeholder="Seu Nome de Usuário">
+        <input type="password" id="lpass" placeholder="Senha (ADM: 1533)">
+        <button class="btn btn-post" onclick="logar()">ENTRAR NO SISTEMA</button>
+    </div>
 </div>
 
 <div id="app" style="display:none">
     <header class="header">
         <div id="meuStatus"></div>
-        <button onclick="location.reload()" style="background:none; border:none; color:red">Sair</button>
+        <button onclick="location.reload()" style="background:none; border:none; color:#ff4d4d; font-weight:bold; cursor:pointer">SAIR</button>
     </header>
 
     <div class="card">
-        <h3>Postar o que eu tenho</h3>
-        <input type="file" id="f1" accept="image/*" onchange="lerImg(this, 'pre1')">
-        <img id="pre1" style="width:100%; height:100px; object-fit:contain; display:none; margin-bottom: 10px;">
-        <textarea id="d1" placeholder="Descreva o seu item..."></textarea>
-        <button class="btn" style="background:var(--sea); width:100%" onclick="subirPost()">POSTAR NA TIMELINE</button>
+        <h3 style="margin-top:0">Novo Post</h3>
+        <input type="file" id="f1" accept="image/*" onchange="lerImg(this)">
+        <img id="pre1" style="width:100%; max-height:200px; object-fit:contain; display:none; margin:10px 0; border-radius:8px">
+        <textarea id="d1" placeholder="O que você tem para trocar? (ex: Mouse Gamer)"></textarea>
+        <button class="btn btn-post" onclick="subirPost()">PUBLICAR NA TIMELINE</button>
     </div>
 
     <div id="feed"></div>
 </div>
 
 <script type="module">
-    // URLs CORRIGIDAS PARA FUNCIONAR EM QUALQUER LUGAR
     import { initializeApp } from "https://www.gstatic.com";
     import { getDatabase, ref, push, onValue, update, remove } from "https://www.gstatic.com";
 
+    // ⚠️ COLOQUE SEUS DADOS AQUI
     const firebaseConfig = {
       apiKey: "AIzaSyDM5M1_O-wfcBDGYJIiYgiHVbqhiKC-0dw",
       authDomain: "icek-9cdd7.firebaseapp.com",
@@ -62,47 +73,54 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
-
-    window.user = { n: "", c: "COMUM" };
     let imgBase64 = "";
+    window.user = { n: "", c: "COMUM" };
 
+    // FUNÇÃO DE LOGIN
     window.logar = () => {
         const n = document.getElementById('lnome').value;
         const p = document.getElementById('lpass').value;
-        if(!n) return alert("Digite seu nome!");
+        if(!n) return alert("Por favor, digite seu nome.");
+        
         window.user = { n: n, c: (p === "1533" ? "ADM1" : "COMUM") };
         document.getElementById('loginS').style.display = 'none';
         document.getElementById('app').style.display = 'block';
-        document.getElementById('meuStatus').innerHTML = `<strong>${window.user.n}</strong> (${window.user.c})`;
+        document.getElementById('meuStatus').innerHTML = `👤 <b>${n}</b> <small>(${window.user.c})</small>`;
     };
 
-    window.lerImg = (input, id) => {
-        const reader = new FileReader();
-        reader.onload = (e) => { 
-            imgBase64 = e.target.result;
-            document.getElementById(id).src = imgBase64;
-            document.getElementById(id).style.display = "block";
-        };
-        reader.readAsDataURL(input.files[0]);
+    // LER IMAGEM E CONVERTER PARA BASE64
+    window.lerImg = (input) => {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = (e) => { 
+                imgBase64 = e.target.result;
+                const pre = document.getElementById('pre1');
+                pre.src = imgBase64;
+                pre.style.display = "block";
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
     };
 
+    // ENVIAR POST PARA O FIREBASE
     window.subirPost = () => {
         const d = document.getElementById('d1').value;
-        if(!d || !imgBase64) return alert("Coloque foto e descrição!");
+        if(!d || !imgBase64) return alert("Adicione uma foto e uma descrição!");
         
         push(ref(db, 'posts'), {
             u1: window.user.n,
             d1: d,
             i1: imgBase64,
-            u2: "", d2: "", i2: "" 
+            u2: "", d2: "", i2: ""
+        }).then(() => {
+            document.getElementById('d1').value = "";
+            document.getElementById('pre1').style.display = "none";
+            imgBase64 = "";
+            alert("Postado com sucesso!");
         });
-
-        document.getElementById('d1').value = "";
-        document.getElementById('pre1').style.display = "none";
-        imgBase64 = "";
-        alert("Postado com sucesso!");
     };
 
+    // ATUALIZAR FEED AUTOMATICAMENTE
     onValue(ref(db, 'posts'), (snapshot) => {
         const feed = document.getElementById('feed');
         feed.innerHTML = "";
@@ -113,43 +131,46 @@
             card.className = "card";
             
             card.innerHTML = `
-                <div style="font-size:11px; margin-bottom: 5px;">Postado por: <strong>${p.u1}</strong></div>
+                <div style="font-size:12px; color:#666; margin-bottom:8px">Post de <b>${p.u1}</b></div>
                 <div class="dupla">
                     <div class="lado">
                         <img src="${p.i1}">
-                        <b>${p.u1} TEM:</b><br>${p.d1}
+                        <b>TEM:</b><br>${p.d1}
                     </div>
                     <div class="vs">X</div>
                     <div class="lado">
                         ${p.u2 ? `
-                            <img src="${p.i2 || 'https://via.placeholder.com'}">
+                            <img src="${p.i2}">
                             <b>${p.u2} OFERECE:</b><br>${p.d2}
                         ` : `
-                            <div style="padding-top: 40px;">
-                                <button class="btn" style="background:var(--green); font-size:10px" onclick="fazerTroca('${id}')">OFERECER TROCA</button>
+                            <div style="margin-top:40px">
+                                <span style="color:#999 italic">Aguardando troca...</span>
+                                <button class="btn btn-offer" onclick="fazerTroca('${id}')">OFERECER ITEM</button>
                             </div>
                         `}
                     </div>
                 </div>
-                ${window.user.c === "ADM1" ? `<button onclick="removerPost('${id}')" style="color:red; background:none; border:none; font-size:10px; cursor:pointer">🗑️ REMOVER POST</button>` : ""}
+                ${window.user.c === "ADM1" ? `<button onclick="removerPost('${id}')" style="color:red; background:none; border:none; cursor:pointer; font-size:11px">🗑️ EXCLUIR POST</button>` : ""}
             `;
             feed.prepend(card);
         });
     });
 
+    // OFERECER TROCA
     window.fazerTroca = (id) => {
-        const desc = prompt("O que você oferece em troca?");
+        const desc = prompt("O que você oferece em troca deste item?");
         if(!desc) return;
         
         update(ref(db, `posts/${id}`), {
             u2: window.user.n,
             d2: desc,
-            i2: "https://via.placeholder.com" // Placeholder para a segunda imagem
-        }).then(() => alert("Oferta enviada!"));
+            i2: "https://via.placeholder.com" 
+        });
     };
 
+    // REMOVER (SÓ ADM)
     window.removerPost = (id) => {
-        if(confirm("Deseja mesmo apagar?")) {
+        if(confirm("Deseja apagar este post permanentemente?")) {
             remove(ref(db, `posts/${id}`));
         }
     };
