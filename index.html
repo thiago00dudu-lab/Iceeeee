@@ -11,11 +11,12 @@
         .login-box { width: 100%; max-width: 350px; text-align: center; }
         .header { padding: 15px; background: var(--primary); color: white; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
         .card { background: var(--white); border-radius: 12px; padding: 15px; margin: 15px auto; max-width: 500px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .btn { cursor: pointer; border: none; border-radius: 8px; font-weight: bold; padding: 12px; color: white; width: 100%; }
+        .btn { cursor: pointer; border: none; border-radius: 8px; font-weight: bold; padding: 12px; color: white; width: 100%; transition: 0.3s; }
+        .btn:active { transform: scale(0.98); opacity: 0.8; }
         .btn-post { background: var(--primary); }
         .btn-offer { background: var(--secondary); margin-top: 10px; font-size: 12px; }
         .dupla { display: flex; gap: 10px; margin: 15px 0; align-items: flex-start; }
-        .lado { flex: 1; background: #f8f9fa; padding: 10px; border-radius: 8px; border: 1px solid #eee; text-align: center; font-size: 13px; min-height: 180px; }
+        .lado { flex: 1; background: #f8f9fa; padding: 10px; border-radius: 8px; border: 1px solid #eee; text-align: center; font-size: 13px; min-height: 180px; overflow: hidden; }
         .lado img { width: 100%; height: 120px; object-fit: cover; border-radius: 6px; margin-bottom: 8px; background: #ddd; }
         .vs { align-self: center; font-weight: bold; color: var(--primary); font-size: 18px; }
         input, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
@@ -39,17 +40,18 @@
     </header>
 
     <div class="card">
-        <h3 style="margin-top:0">Postar Item</h3>
+        <h3 style="margin-top:0">Postar Item para Troca</h3>
         <input type="file" id="f1" accept="image/*" onchange="lerImg(this)">
         <img id="pre1" style="width:100%; max-height:200px; object-fit:contain; display:none; margin:10px 0; border-radius:8px">
         <textarea id="d1" placeholder="O que você tem para trocar?"></textarea>
-        <button class="btn btn-post" onclick="subirPost()">PUBLICAR</button>
+        <button class="btn btn-post" id="btnSubir" onclick="subirPost()">PUBLICAR NO FEED</button>
     </div>
 
     <div id="feed"></div>
 </div>
 
 <script type="module">
+    // IMPORTAÇÕES CORRIGIDAS (Versão 10 do Firebase)
     import { initializeApp } from "https://www.gstatic.com";
     import { getDatabase, ref, push, onValue, update, remove } from "https://www.gstatic.com";
 
@@ -64,9 +66,9 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
     let imgBase64 = "";
+
     window.user = { n: "", c: "COMUM" };
 
-    // Login funcionando
     window.logar = () => {
         const n = document.getElementById('lnome').value;
         const p = document.getElementById('lpass').value;
@@ -74,17 +76,28 @@
         window.user = { n: n, c: (p === "1533" ? "ADM1" : "COMUM") };
         document.getElementById('loginS').style.display = 'none';
         document.getElementById('app').style.display = 'block';
-        document.getElementById('meuStatus').innerHTML = `👤 <b>${n}</b>`;
+        document.getElementById('meuStatus').innerHTML = `👤 <b>${n}</b> ${window.user.c === 'ADM1' ? '(ADM)' : ''}`;
     };
 
-    // Imagem funcionando
+    // REDUTOR DE IMAGEM PARA NÃO TRAVAR O BANCO
     window.lerImg = (input) => {
         if (input.files && input.files[0]) {
             const reader = new FileReader();
             reader.onload = (e) => { 
-                imgBase64 = e.target.result;
-                document.getElementById('pre1').src = imgBase64;
-                document.getElementById('pre1').style.display = "block";
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    // Reduzindo para no máximo 500px de largura mantendo a proporção
+                    const scale = 500 / img.width;
+                    canvas.width = 500;
+                    canvas.height = img.height * scale;
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    imgBase64 = canvas.toDataURL('image/jpeg', 0.6); // Qualidade 60%
+                    document.getElementById('pre1').src = imgBase64;
+                    document.getElementById('pre1').style.display = "block";
+                };
+                img.src = e.target.result;
             };
             reader.readAsDataURL(input.files[0]);
         }
@@ -92,11 +105,27 @@
 
     window.subirPost = () => {
         const d = document.getElementById('d1').value;
-        if(!d || !imgBase64) return alert("Falta foto ou descrição!");
-        push(ref(db, 'posts'), { u1: window.user.n, d1: d, i1: imgBase64, u2: "", d2: "", i2: "" });
-        document.getElementById('d1').value = "";
-        document.getElementById('pre1').style.display = "none";
-        imgBase64 = "";
+        if(!d || !imgBase64) return alert("Adicione uma foto e uma descrição!");
+        
+        const btn = document.getElementById('btnSubir');
+        btn.disabled = true;
+        btn.innerText = "ENVIANDO...";
+
+        push(ref(db, 'posts'), { 
+            u1: window.user.n, 
+            d1: d, 
+            i1: imgBase64, 
+            u2: "", 
+            d2: "", 
+            i2: "" 
+        }).then(() => {
+            document.getElementById('d1').value = "";
+            document.getElementById('pre1').style.display = "none";
+            document.getElementById('f1').value = "";
+            imgBase64 = "";
+            btn.disabled = false;
+            btn.innerText = "PUBLICAR NO FEED";
+        });
     };
 
     onValue(ref(db, 'posts'), (snap) => {
@@ -109,25 +138,39 @@
             card.className = "card";
             card.innerHTML = `
                 <div class="dupla">
-                    <div class="lado"><img src="${p.i1}"><b>${p.u1} TEM:</b><br>${p.d1}</div>
+                    <div class="lado">
+                        <img src="${p.i1}">
+                        <b>${p.u1} TEM:</b><br>${p.d1}
+                    </div>
                     <div class="vs">X</div>
                     <div class="lado">
-                        ${p.u2 ? `<img src="${p.i2}"><b>${p.u2} OFERECE:</b><br>${p.d2}` : 
-                        `<div style="margin-top:40px"><button class="btn btn-offer" onclick="fazerTroca('${id}')">OFERECER</button></div>`}
+                        ${p.u2 ? 
+                            `<img src="${p.i2}"><b>${p.u2} OFERECE:</b><br>${p.d2}` : 
+                            `<div style="margin-top:40px">
+                                <p style="color:#888; font-size:11px">Aguardando oferta...</p>
+                                <button class="btn btn-offer" onclick="fazerTroca('${id}')">OFERECER TROCA</button>
+                             </div>`
+                        }
                     </div>
                 </div>
-                ${window.user.c === "ADM1" ? `<button onclick="removerPost('${id}')" style="color:red; background:none; border:none; cursor:pointer; font-size:11px">🗑️ APAGAR</button>` : ""}
+                ${window.user.c === "ADM1" ? `<button onclick="removerPost('${id}')" style="color:red; background:none; border:none; cursor:pointer; font-size:11px; width:100%; text-align:right">🗑️ APAGAR POST</button>` : ""}
             `;
             feed.prepend(card);
         });
     });
 
     window.fazerTroca = (id) => {
-        const o = prompt("O que oferece?");
-        if(o) update(ref(db, `posts/${id}`), { u2: window.user.n, d2: o, i2: "https://via.placeholder.com" });
+        const o = prompt("O que você oferece em troca deste item?");
+        if(o) {
+            update(ref(db, `posts/${id}`), { 
+                u2: window.user.n, 
+                d2: o, 
+                i2: "https://via.placeholder.com" // Imagem padrão para a oferta
+            });
+        }
     };
 
-    window.removerPost = (id) => confirm("Apagar?") && remove(ref(db, `posts/${id}`));
+    window.removerPost = (id) => confirm("Apagar permanentemente?") && remove(ref(db, `posts/${id}`));
 </script>
 </body>
 </html>
