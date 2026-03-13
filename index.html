@@ -15,8 +15,8 @@
         header { padding: 15px 20px; background: linear-gradient(135deg, var(--sea), #1a5276); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
         .wrap { max-width: 500px; margin: auto; padding: 15px; }
         .card-timeline { background: var(--white); border-radius: 20px; overflow: hidden; margin-bottom: 25px; box-shadow: 0 8px 20px rgba(15, 52, 82, 0.15); }
-        .card-timeline img { width: 100%; height: 350px; object-fit: cover; }
-        .card-info { padding: 18px; }
+        .card-timeline img { width: 100%; height: 350px; object-fit: cover; cursor: pointer; }
+        .card-info { padding: 18px; cursor: pointer; }
         .actions { display: flex; padding: 12px 18px; gap: 15px; border-top: 1px solid #eee; background: #fafafa; justify-content: space-around; }
         .btn-action { background: none; border: none; color: var(--sea); font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 13px; }
         .capa { height: 160px; background: linear-gradient(to bottom, var(--blue), var(--sea)); position: relative; }
@@ -37,8 +37,7 @@
 <div id="loginS" style="position:fixed; inset:0; background:var(--sea); z-index:5000; display:flex; align-items:center; justify-content:center;">
     <div style="background:white; padding:40px 30px; border-radius:30px; width:85%; text-align:center;">
         <h2 style="color:var(--sea);">🧊 ICE LOGIN</h2>
-        <input type="text" id="inome" placeholder="Usuário" style="width:100%; padding:15px; margin-bottom:15px; border-radius:12px; border:1px solid #ddd;">
-        <input type="password" id="ipass" placeholder="Senha" style="width:100%; padding:15px; margin-bottom:25px; border-radius:12px; border:1px solid #ddd;">
+        <input type="text" id="inome" placeholder="Seu Usuário" style="width:100%; padding:15px; margin-bottom:15px; border-radius:12px; border:1px solid #ddd;">
         <button onclick="logar()" style="background:var(--blue); color:white; width:100%; padding:16px; border:none; border-radius:12px; font-weight:bold;">ENTRAR</button>
     </div>
 </div>
@@ -46,7 +45,6 @@
 <div id="app" style="display:none">
     <header>
         <div style="font-weight:900; font-size:22px;">ICE TROCAS</div>
-        <button onclick="location.reload()" style="color:white; background:none; border:1px solid #fff; border-radius:20px; padding:4px 10px;">Sair</button>
     </header>
     <div class="wrap"><div id="feed"></div></div>
     <div class="nav">
@@ -56,23 +54,22 @@
 </div>
 
 <div id="telaPerfil" style="display:none; position:fixed; inset:0; background:var(--bg); z-index:2000; overflow-y:auto;">
-    <div class="capa" id="pCapa"><button onclick="fecharTelas()" style="margin:15px; border:none; background:rgba(0,0,0,0.4); color:white; border-radius:50%; width:40px; height:40px;"><i class="fas fa-arrow-left"></i></button></div>
-    <div class="avatar" id="pAvatar"></div>
+    <div class="capa"><button onclick="fecharTelas()" style="margin:15px; border:none; background:rgba(0,0,0,0.4); color:white; border-radius:50%; width:40px; height:40px;"><i class="fas fa-arrow-left"></i></button></div>
+    <div class="avatar"></div>
     <div class="bio-area">
         <h2 id="perfNome" style="color:var(--sea);"></h2>
-        <div class="finance-btns" id="btnsFinance">
+        <div class="finance-btns">
             <button class="btn-fin deposito" onclick="abrirFin()"><i class="fas fa-wallet"></i> DEPÓSITO</button>
-            <button class="btn-fin saque"><i class="fas fa-hand-holding-usd"></i> SAQUE</button>
         </div>
-        <div id="perfilPosts"></div>
+        <div id="perfilPosts" style="padding-bottom:100px;"></div>
     </div>
 </div>
 
 <div id="modalFin">
     <div style="background:white; padding:30px; border-radius:25px; width:85%; max-width:400px; text-align:center;">
-        <h3>💰 Realizar Depósito</h3>
-        <input type="number" id="finValor" class="pix-input" placeholder="R$ 0,00">
-        <button id="btnFinAction" onclick="executarPix()" style="background:var(--sea); color:white; width:100%; padding:15px; border:none; border-radius:12px; font-weight:bold;">GERAR PIX AGORA</button>
+        <h3>💰 Depósito via Pix</h3>
+        <input type="number" id="finValor" class="pix-input" placeholder="R$ 10,00">
+        <button id="btnFinAction" onclick="executarPix()" style="background:var(--sea); color:white; width:100%; padding:15px; border:none; border-radius:12px; font-weight:bold;">GERAR PIX</button>
         <button onclick="document.getElementById('modalFin').style.display='none'" style="margin-top:15px; background:none; border:none; color:red;">CANCELAR</button>
     </div>
 </div>
@@ -81,49 +78,37 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-    const firebaseConfig = { apiKey: "AIzaSyDM5M1_O-wfcBDGYJIiYgiHVbqhiKC-0dw", databaseURL: "https://icek-9cdd7-default-rtdb.firebaseio.com", projectId: "icek-9cdd7" };
+    const firebaseConfig = { apiKey: "SUA_API_KEY", databaseURL: "https://icek-9cdd7-default-rtdb.firebaseio.com", projectId: "icek-9cdd7" };
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
     window.user = {};
 
-    // Função ajustada para puxar o Pix do servidor Vercel
+    // --- CORREÇÃO DO PIX: AGORA COPIA O CÓDIGO CERTO ---
     window.executarPix = async () => {
         const valor = document.getElementById('finValor').value;
-        const usuario = window.user.nome || "Usuario";
-
-        if (!valor || valor < 1) return alert("Erro no Pix (Min R$ 1,00)");
+        const btn = document.getElementById('btnFinAction');
+        btn.innerText = "GERANDO...";
 
         try {
             const res = await fetch('/api/Pix', { 
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ valor: valor, usuario: usuario })
+                body: JSON.stringify({ valor: valor, usuario: window.user.nome })
             });
-
             const data = await res.json();
             
-            if (data.point_of_interaction && data.point_of_interaction.transaction_data) {
-                const copiaCola = data.point_of_interaction.transaction_data.qr_code;
-                window.prompt("🧊 PIX GERADO! Copie o código abaixo:", copiaCola);
+            // O segredo está aqui: pegamos o qr_code que o banco entende (começa com 000201)
+            const copiaCola = data.qr_code || data.point_of_interaction?.transaction_data?.qr_code;
+            
+            if (copiaCola) {
+                await navigator.clipboard.writeText(copiaCola);
+                alert("🧊 PIX COPIADO!\n\nAgora abra seu banco, vá em PIX COPIA E COLA e clique em colar.");
                 document.getElementById('modalFin').style.display = 'none';
-            } else { 
-                alert("Erro ao gerar Pix. Verifique o Access Token."); 
+            } else {
+                alert("Erro: Verifique o Token na Vercel.");
             }
-        } catch (e) { 
-            alert("Erro de conexão. Verifique se o arquivo api/Pix.js existe no GitHub."); 
-        }
-    };
-
-    window.compartilharApp = () => {
-        if (navigator.share) {
-            navigator.share({ 
-                title: 'ICE TROCAS', 
-                text: 'Confira essa troca no ICE!', 
-                url: window.location.href 
-            }).catch(() => console.log('Cancelado'));
-        } else {
-            window.prompt("Copie o link:", window.location.href);
-        }
+        } catch (e) { alert("Erro de conexão."); }
+        btn.innerText = "GERAR PIX";
     };
 
     window.logar = () => {
@@ -134,6 +119,7 @@
         document.getElementById('app').style.display = 'block';
     };
 
+    // --- CORREÇÃO DO PERFIL: CLICAR NA FOTO OU NO NOME ---
     onValue(ref(db, 'posts'), (snap) => {
         const f = document.getElementById('feed'); f.innerHTML = "";
         snap.forEach(c => {
@@ -141,13 +127,13 @@
             const div = document.createElement('div');
             div.className = "card-timeline";
             div.innerHTML = `
-                <img src="${p.i1}">
-                <div class="card-info"><b>${p.u1}</b></div>
+                <img src="${p.i1}" onclick="abrirPerfil('${p.u1}')">
+                <div class="card-info" onclick="abrirPerfil('${p.u1}')">
+                    <b style="color:var(--sea);"><i class="fas fa-user-circle"></i> ${p.u1}</b>
+                </div>
                 <div class="actions">
                     <button class="btn-action"><i class="fas fa-comment"></i> CHAT</button>
-                    <button class="btn-action" onclick="compartilharApp()">
-                        <i class="fas fa-share-alt"></i> COMPARTILHAR
-                    </button>
+                    <button class="btn-action"><i class="fas fa-share-alt"></i> TROCAR</button>
                 </div>`;
             f.prepend(div);
         });
