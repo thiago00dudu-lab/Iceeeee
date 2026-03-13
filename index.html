@@ -7,115 +7,180 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <style>
         :root { 
-            --bg: #e3effd; --sea: #0f3452; --blue: #1877f2; --gold: #FFD700; 
-            --light-yellow: #FFFF80; --mod-blue: #00BFFF; --white: #fff; 
-            --red: #ff4d4d; --green: #28a745;
+            --bg: #e3effd; 
+            --sea: #0f3452; 
+            --blue: #1877f2; 
+            --gold: #FFD700; 
+            --light-yellow: #FFFF80; 
+            --mod-blue: #00BFFF; 
+            --white: #fff; 
+            --red: #ff4d4d;
+            --green: #25d366;
         }
-        body { margin:0; font-family: 'Segoe UI', sans-serif; background: var(--bg); padding-bottom: 90px; }
-        header { padding: 15px 20px; background: linear-gradient(135deg, var(--sea), #1a5276); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        
+        body { margin:0; font-family: 'Segoe UI', sans-serif; background: var(--bg); padding-bottom: 90px; overflow-x: hidden; }
+        
+        header { 
+            padding: 15px 20px; 
+            background: linear-gradient(135deg, var(--sea), #1a5276); 
+            display: flex; justify-content: space-between; align-items: center; 
+            position: sticky; top: 0; z-index: 100; color: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
         .wrap { max-width: 500px; margin: auto; padding: 15px; }
-        .card-timeline { background: var(--white); border-radius: 20px; overflow: hidden; margin-bottom: 25px; box-shadow: 0 8px 20px rgba(15, 52, 82, 0.15); cursor: pointer; }
-        .card-timeline img { width: 100%; height: 350px; object-fit: cover; }
+
+        /* Estilo dos Cards */
+        .card-timeline { 
+            background: var(--white); border-radius: 20px; overflow: hidden; 
+            margin-bottom: 25px; box-shadow: 0 8px 20px rgba(15, 52, 82, 0.15); 
+        }
+        .card-timeline img { width: 100%; height: 300px; object-fit: cover; }
         .card-info { padding: 18px; }
-        .capa { height: 160px; background: linear-gradient(to bottom, var(--blue), var(--sea)); position: relative; }
-        .avatar { width: 100px; height: 100px; border-radius: 50%; border: 5px solid var(--white); position: absolute; bottom: -50px; left: 20px; background: #eee no-repeat center/cover; }
-        .bio-area { margin-top: 60px; padding: 0 20px; }
-        .nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--sea); display: flex; gap: 50px; padding: 14px 40px; border-radius: 50px; z-index: 3000; }
-        .nav i { color: white; font-size: 24px; cursor: pointer; }
+        .card-info b { font-size: 16px; color: var(--sea); display: block; margin-bottom: 5px; }
+        
+        .actions { 
+            display: flex; padding: 12px 18px; gap: 15px; 
+            border-top: 1px solid #eee; background: #fafafa;
+        }
+        .btn-action { 
+            background: none; border: none; color: var(--sea); 
+            font-weight: bold; cursor: pointer; display: flex; 
+            align-items: center; gap: 6px; font-size: 13px;
+        }
+
+        /* Perfil e Telas */
+        .capa { height: 140px; background: linear-gradient(to bottom, var(--blue), var(--sea)); position: relative; }
+        .avatar { 
+            width: 90px; height: 90px; border-radius: 50%; 
+            border: 4px solid var(--white); position: absolute; 
+            bottom: -45px; left: 20px; background: #ddd center/cover;
+        }
+        .bio-area { margin-top: 55px; padding: 0 20px; color: var(--sea); }
+
+        /* Navegação */
+        .nav { 
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); 
+            background: var(--sea); display: flex; gap: 40px; padding: 12px 35px; 
+            border-radius: 50px; z-index: 3000; box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+        .nav i { color: white; font-size: 22px; cursor: pointer; }
+
+        /* Telas Ocultas */
+        .full-screen { 
+            display: none; position: fixed; inset: 0; 
+            background: var(--bg); z-index: 2000; overflow-y: auto; 
+        }
+
+        /* Chat */
+        .chat-header { background: var(--sea); color: white; padding: 15px; display: flex; align-items: center; gap: 10px; }
+        #msgs { padding: 15px; display: flex; flex-direction: column; gap: 10px; height: 70vh; overflow-y: auto; }
+        .msg { padding: 10px 15px; border-radius: 15px; max-width: 80%; font-size: 14px; }
+        .msg.me { background: var(--blue); color: white; align-self: flex-end; }
+        .msg.him { background: white; color: #333; align-self: flex-start; }
+
+        .pix-badge { background: var(--green); color: white; padding: 2px 8px; border-radius: 5px; font-size: 12px; }
     </style>
 </head>
 <body>
 
-<div id="loginS" style="position:fixed; inset:0; background:var(--sea); z-index:5000; display:flex; align-items:center; justify-content:center;">
-    <div style="background:white; padding:40px 30px; border-radius:30px; width:85%; text-align:center;">
-        <h2 style="color:var(--sea);">🧊 ICE LOGIN</h2>
-        <input type="text" id="inome" placeholder="Usuário" style="width:100%; padding:15px; margin-bottom:15px; border-radius:12px; border:1px solid #ddd;">
-        <input type="password" id="ipass" placeholder="Senha" style="width:100%; padding:15px; margin-bottom:25px; border-radius:12px; border:1px solid #ddd;">
-        <button onclick="logar()" style="background:var(--blue); color:white; width:100%; padding:16px; border:none; border-radius:12px; font-weight:bold;">ENTRAR</button>
+<header>
+    <div style="font-weight: 800; font-size: 20px;">ICE TROCAS</div>
+    <i class="fa-solid fa-bell"></i>
+</header>
+
+<div id="telaFeed" class="wrap">
+    <div class="card-timeline">
+        <img src="https://images.unsplash.com/photo-1550009158-9ebf69173e03?w=500" alt="Produto">
+        <div class="card-info">
+            <b>iPhone 13 Pro - Perfeito Estado</b>
+            <p style="font-size: 13px; color: #666;">Troco por MacBook ou algo do meu interesse.</p>
+            <span class="pix-badge"><i class="fa-brands fa-pix"></i> Aceito Volta em Pix</span>
+        </div>
+        <div class="actions">
+            <button class="btn-action" onclick="abrirChat('João Celulares')"><i class="fa-regular fa-comment"></i> Negociar</button>
+            <button class="btn-action"><i class="fa-regular fa-heart"></i> Curtir</button>
+        </div>
     </div>
 </div>
 
-<div id="app" style="display:none">
-    <header>
-        <div style="font-weight:900; font-size:22px;">ICE TROCAS</div>
-        <button onclick="location.reload()" style="color:white; background:none; border:1px solid #fff; border-radius:20px; padding:4px 10px;">Sair</button>
-    </header>
-    <div class="wrap"><div id="feed"></div></div>
-    <div class="nav">
-        <i class="fas fa-home" onclick="fecharPerfil()"></i>
-        <i class="fas fa-user-circle" onclick="abrirPerfil(window.user.nome)"></i>
+<div id="telaPerfil" class="full-screen">
+    <div class="capa">
+        <div class="avatar" style="background-image: url('https://i.pravatar.cc/150?u=me');"></div>
     </div>
-</div>
-
-<div id="telaPerfil" style="display:none; position:fixed; inset:0; background:var(--bg); z-index:2000; overflow-y:auto;">
-    <div class="capa"><button onclick="fecharPerfil()" style="margin:15px; border:none; background:rgba(0,0,0,0.4); color:white; border-radius:50%; width:40px; height:40px;"><i class="fas fa-arrow-left"></i></button></div>
-    <div class="avatar"></div>
     <div class="bio-area">
-        <h2 id="perfNome" style="color:var(--sea);"></h2>
-        <p style="color: #666;">Interessado em trocas 🧊</p>
-        <div id="perfilPosts"></div>
+        <h2>Seu Nome</h2>
+        <p>Entusiasta de tecnologia e trocas inteligentes. 📍 São Paulo</p>
+        <hr>
+        <h3>Meus Anúncios</h3>
+        <p style="color: #888; text-align: center;">Você ainda não postou nada.</p>
+    </div>
+    <button onclick="fecharTelas()" style="margin: 20px; padding: 10px; width: calc(100% - 40px); border-radius: 10px; border: none; background: var(--sea); color: white;">Voltar ao Feed</button>
+</div>
+
+<div id="telaChat" class="full-screen" style="background: #e5ddd5;">
+    <div class="chat-header">
+        <i class="fa-solid fa-arrow-left" onclick="fecharTelas()"></i>
+        <b id="chatNome">Nome do Usuário</b>
+    </div>
+    <div id="msgs">
+        <div class="msg him">Olá! Tenho interesse no seu produto.</div>
+        <div class="msg me">Opa, aceita troca ou só venda?</div>
+    </div>
+    <div style="padding: 10px; background: white; display: flex; gap: 10px; position: fixed; bottom: 0; width: 100%; box-sizing: border-box;">
+        <input type="text" id="inputMsg" placeholder="Digite sua proposta..." style="flex:1; border: 1px solid #ddd; padding: 10px; border-radius: 20px;">
+        <button onclick="enviarMsg()" style="background: var(--blue); color: white; border: none; width: 45px; height: 45px; border-radius: 50%;"><i class="fa-solid fa-paper-plane"></i></button>
     </div>
 </div>
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+<div class="nav">
+    <i class="fa-solid fa-house" onclick="fecharTelas()"></i>
+    <i class="fa-solid fa-circle-plus" onclick="alert('Função de postar em breve!')"></i>
+    <i class="fa-solid fa-message" onclick="abrirChat('Conversas')"></i>
+    <i class="fa-solid fa-user" onclick="abrirTela('telaPerfil')"></i>
+</div>
 
-    const firebaseConfig = { 
-        apiKey: "AIzaSyDM5M1_O-wfcBDGYJIiYgiHVbqhiKC-0dw", 
-        databaseURL: "https://icek-9cdd7-default-rtdb.firebaseio.com", 
-        projectId: "icek-9cdd7" 
-    };
-    
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-    window.user = { nome: "" };
+<script>
+    // Função para navegar entre as telas
+    function abrirTela(id) {
+        // Esconde todas as telas full-screen
+        document.querySelectorAll('.full-screen').forEach(tela => {
+            tela.style.display = 'none';
+        });
+        // Mostra a tela desejada
+        document.getElementById(id).style.display = 'block';
+        if(id === 'telaChat') document.getElementById(id).style.display = 'flex';
+    }
 
-    // FUNÇÃO LOGIN CORRIGIDA: Agora ela libera o App
-    window.logar = () => {
-        const n = document.getElementById('inome').value.trim();
-        if(!n) { alert("Digite o usuário!"); return; }
-        
-        window.user.nome = n;
-        document.getElementById('loginS').style.display = 'none';
-        document.getElementById('app').style.display = 'block';
-        
-        carregarFeed(); // Inicia o carregamento após logar
-    };
-
-    // FUNÇÃO FEED: Clicar na publicação abre o perfil
-    function carregarFeed() {
-        onValue(ref(db, 'posts'), (snap) => {
-            const f = document.getElementById('feed');
-            f.innerHTML = "";
-            snap.forEach(c => {
-                const p = c.val();
-                const div = document.createElement('div');
-                div.className = "card-timeline";
-                
-                // TRAVA DE CLIQUE: Qualquer toque no card abre o perfil de p.u1
-                div.onclick = () => abrirPerfil(p.u1);
-
-                div.innerHTML = `
-                    <div class="card-info">
-                        <b style="color:var(--sea);"><i class="fas fa-user-circle"></i> ${p.u1}</b>
-                    </div>
-                    <img src="${p.i1}">
-                `;
-                f.prepend(div);
-            });
+    function fecharTelas() {
+        document.querySelectorAll('.full-screen').forEach(tela => {
+            tela.style.display = 'none';
         });
     }
 
-    window.abrirPerfil = (nome) => {
-        document.getElementById('perfNome').innerText = nome;
-        document.getElementById('telaPerfil').style.display = 'block';
-        window.scrollTo(0,0);
-    };
+    function abrirChat(nome) {
+        document.getElementById('chatNome').innerText = nome;
+        abrirTela('telaChat');
+    }
 
-    window.fecharPerfil = () => {
-        document.getElementById('telaPerfil').style.display = 'none';
-    };
+    function enviarMsg() {
+        const input = document.getElementById('inputMsg');
+        const msgTexto = input.value;
+        if(msgTexto.trim() !== "") {
+            const container = document.getElementById('msgs');
+            const div = document.createElement('div');
+            div.className = "msg me";
+            div.innerText = msgTexto;
+            container.appendChild(div);
+            input.value = "";
+            container.scrollTop = container.scrollHeight;
+        }
+    }
+
+    // Simulação de carregar posts
+    console.log("Sistema Ice Trocas carregado com sucesso.");
 </script>
+
 </body>
 </html>
+
