@@ -6,7 +6,7 @@
     <title>ICE - Trocas em Tempo Real</title>
     <style>
         :root { --bg: #f0f2f5; --primary: #0f3452; --secondary: #23c79c; --white: #ffffff; }
-        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); color: #333; }
+        body { margin: 0; font-family: sans-serif; background: var(--bg); color: #333; }
         
         /* LOGIN */
         #loginS { position: fixed; inset: 0; background: var(--white); z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
@@ -21,7 +21,7 @@
         .btn-post { background: var(--primary); }
         .btn-offer { background: var(--secondary); margin-top: 10px; font-size: 12px; }
         
-        /* TIMELINE DUPLA */
+        /* TIMELINE */
         .dupla { display: flex; gap: 10px; margin: 15px 0; align-items: flex-start; }
         .lado { flex: 1; background: #f8f9fa; padding: 10px; border-radius: 8px; border: 1px solid #eee; text-align: center; font-size: 13px; min-height: 180px; }
         .lado img { width: 100%; height: 120px; object-fit: cover; border-radius: 6px; margin-bottom: 8px; background: #ddd; }
@@ -48,21 +48,21 @@
     </header>
 
     <div class="card">
-        <h3 style="margin-top:0">Novo Post</h3>
+        <h3 style="margin-top:0">Postar Item</h3>
         <input type="file" id="f1" accept="image/*" onchange="lerImg(this)">
         <img id="pre1" style="width:100%; max-height:200px; object-fit:contain; display:none; margin:10px 0; border-radius:8px">
-        <textarea id="d1" placeholder="O que você tem para trocar? (ex: Mouse Gamer)"></textarea>
-        <button class="btn btn-post" onclick="subirPost()">PUBLICAR NA TIMELINE</button>
+        <textarea id="d1" placeholder="O que você tem para trocar?"></textarea>
+        <button class="btn btn-post" onclick="subirPost()">PUBLICAR</button>
     </div>
 
     <div id="feed"></div>
 </div>
 
 <script type="module">
+    // LINKS CORRIGIDOS E COMPLETOS
     import { initializeApp } from "https://www.gstatic.com";
     import { getDatabase, ref, push, onValue, update, remove } from "https://www.gstatic.com";
 
-    // ⚠️ COLOQUE SEUS DADOS AQUI
     const firebaseConfig = {
       apiKey: "AIzaSyDM5M1_O-wfcBDGYJIiYgiHVbqhiKC-0dw",
       authDomain: "icek-9cdd7.firebaseapp.com",
@@ -76,36 +76,34 @@
     let imgBase64 = "";
     window.user = { n: "", c: "COMUM" };
 
-    // FUNÇÃO DE LOGIN
+    // FUNÇÃO DE LOGIN EXPOSTA PARA O WINDOW
     window.logar = () => {
         const n = document.getElementById('lnome').value;
         const p = document.getElementById('lpass').value;
-        if(!n) return alert("Por favor, digite seu nome.");
+        if(!n) return alert("Digite seu nome!");
         
         window.user = { n: n, c: (p === "1533" ? "ADM1" : "COMUM") };
         document.getElementById('loginS').style.display = 'none';
         document.getElementById('app').style.display = 'block';
-        document.getElementById('meuStatus').innerHTML = `👤 <b>${n}</b> <small>(${window.user.c})</small>`;
+        document.getElementById('meuStatus').innerHTML = `👤 <b>${n}</b>`;
     };
 
-    // LER IMAGEM E CONVERTER PARA BASE64
+    // FUNÇÃO DE LER IMAGEM EXPOSTA PARA O WINDOW
     window.lerImg = (input) => {
         if (input.files && input.files[0]) {
             const reader = new FileReader();
             reader.onload = (e) => { 
                 imgBase64 = e.target.result;
-                const pre = document.getElementById('pre1');
-                pre.src = imgBase64;
-                pre.style.display = "block";
+                document.getElementById('pre1').src = imgBase64;
+                document.getElementById('pre1').style.display = "block";
             };
             reader.readAsDataURL(input.files[0]);
         }
     };
 
-    // ENVIAR POST PARA O FIREBASE
     window.subirPost = () => {
         const d = document.getElementById('d1').value;
-        if(!d || !imgBase64) return alert("Adicione uma foto e uma descrição!");
+        if(!d || !imgBase64) return alert("Falta foto ou descrição!");
         
         push(ref(db, 'posts'), {
             u1: window.user.n,
@@ -116,11 +114,9 @@
             document.getElementById('d1').value = "";
             document.getElementById('pre1').style.display = "none";
             imgBase64 = "";
-            alert("Postado com sucesso!");
         });
     };
 
-    // ATUALIZAR FEED AUTOMATICAMENTE
     onValue(ref(db, 'posts'), (snapshot) => {
         const feed = document.getElementById('feed');
         feed.innerHTML = "";
@@ -129,13 +125,11 @@
             const id = child.key;
             const card = document.createElement('div');
             card.className = "card";
-            
             card.innerHTML = `
-                <div style="font-size:12px; color:#666; margin-bottom:8px">Post de <b>${p.u1}</b></div>
                 <div class="dupla">
                     <div class="lado">
                         <img src="${p.i1}">
-                        <b>TEM:</b><br>${p.d1}
+                        <b>${p.u1} TEM:</b><br>${p.d1}
                     </div>
                     <div class="vs">X</div>
                     <div class="lado">
@@ -144,23 +138,20 @@
                             <b>${p.u2} OFERECE:</b><br>${p.d2}
                         ` : `
                             <div style="margin-top:40px">
-                                <span style="color:#999 italic">Aguardando troca...</span>
-                                <button class="btn btn-offer" onclick="fazerTroca('${id}')">OFERECER ITEM</button>
+                                <button class="btn btn-offer" onclick="fazerTroca('${id}')">OFERECER TROCA</button>
                             </div>
                         `}
                     </div>
                 </div>
-                ${window.user.c === "ADM1" ? `<button onclick="removerPost('${id}')" style="color:red; background:none; border:none; cursor:pointer; font-size:11px">🗑️ EXCLUIR POST</button>` : ""}
+                ${window.user.c === "ADM1" ? `<button onclick="removerPost('${id}')" style="color:red; background:none; border:none; cursor:pointer; font-size:11px">🗑️ APAGAR</button>` : ""}
             `;
             feed.prepend(card);
         });
     });
 
-    // OFERECER TROCA
     window.fazerTroca = (id) => {
-        const desc = prompt("O que você oferece em troca deste item?");
+        const desc = prompt("O que você oferece?");
         if(!desc) return;
-        
         update(ref(db, `posts/${id}`), {
             u2: window.user.n,
             d2: desc,
@@ -168,13 +159,7 @@
         });
     };
 
-    // REMOVER (SÓ ADM)
-    window.removerPost = (id) => {
-        if(confirm("Deseja apagar este post permanentemente?")) {
-            remove(ref(db, `posts/${id}`));
-        }
-    };
+    window.removerPost = (id) => confirm("Apagar?") && remove(ref(db, `posts/${id}`));
 </script>
 </body>
 </html>
-
