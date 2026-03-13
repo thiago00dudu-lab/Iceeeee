@@ -20,7 +20,6 @@
         
         body { margin:0; font-family: 'Segoe UI', sans-serif; background: var(--bg); padding-bottom: 90px; }
         
-        /* HEADER ESTILO URSO */
         header { 
             padding: 15px 20px; 
             background: linear-gradient(135deg, var(--sea), #1a5276); 
@@ -31,13 +30,11 @@
 
         .wrap { max-width: 500px; margin: auto; padding: 15px; }
 
-        /* ESTRELAS ÚNICAS */
         .badge { font-size: 11px; font-weight: 900; display: flex; align-items: center; gap: 4px; margin-top: 4px; text-transform: uppercase; }
         .star-gold { color: var(--gold); }
         .star-yellow { color: var(--light-yellow); }
         .star-blue { color: var(--mod-blue); }
 
-        /* CARD DA TIMELINE BONITO */
         .card-timeline { 
             background: var(--white); border-radius: 20px; overflow: hidden; 
             margin-bottom: 25px; box-shadow: 0 8px 20px rgba(15, 52, 82, 0.15); 
@@ -47,7 +44,6 @@
         .card-info { padding: 18px; position: relative; }
         .card-info b { font-size: 16px; color: var(--sea); }
         
-        /* BOTÕES DE AÇÃO */
         .actions { 
             display: flex; padding: 12px 18px; gap: 15px; 
             border-top: 1px solid #eee; background: #fafafa;
@@ -58,7 +54,6 @@
             align-items: center; gap: 6px; font-size: 13px;
         }
 
-        /* PERFIL ESTILO PREMIUM */
         .capa { height: 160px; background: linear-gradient(to bottom, var(--blue), var(--sea)); position: relative; background-size: cover; }
         .avatar { 
             width: 100px; height: 100px; border-radius: 50%; 
@@ -68,7 +63,6 @@
         }
         .bio-area { margin-top: 60px; padding: 0 20px; }
 
-        /* SISTEMA VS (DUPLO) */
         .dupla-box { 
             display: flex; gap: 12px; margin-top: 20px; position: relative; 
             background: var(--white); padding: 12px; border-radius: 18px; 
@@ -84,7 +78,6 @@
             border: 3px solid var(--white); z-index: 10;
         }
 
-        /* MENU RODAPÉ FLUTUANTE */
         .nav { 
             position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); 
             background: var(--sea); display: flex; gap: 50px; padding: 14px 40px; 
@@ -93,19 +86,23 @@
         .nav i { color: white; font-size: 24px; cursor: pointer; transition: 0.3s; }
         .nav i:hover { color: var(--ice); transform: scale(1.1); }
 
-        /* TELAS E MODAIS */
         #telaPerfil, #telaChat, #modalOferta, #telaEdit { 
             display: none; position: fixed; inset: 0; 
             background: var(--bg); z-index: 2000; overflow-y: auto; 
         }
         #modalOferta { background: rgba(15, 52, 82, 0.9); align-items: center; justify-content: center; padding: 20px; }
         
-        /* CHAT ESTILO WHATSAPP */
         #telaChat { flex-direction: column; background: #e5ddd5; }
         #msgs { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 8px; }
         
         .master-panel { background: #fff3cd; border: 2px dashed #ffa500; padding: 15px; border-radius: 15px; margin: 15px 0; }
         .btn-adm { padding: 10px; border-radius: 8px; border: none; font-weight: bold; margin: 4px; cursor: pointer; }
+
+        /* Estilo para o Input de Valor Pix */
+        .pix-input {
+            width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd;
+            margin-bottom: 15px; box-sizing: border-box; font-weight: bold; color: var(--sea);
+        }
     </style>
 </head>
 <body>
@@ -133,7 +130,6 @@
             <textarea id="txtDesc" placeholder="O que você está trocando hoje?" style="width:100%; height:60px; border:1px solid #eee; border-radius:12px; padding:12px; box-sizing:border-box; background:#f9f9f9; outline:none;"></textarea>
             <button onclick="subirPost()" style="background:var(--sea); color:white; width:100%; padding:14px; border:none; border-radius:12px; margin-top:10px; font-weight:bold; cursor:pointer;">PUBLICAR AGORA</button>
         </div>
-
         <div id="feed"></div>
     </div>
 
@@ -157,7 +153,6 @@
             <button id="btnEdit" onclick="document.getElementById('telaEdit').style.display='block'" style="display:none; padding:8px 16px; border-radius:20px; border:1px solid #ddd; background:white; font-weight:bold; font-size:12px;">Editar Perfil</button>
         </div>
         <p id="perfBio" style="color:#555; margin-top:15px; font-size:14px; line-height:1.5;"></p>
-        
         <div id="masterControl" class="master-panel" style="display:none;">
             <b style="font-size:13px;">⚙️ GESTÃO MASTER: <span id="targetUser"></span></b><br>
             <button class="btn-adm" style="background:var(--light-yellow);" onclick="mudarCargo('ADM2')">ADM2</button>
@@ -165,7 +160,6 @@
             <button class="btn-adm" style="background:#ddd;" onclick="mudarCargo('USER')">USER</button>
             <button class="btn-adm" style="background:var(--red); color:white;" onclick="bloquearUser()">BANIR</button>
         </div>
-
         <hr style="opacity:0.2; margin:20px 0;">
         <h4 id="anchorTrocas" style="color:var(--sea); margin-bottom:15px;"><i class="fas fa-exchange-alt"></i> Trocas Disponíveis</h4>
         <div id="perfilPosts"></div>
@@ -173,7 +167,7 @@
 </div>
 
 <div id="telaChat" style="flex-direction:column; display:none;">
-    <div style="background:var(--sea); color:white; padding:15px; display:flex; justify-content:space-between; align-items:center; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+    <div style="background:var(--sea); color:white; padding:15px; display:flex; justify-content:space-between; align-items:center;">
         <button onclick="fecharChat()" style="color:white; background:none; border:none; font-size:20px;"><i class="fas fa-chevron-left"></i></button>
         <b id="chatUser">Nome do Usuário</b>
         <div style="width:20px;"></div>
@@ -181,16 +175,20 @@
     <div id="msgs"></div>
     <div style="padding:15px; background:white; display:flex; gap:10px; align-items:center;">
         <input type="text" id="itxtMsg" placeholder="Digite sua mensagem..." style="flex:1; padding:14px; border-radius:30px; border:1px solid #eee; background:#f5f5f5; outline:none;">
-        <button onclick="enviarMsg()" style="background:var(--blue); color:white; border:none; border-radius:50%; width:50px; height:50px; display:flex; align-items:center; justify-content:center; box-shadow: 0 4px 10px rgba(24,119,242,0.3);"><i class="fas fa-paper-plane"></i></button>
+        <button onclick="enviarMsg()" style="background:var(--blue); color:white; border:none; border-radius:50%; width:50px; height:50px;"><i class="fas fa-paper-plane"></i></button>
     </div>
 </div>
 
 <div id="modalOferta" style="display:none; flex-direction:column;">
     <div style="background:white; padding:30px; border-radius:25px; width:85%; max-width:400px; text-align:center;">
         <h3 style="margin-top:0;">Fazer Proposta</h3>
-        <p style="color:#666; font-size:13px;">Selecione sua mídia para entrar no duelo.</p>
-        <input type="file" id="fOferta" accept="image/*" style="width:100%; margin:20px 0;">
-        <button onclick="confirmarOferta()" style="background:var(--blue); color:white; width:100%; padding:15px; border:none; border-radius:12px; font-weight:bold; font-size:15px;">CONFIRMAR E NEGOCIAR</button>
+        <p style="color:#666; font-size:12px; margin-bottom:10px;">Valor adicional em dinheiro (PIX):</p>
+        <input type="number" id="valorPix" class="pix-input" placeholder="R$ 0,00 (Opcional)">
+        
+        <p style="color:#666; font-size:12px;">Selecione sua mídia:</p>
+        <input type="file" id="fOferta" accept="image/*" style="width:100%; margin-bottom:20px;">
+        
+        <button onclick="confirmarOferta()" style="background:var(--blue); color:white; width:100%; padding:15px; border:none; border-radius:12px; font-weight:bold;">CONFIRMAR E GERAR PIX</button>
         <button onclick="document.getElementById('modalOferta').style.display='none'" style="margin-top:15px; background:none; border:none; color:red; font-weight:bold;">CANCELAR</button>
     </div>
 </div>
@@ -198,14 +196,11 @@
 <div id="telaEdit">
     <div class="wrap" style="background:white; min-height:100vh; padding:30px;">
         <h3>Editar Meu Perfil</h3>
-        <label style="font-size:12px; font-weight:bold;">FOTO DE CAPA:</label>
-        <input type="file" id="eCapa" accept="image/*" style="margin-bottom:20px; width:100%;">
-        <label style="font-size:12px; font-weight:bold;">FOTO DE PERFIL:</label>
-        <input type="file" id="eAvatar" accept="image/*" style="margin-bottom:20px; width:100%;">
-        <label style="font-size:12px; font-weight:bold;">MINHA BIO:</label>
-        <textarea id="eBio" style="width:100%; height:100px; border-radius:12px; border:1px solid #ddd; padding:10px; margin-bottom:20px;"></textarea>
-        <button onclick="salvarPerfil()" style="background:var(--blue); color:white; width:100%; padding:15px; border:none; border-radius:12px; font-weight:bold;">SALVAR TUDO</button>
-        <button onclick="document.getElementById('telaEdit').style.display='none'" style="width:100%; margin-top:15px; background:none; border:none; color:red;">Voltar</button>
+        <label>FOTO DE CAPA:</label><input type="file" id="eCapa" accept="image/*" style="width:100%; margin-bottom:10px;">
+        <label>FOTO DE PERFIL:</label><input type="file" id="eAvatar" accept="image/*" style="width:100%; margin-bottom:10px;">
+        <label>MINHA BIO:</label><textarea id="eBio" style="width:100%; height:80px;"></textarea>
+        <button onclick="salvarPerfil()" style="background:var(--blue); color:white; width:100%; padding:15px; border:none; border-radius:12px; font-weight:bold;">SALVAR</button>
+        <button onclick="document.getElementById('telaEdit').style.display='none'" style="width:100%; margin-top:10px; background:none; border:none; color:red;">Voltar</button>
     </div>
 </div>
 
@@ -218,6 +213,37 @@
     const db = getDatabase(app);
     let postAtivoId = "", userDonoTroca = "", chatAtivoId = "";
     window.user = {};
+
+    // --- MERCADO PAGO INTEGRATION ---
+    window.gerarPixMP = async (valor) => {
+        const token = "APP_USR-bd8c1628-3715-47fb-91ee-845b41bd6be1";
+        const paymentData = {
+            transaction_amount: parseFloat(valor),
+            description: `Duelo ICE: ${window.user.nome}`,
+            payment_method_id: "pix",
+            payer: { email: `${window.user.nome}@ice.com`, first_name: window.user.nome }
+        };
+
+        try {
+            const res = await fetch('https://api.mercadopago.com/v1/payments', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'X-Idempotency-Key': Math.random().toString(36).slice(2),
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(paymentData)
+            });
+            const data = await res.json();
+            if (data.point_of_interaction) {
+                const copiaCola = data.point_of_interaction.transaction_data.qr_code;
+                window.prompt("🧊 PIX GERADO! Copie e pague no seu banco:", copiaCola);
+                return true;
+            }
+            alert("Erro no Pix: Valor mínimo R$ 1,00.");
+            return false;
+        } catch (e) { return false; }
+    };
 
     window.logar = () => {
         const n = document.getElementById('inome').value.trim();
@@ -247,15 +273,10 @@
             const p = c.val();
             const div = document.createElement('div');
             div.className = "card-timeline";
-            div.innerHTML = `
-                <img src="${p.i1}" onclick="abrirPerfil('${p.u1}', true)">
-                <div class="card-info">
-                    <b>${p.u1}</b> ${renderEstrela(p.c1)}
-                    <p style="margin:10px 0; font-size:14px; color:#555;">${p.d1 || ''}</p>
-                </div>
+            div.innerHTML = `<img src="${p.i1}" onclick="abrirPerfil('${p.u1}', true)">
+                <div class="card-info"><b>${p.u1}</b> ${renderEstrela(p.c1)}<p>${p.d1 || ''}</p></div>
                 <div class="actions">
                     <button class="btn-action" onclick="abrirChat('${p.u1}')"><i class="fas fa-comment"></i> CHAT</button>
-                    <button class="btn-action" onclick="compartilharPost('${p.u1}')"><i class="fas fa-share"></i> COMPARTILHAR</button>
                 </div>`;
             f.prepend(div);
         });
@@ -267,49 +288,47 @@
             const d = snap.val();
             document.getElementById('perfNome').innerText = d.nome;
             document.getElementById('perfBadge').innerHTML = renderEstrela(d.cargo);
-            document.getElementById('perfBio').innerText = d.bio || "Sem bio definida.";
+            document.getElementById('perfBio').innerText = d.bio || "";
             document.getElementById('pCapa').style.backgroundImage = `url(${d.capa || ''})`;
             document.getElementById('pAvatar').style.backgroundImage = `url(${d.avatar || ''})`;
             document.getElementById('btnEdit').style.display = (nome === window.user.nome) ? 'block' : 'none';
-            document.getElementById('targetUser').innerText = d.nome;
-            document.getElementById('masterControl').style.display = (window.user.cargo === 'ADM1' && nome !== window.user.nome) ? 'block' : 'none';
-            
             const pBox = document.getElementById('perfilPosts'); pBox.innerHTML = "";
-            onValue(ref(db, 'posts'), (postSnap) => {
-                postSnap.forEach(c => {
+            onValue(ref(db, 'posts'), (psnap) => {
+                psnap.forEach(c => {
                     const p = c.val();
                     if(p.u1 === nome){
                         const dDiv = document.createElement('div');
                         dDiv.className = "dupla-box";
-                        dDiv.innerHTML = `<div class="lado"><img src="${p.i1}"></div>
-                            <div class="vs-circle">VS</div>
+                        dDiv.innerHTML = `<div class="lado"><img src="${p.i1}"></div><div class="vs-circle">VS</div>
                             <div class="lado" onclick="abrirOferta('${c.key}', '${p.u1}')">
-                                ${p.i2 ? `<img src="${p.i2}">` : `<div style="padding-top:55px; color:var(--blue); font-size:11px; font-weight:bold;">OFERECER</div>`}
+                                ${p.i2 ? `<img src="${p.i2}">` : `<div style="padding-top:55px; color:var(--blue);">OFERECER</div>`}
                             </div>`;
                         pBox.prepend(dDiv);
                     }
                 });
             }, { onlyOnce: true });
-
             document.getElementById('telaPerfil').style.display = 'block';
             if(rolar) setTimeout(() => { document.getElementById('anchorTrocas').scrollIntoView({behavior: "smooth"}); }, 300);
         });
     };
 
-    window.abrirOferta = (id, dono) => {
-        if(dono === window.user.nome) return;
-        postAtivoId = id;
-        document.getElementById('modalOferta').style.display = 'flex';
-    };
+    window.abrirOferta = (id, dono) => { if(dono !== window.user.nome) { postAtivoId = id; document.getElementById('modalOferta').style.display = 'flex'; } };
 
-    window.confirmarOferta = () => {
+    window.confirmarOferta = async () => {
+        const valor = document.getElementById('valorPix').value;
         const file = document.getElementById('fOferta').files[0];
         if(!file) return alert("Selecione sua foto!");
+        
+        if(valor >= 1) {
+            const ok = await window.gerarPixMP(valor);
+            if(!ok) return;
+        }
+
         const r = new FileReader();
         r.onload = (e) => {
             update(ref(db, `posts/${postAtivoId}`), { u2: window.user.nome, i2: e.target.result });
             document.getElementById('modalOferta').style.display = 'none';
-            abrirChat(userDonoTroca); // ABRE O CHAT AUTOMÁTICO APÓS A TROCA
+            abrirChat(userDonoTroca);
         };
         r.readAsDataURL(file);
     };
@@ -323,7 +342,7 @@
             snap.forEach(c => {
                 const m = c.val();
                 const d = document.createElement('div');
-                d.style = `margin:5px; padding:12px; border-radius:18px; max-width:75%; font-size:14px; ${m.u === window.user.nome ? 'background:#dcf8c6; align-self:flex-end; border-bottom-right-radius:2px;' : 'background:white; align-self:flex-start; border-bottom-left-radius:2px;'}`;
+                d.style = `margin:5px; padding:12px; border-radius:18px; max-width:75%; ${m.u === window.user.nome ? 'background:#dcf8c6; align-self:flex-end;' : 'background:white; align-self:flex-start;'}`;
                 d.innerHTML = `<b>${m.u}</b><br>${m.t}`;
                 box.appendChild(d);
             });
@@ -333,40 +352,13 @@
 
     window.enviarMsg = () => {
         const t = document.getElementById('itxtMsg').value;
-        if(!t) return;
-        push(ref(db, `privado/${chatAtivoId}`), { u: window.user.nome, t: t });
-        document.getElementById('itxtMsg').value = "";
+        if(t) { push(ref(db, `privado/${chatAtivoId}`), { u: window.user.nome, t: t }); document.getElementById('itxtMsg').value = ""; }
     };
 
-    window.salvarPerfil = () => {
-        const bio = document.getElementById('eBio').value;
-        const fCapa = document.getElementById('eCapa').files[0];
-        const fAvat = document.getElementById('eAvatar').files[0];
-        let updates = { bio: bio };
-
-        const processar = (file, key, callback) => {
-            if(!file) return callback();
-            const r = new FileReader();
-            r.onload = (e) => { updates[key] = e.target.result; callback(); };
-            r.readAsDataURL(file);
-        };
-
-        processar(fCapa, 'capa', () => {
-            processar(fAvat, 'avatar', () => {
-                update(ref(db, `usuarios/${window.user.nome}`), updates);
-                alert("Perfil Atualizado!");
-                document.getElementById('telaEdit').style.display = 'none';
-            });
-        });
-    };
-
-    window.compartilharPost = (u) => {
-        const text = `Veja a troca de ${u} no ICE TROCAS!`;
-        if (navigator.share) {
-            navigator.share({ title: 'ICE TROCAS', text: text, url: window.location.href });
-        } else {
-            alert("Link de compartilhamento copiado!");
-        }
+    window.subirPost = () => {
+        if(!window.tempMidia) return alert("Selecione uma foto!");
+        push(ref(db, 'posts'), { u1: window.user.nome, d1: document.getElementById('txtDesc').value, i1: window.tempMidia, c1: window.user.cargo });
+        document.getElementById('txtDesc').value = ""; document.getElementById('preView').style.display = "none";
     };
 
     window.preview = (i) => {
@@ -379,16 +371,6 @@
         r.readAsDataURL(i.files[0]);
     };
 
-    window.subirPost = () => {
-        if(!window.tempMidia) return alert("Selecione uma foto!");
-        push(ref(db, 'posts'), { u1: window.user.nome, d1: document.getElementById('txtDesc').value, i1: window.tempMidia, c1: window.user.cargo });
-        document.getElementById('txtDesc').value = "";
-        document.getElementById('preView').style.display = "none";
-        alert("Publicado com sucesso!");
-    };
-
-    window.mudarCargo = (c) => { update(ref(db, `usuarios/${userDonoTroca}`), { cargo: c }); alert("Cargo Alterado!"); };
-    window.bloquearUser = () => { if(confirm("Banir usuário?")) update(ref(db, `usuarios/${userDonoTroca}`), { bloqueado: true }); };
     window.fecharPerfil = () => document.getElementById('telaPerfil').style.display = 'none';
     window.fecharChat = () => document.getElementById('telaChat').style.display = 'none';
 </script>
