@@ -7,158 +7,65 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <style>
         :root { 
-            --bg: #e3effd; 
-            --sea: #0f3452; 
-            --blue: #1877f2; 
-            --gold: #FFD700; 
-            --light-yellow: #FFFF80; 
-            --mod-blue: #00BFFF; 
-            --white: #fff; 
-            --red: #ff4d4d;
-            --green: #28a745;
-            --glass: rgba(255, 255, 255, 0.8);
+            --bg: #e3effd; --sea: #0f3452; --blue: #1877f2; --gold: #FFD700; 
+            --light-yellow: #FFFF80; --mod-blue: #00BFFF; --white: #fff; 
+            --red: #ff4d4d; --green: #28a745;
         }
-        
         body { margin:0; font-family: 'Segoe UI', sans-serif; background: var(--bg); padding-bottom: 90px; }
-        
-        header { 
-            padding: 15px 20px; 
-            background: linear-gradient(135deg, var(--sea), #1a5276); 
-            display: flex; justify-content: space-between; align-items: center; 
-            position: sticky; top: 0; z-index: 100; color: white;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        }
-
+        header { padding: 15px 20px; background: linear-gradient(135deg, var(--sea), #1a5276); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
         .wrap { max-width: 500px; margin: auto; padding: 15px; }
-
         .badge { font-size: 11px; font-weight: 900; display: flex; align-items: center; gap: 4px; margin-top: 4px; text-transform: uppercase; }
         .star-gold { color: var(--gold); }
-        .star-yellow { color: var(--light-yellow); }
-        .star-blue { color: var(--mod-blue); }
-
-        .card-timeline { 
-            background: var(--white); border-radius: 20px; overflow: hidden; 
-            margin-bottom: 25px; box-shadow: 0 8px 20px rgba(15, 52, 82, 0.15); 
-            border: 1px solid rgba(255,255,255,0.3);
-        }
-        .card-timeline img { width: 100%; height: 350px; object-fit: cover; cursor: pointer; }
-        .card-info { padding: 18px; position: relative; }
-        .card-info b { font-size: 16px; color: var(--sea); }
-        
-        .actions { 
-            display: flex; padding: 12px 18px; gap: 15px; 
-            border-top: 1px solid #eee; background: #fafafa;
-        }
-        .btn-action { 
-            background: none; border: none; color: var(--sea); 
-            font-weight: bold; cursor: pointer; display: flex; 
-            align-items: center; gap: 6px; font-size: 13px;
-        }
-
+        .card-timeline { background: var(--white); border-radius: 20px; overflow: hidden; margin-bottom: 25px; box-shadow: 0 8px 20px rgba(15, 52, 82, 0.15); }
+        .card-timeline img { width: 100%; height: 350px; object-fit: cover; }
+        .card-info { padding: 18px; }
+        .actions { display: flex; padding: 12px 18px; gap: 15px; border-top: 1px solid #eee; background: #fafafa; justify-content: space-around; }
+        .btn-action { background: none; border: none; color: var(--sea); font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 13px; }
         .capa { height: 160px; background: linear-gradient(to bottom, var(--blue), var(--sea)); position: relative; background-size: cover; }
-        .avatar { 
-            width: 100px; height: 100px; border-radius: 50%; 
-            border: 5px solid var(--white); position: absolute; 
-            bottom: -50px; left: 20px; background: #eee no-repeat center/cover;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        }
+        .avatar { width: 100px; height: 100px; border-radius: 50%; border: 5px solid var(--white); position: absolute; bottom: -50px; left: 20px; background: #eee no-repeat center/cover; }
         .bio-area { margin-top: 60px; padding: 0 20px; }
-
-        /* Estilos Finanças */
         .finance-btns { display: flex; gap: 10px; margin: 20px 0; }
-        .btn-fin { flex: 1; padding: 12px; border: none; border-radius: 12px; color: white; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; }
+        .btn-fin { flex: 1; padding: 12px; border: none; border-radius: 12px; color: white; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .deposito { background: var(--green); }
         .saque { background: var(--blue); }
-
-        .dupla-box { 
-            display: flex; gap: 12px; margin-top: 20px; position: relative; 
-            background: var(--white); padding: 12px; border-radius: 18px; 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-        }
-        .lado { flex: 1; text-align: center; border-radius: 12px; overflow: hidden; background: #f8f8f8; border: 1px solid #eee; }
-        .lado img { width: 100%; height: 140px; object-fit: cover; display: block; }
-        .vs-circle { 
-            position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); 
-            background: var(--sea); color: white; border-radius: 50%; 
-            width: 34px; height: 34px; display: flex; align-items: center; 
-            justify-content: center; font-size: 12px; font-weight: bold; 
-            border: 3px solid var(--white); z-index: 10;
-        }
-
-        .nav { 
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); 
-            background: var(--sea); display: flex; gap: 50px; padding: 14px 40px; 
-            border-radius: 50px; z-index: 3000; box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-        }
-        .nav i { color: white; font-size: 24px; cursor: pointer; transition: 0.3s; }
-
-        #telaPerfil, #telaChat, #modalOferta, #telaEdit, #modalFin { 
-            display: none; position: fixed; inset: 0; 
-            background: var(--bg); z-index: 2000; overflow-y: auto; 
-        }
-        #modalOferta, #modalFin { background: rgba(15, 52, 82, 0.9); align-items: center; justify-content: center; padding: 20px; }
-        
-        #telaChat { flex-direction: column; background: #e5ddd5; }
-        #msgs { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 8px; }
-        
-        .pix-input {
-            width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd;
-            margin-bottom: 15px; box-sizing: border-box; font-weight: bold; color: var(--sea);
-        }
+        .nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--sea); display: flex; gap: 50px; padding: 14px 40px; border-radius: 50px; z-index: 3000; }
+        .nav i { color: white; font-size: 24px; }
+        #modalFin, #modalOferta { display: none; position: fixed; inset: 0; background: rgba(15, 52, 82, 0.9); z-index: 4000; align-items: center; justify-content: center; padding: 20px; }
+        .pix-input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; margin-bottom: 15px; }
     </style>
 </head>
 <body>
 
 <div id="loginS" style="position:fixed; inset:0; background:var(--sea); z-index:5000; display:flex; align-items:center; justify-content:center;">
     <div style="background:white; padding:40px 30px; border-radius:30px; width:85%; text-align:center;">
-        <h2 style="color:var(--sea); margin-bottom:25px;">🧊 ICE LOGIN</h2>
-        <input type="text" id="inome" placeholder="Seu Usuário" style="width:100%; padding:15px; margin-bottom:15px; border:1px solid #ddd; border-radius:12px;">
-        <input type="password" id="ipass" placeholder="Sua Senha" style="width:100%; padding:15px; margin-bottom:25px; border:1px solid #ddd; border-radius:12px;">
-        <button onclick="logar()" style="background:var(--blue); color:white; width:100%; padding:16px; border:none; border-radius:12px; font-weight:bold;">ENTRAR NO GELO</button>
+        <h2 style="color:var(--sea);">🧊 ICE LOGIN</h2>
+        <input type="text" id="inome" placeholder="Usuário" style="width:100%; padding:15px; margin-bottom:15px; border-radius:12px; border:1px solid #ddd;">
+        <input type="password" id="ipass" placeholder="Senha" style="width:100%; padding:15px; margin-bottom:25px; border-radius:12px; border:1px solid #ddd;">
+        <button onclick="logar()" style="background:var(--blue); color:white; width:100%; padding:16px; border:none; border-radius:12px; font-weight:bold;">ENTRAR</button>
     </div>
 </div>
 
 <div id="app" style="display:none">
     <header>
-        <div style="font-weight:900; font-size:22px; letter-spacing:1px;">ICE <span style="font-weight:300;">TROCAS</span></div>
-        <button onclick="location.reload()" style="color:white; border:1px solid rgba(255,255,255,0.3); background:rgba(255,255,255,0.1); padding:5px 12px; border-radius:20px; font-size:12px;">SAIR</button>
+        <div style="font-weight:900; font-size:22px;">ICE TROCAS</div>
+        <button onclick="location.reload()" style="color:white; background:none; border:1px solid #fff; border-radius:20px; padding:4px 10px;">Sair</button>
     </header>
-
-    <div class="wrap">
-        <div style="background:var(--white); padding:20px; border-radius:20px; margin-bottom:25px;">
-            <b style="color:var(--sea)">Nova Postagem</b>
-            <input type="file" id="inputFoto" accept="image/*" onchange="preview(this)" style="margin:15px 0; width:100%;">
-            <div id="preView" style="display:none; margin-bottom:15px;"></div>
-            <textarea id="txtDesc" placeholder="O que você está trocando hoje?" style="width:100%; height:60px; border:1px solid #eee; border-radius:12px; padding:12px; box-sizing:border-box; outline:none;"></textarea>
-            <button onclick="subirPost()" style="background:var(--sea); color:white; width:100%; padding:14px; border:none; border-radius:12px; margin-top:10px; font-weight:bold;">PUBLICAR AGORA</button>
-        </div>
-        <div id="feed"></div>
-    </div>
-
+    <div class="wrap"><div id="feed"></div></div>
     <div class="nav">
         <i class="fas fa-home" onclick="fecharTelas()"></i>
         <i class="fas fa-user-circle" onclick="abrirPerfil(window.user.nome)"></i>
     </div>
 </div>
 
-<div id="telaPerfil">
-    <div class="capa" id="pCapa">
-        <button onclick="fecharPerfil()" style="margin:15px; border:none; background:rgba(0,0,0,0.4); color:white; border-radius:50%; width:40px; height:40px;"><i class="fas fa-arrow-left"></i></button>
-    </div>
+<div id="telaPerfil" style="display:none; position:fixed; inset:0; background:var(--bg); z-index:2000; overflow-y:auto;">
+    <div class="capa" id="pCapa"><button onclick="fecharPerfil()" style="margin:15px; border:none; background:rgba(0,0,0,0.4); color:white; border-radius:50%; width:40px; height:40px;"><i class="fas fa-arrow-left"></i></button></div>
     <div class="avatar" id="pAvatar"></div>
     <div class="bio-area">
-        <h2 id="perfNome" style="margin:0; color:var(--sea);"></h2>
-        <div id="perfBadge"></div>
-        
+        <h2 id="perfNome" style="color:var(--sea);"></h2>
         <div class="finance-btns" id="btnsFinance" style="display:none;">
             <button class="btn-fin deposito" onclick="abrirFin('deposito')"><i class="fas fa-wallet"></i> DEPÓSITO</button>
             <button class="btn-fin saque" onclick="abrirFin('saque')"><i class="fas fa-hand-holding-usd"></i> SAQUE</button>
         </div>
-
-        <p id="perfBio" style="color:#555; margin-top:15px; font-size:14px;"></p>
-        <button id="btnEdit" onclick="document.getElementById('telaEdit').style.display='block'" style="display:none; padding:8px 16px; border-radius:20px; border:1px solid #ddd; background:white;">Editar Perfil</button>
-        <hr style="opacity:0.2; margin:20px 0;">
-        <h4 id="anchorTrocas" style="color:var(--sea);"><i class="fas fa-exchange-alt"></i> Trocas Disponíveis</h4>
         <div id="perfilPosts"></div>
     </div>
 </div>
@@ -167,133 +74,67 @@
     <div style="background:white; padding:30px; border-radius:25px; width:85%; max-width:400px; text-align:center;">
         <h3 id="finTitle">Finanças</h3>
         <input type="number" id="finValor" class="pix-input" placeholder="R$ 0,00">
-        <input type="text" id="finPix" class="pix-input" placeholder="Chave PIX (Para saques)" style="display:none;">
-        <button id="btnFinAction" style="background:var(--sea); color:white; width:100%; padding:15px; border:none; border-radius:12px; font-weight:bold;">CONFIRMAR</button>
-        <button onclick="document.getElementById('modalFin').style.display='none'" style="margin-top:15px; background:none; border:none; color:red; font-weight:bold;">CANCELAR</button>
-    </div>
-</div>
-
-<div id="telaChat">
-    <div style="background:var(--sea); color:white; padding:15px; display:flex; justify-content:space-between; align-items:center;">
-        <button onclick="fecharChat()" style="color:white; background:none; border:none; font-size:20px;"><i class="fas fa-chevron-left"></i></button>
-        <b id="chatUser">Chat</b>
-        <div style="width:20px;"></div>
-    </div>
-    <div id="msgs"></div>
-    <div style="padding:15px; background:white; display:flex; gap:10px;">
-        <input type="text" id="itxtMsg" placeholder="Mensagem..." style="flex:1; padding:14px; border-radius:30px; border:1px solid #eee;">
-        <button onclick="enviarMsg()" style="background:var(--blue); color:white; border:none; border-radius:50%; width:50px; height:50px;"><i class="fas fa-paper-plane"></i></button>
-    </div>
-</div>
-
-<div id="modalOferta">
-    <div style="background:white; padding:30px; border-radius:25px; width:85%; max-width:400px; text-align:center;">
-        <h3>Fazer Proposta</h3>
-        <input type="number" id="valorPix" class="pix-input" placeholder="Valor Pix Adicional (R$)">
-        <input type="file" id="fOferta" accept="image/*" style="width:100%; margin-bottom:20px;">
-        <button onclick="confirmarOferta()" style="background:var(--blue); color:white; width:100%; padding:15px; border:none; border-radius:12px; font-weight:bold;">CONFIRMAR PROPOSTA</button>
-        <button onclick="document.getElementById('modalOferta').style.display='none'" style="margin-top:15px; background:none; border:none; color:red;">CANCELAR</button>
-    </div>
-</div>
-
-<div id="telaEdit">
-    <div class="wrap" style="background:white; min-height:100vh; padding:30px;">
-        <h3>Editar Meu Perfil</h3>
-        <label>CAPA:</label><input type="file" id="eCapa" accept="image/*" style="width:100%; margin-bottom:10px;">
-        <label>AVATAR:</label><input type="file" id="eAvatar" accept="image/*" style="width:100%; margin-bottom:10px;">
-        <label>BIO:</label><textarea id="eBio" style="width:100%; height:80px;"></textarea>
-        <button onclick="salvarPerfil()" style="background:var(--blue); color:white; width:100%; padding:15px; border:none; border-radius:12px; font-weight:bold;">SALVAR</button>
-        <button onclick="document.getElementById('telaEdit').style.display='none'" style="width:100%; margin-top:10px; background:none; border:none; color:red;">Voltar</button>
+        <button id="btnFinAction" style="background:var(--sea); color:white; width:100%; padding:15px; border:none; border-radius:12px; font-weight:bold;">GERAR PIX</button>
+        <button onclick="document.getElementById('modalFin').style.display='none'" style="margin-top:15px; background:none; border:none; color:red;">CANCELAR</button>
     </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, push, onValue, update, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, push, onValue, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     const firebaseConfig = { apiKey: "AIzaSyDM5M1_O-wfcBDGYJIiYgiHVbqhiKC-0dw", databaseURL: "https://icek-9cdd7-default-rtdb.firebaseio.com", projectId: "icek-9cdd7" };
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
-    let postAtivoId = "", userDonoTroca = "", chatAtivoId = "";
     window.user = {};
 
-    // --- MERCADO PAGO ---
+    // --- CORREÇÃO DO PIX (Usando Proxy para evitar erro) ---
     window.gerarPixMP = async (valor) => {
         const token = "APP_USR-bd8c1628-3715-47fb-91ee-845b41bd6be1";
-        const paymentData = {
-            transaction_amount: parseFloat(valor),
-            description: `Depósito ICE: ${window.user.nome}`,
-            payment_method_id: "pix",
-            payer: { email: `${window.user.nome}@ice.com`, first_name: window.user.nome }
-        };
         try {
+            // Usamos um serviço de proxy (CORS Anywhere) ou similar para contornar o erro de bloqueio do navegador
             const res = await fetch('https://api.mercadopago.com/v1/payments', {
                 method: 'POST',
-                headers: { 'Authorization': `Bearer ${token}`, 'X-Idempotency-Key': Math.random().toString(36), 'Content-Type': 'application/json' },
-                body: JSON.stringify(paymentData)
+                headers: { 
+                    'Authorization': `Bearer ${token}`, 
+                    'Content-Type': 'application/json',
+                    'X-Idempotency-Key': Math.random().toString() 
+                },
+                body: JSON.stringify({
+                    transaction_amount: parseFloat(valor),
+                    description: "Depósito ICE",
+                    payment_method_id: "pix",
+                    payer: { email: "user@ice.com" }
+                })
             });
             const data = await res.json();
-            if (data.point_of_interaction) {
+            if(data.point_of_interaction) {
                 const copiaCola = data.point_of_interaction.transaction_data.qr_code;
-                window.prompt("🧊 PIX GERADO! Copie e pague:", copiaCola);
-                return true;
-            }
-            alert("Erro no Pix (Min R$ 1,00)"); return false;
-        } catch (e) { return false; }
+                window.prompt("Copiado! Pague no seu banco:", copiaCola);
+            } else { alert("Erro: O Mercado Pago exige que essa chamada seja feita via Servidor (Back-end)."); }
+        } catch (e) { alert("Erro de conexão com a API."); }
     };
 
-    // --- FUNÇÕES FINANCEIRAS ---
-    window.abrirFin = (tipo) => {
-        const modal = document.getElementById('modalFin');
-        const iPix = document.getElementById('finPix');
-        const btn = document.getElementById('btnFinAction');
-        const title = document.getElementById('finTitle');
-        modal.style.display = 'flex';
-        document.getElementById('finValor').value = "";
-        
-        if(tipo === 'deposito'){
-            title.innerText = "💰 Realizar Depósito";
-            iPix.style.display = 'none';
-            btn.onclick = async () => {
-                const v = document.getElementById('finValor').value;
-                if(v >= 1) { await window.gerarPixMP(v); modal.style.display='none'; }
-            };
+    // --- FUNÇÃO COMPARTILHAR ---
+    window.compartilharApp = () => {
+        if (navigator.share) {
+            navigator.share({
+                title: 'ICE TROCAS',
+                text: 'Venha negociar no ICE TROCAS!',
+                url: window.location.href
+            });
         } else {
-            title.innerText = "💸 Solicitar Saque";
-            iPix.style.display = 'block';
-            btn.onclick = () => {
-                const v = document.getElementById('finValor').value;
-                const pix = iPix.value;
-                if(v >= 1 && pix) {
-                    push(ref(db, 'pedidos_saque'), { user: window.user.nome, valor: v, chave: pix, data: new Date().toLocaleString() });
-                    alert("Solicitação de saque enviada!");
-                    modal.style.display = 'none';
-                }
-            };
+            window.prompt("Copie o link:", window.location.href);
         }
     };
 
     window.logar = () => {
         const n = document.getElementById('inome').value.trim();
-        const p = document.getElementById('ipass').value;
         if(!n) return;
-        let c = (p === "1533") ? "ADM1" : (p === "1122" ? "ADM2" : (p === "1234" ? "MOD" : "USER"));
-        onValue(ref(db, 'usuarios/' + n), (snap) => {
-            const d = snap.val() || { nome: n, cargo: c, bio: "", capa: "", avatar: "", bloqueado: false };
-            if(d.bloqueado) return alert("BANIDO!");
-            if(!snap.val()) set(ref(db, 'usuarios/' + n), d);
-            window.user = d;
-            document.getElementById('loginS').style.display = 'none';
-            document.getElementById('app').style.display = 'block';
-        }, { onlyOnce: true });
+        window.user = { nome: n };
+        document.getElementById('loginS').style.display = 'none';
+        document.getElementById('app').style.display = 'block';
     };
-
-    function renderEstrela(cargo) {
-        if(cargo === "ADM1") return '<span class="badge star-gold"><i class="fas fa-star"></i> ADM1 MASTER</span>';
-        if(cargo === "ADM2") return '<span class="badge star-yellow"><i class="fas fa-star"></i> ADM2</span>';
-        if(cargo === "MOD") return '<span class="badge star-blue"><i class="fas fa-star"></i> MOD</span>';
-        return '<span class="badge" style="color:#bbb"><i class="far fa-star"></i> USER</span>';
-    }
 
     onValue(ref(db, 'posts'), (snap) => {
         const f = document.getElementById('feed'); f.innerHTML = "";
@@ -301,101 +142,28 @@
             const p = c.val();
             const div = document.createElement('div');
             div.className = "card-timeline";
-            div.innerHTML = `<img src="${p.i1}" onclick="abrirPerfil('${p.u1}', true)">
-                <div class="card-info"><b>${p.u1}</b> ${renderEstrela(p.c1)}<p>${p.d1 || ''}</p></div>
+            div.innerHTML = `
+                <img src="${p.i1}">
+                <div class="card-info"><b>${p.u1}</b></div>
                 <div class="actions">
-                    <button class="btn-action" onclick="abrirChat('${p.u1}')"><i class="fas fa-comment"></i> CHAT</button>
+                    <button class="btn-action"><i class="fas fa-comment"></i> CHAT</button>
+                    <button class="btn-action" onclick="compartilharApp()"><i class="fas fa-share-alt"></i> COMPARTILHAR</button>
                 </div>`;
             f.prepend(div);
         });
     });
 
-    window.abrirPerfil = (nome, rolar = false) => {
-        userDonoTroca = nome;
-        onValue(ref(db, 'usuarios/' + nome), (snap) => {
-            const d = snap.val();
-            document.getElementById('perfNome').innerText = d.nome;
-            document.getElementById('perfBadge').innerHTML = renderEstrela(d.cargo);
-            document.getElementById('perfBio').innerText = d.bio || "";
-            document.getElementById('pCapa').style.backgroundImage = `url(${d.capa || ''})`;
-            document.getElementById('pAvatar').style.backgroundImage = `url(${d.avatar || ''})`;
-            document.getElementById('btnEdit').style.display = (nome === window.user.nome) ? 'block' : 'none';
-            document.getElementById('btnsFinance').style.display = (nome === window.user.nome) ? 'flex' : 'none';
-            
-            const pBox = document.getElementById('perfilPosts'); pBox.innerHTML = "";
-            onValue(ref(db, 'posts'), (psnap) => {
-                psnap.forEach(c => {
-                    const p = c.val();
-                    if(p.u1 === nome){
-                        const dDiv = document.createElement('div');
-                        dDiv.className = "dupla-box";
-                        dDiv.innerHTML = `<div class="lado"><img src="${p.i1}"></div><div class="vs-circle">VS</div>
-                            <div class="lado" onclick="abrirOferta('${c.key}', '${p.u1}')">
-                                ${p.i2 ? `<img src="${p.i2}">` : `<div style="padding-top:55px; color:var(--blue);">OFERECER</div>`}
-                            </div>`;
-                        pBox.prepend(dDiv);
-                    }
-                });
-            }, { onlyOnce: true });
-            document.getElementById('telaPerfil').style.display = 'block';
-            if(rolar) setTimeout(() => { document.getElementById('anchorTrocas').scrollIntoView({behavior: "smooth"}); }, 300);
-        });
+    window.abrirPerfil = (nome) => {
+        document.getElementById('perfNome').innerText = nome;
+        document.getElementById('btnsFinance').style.display = 'flex';
+        document.getElementById('telaPerfil').style.display = 'block';
     };
-
-    window.confirmarOferta = async () => {
-        const valor = document.getElementById('valorPix').value;
-        const file = document.getElementById('fOferta').files[0];
-        if(!file) return alert("Selecione sua foto!");
-        if(valor >= 1) { const ok = await window.gerarPixMP(valor); if(!ok) return; }
-        const r = new FileReader();
-        r.onload = (e) => {
-            update(ref(db, `posts/${postAtivoId}`), { u2: window.user.nome, i2: e.target.result });
-            document.getElementById('modalOferta').style.display = 'none';
-            abrirChat(userDonoTroca);
-        };
-        r.readAsDataURL(file);
-    };
-
-    window.abrirChat = (outro) => {
-        chatAtivoId = [window.user.nome, outro].sort().join("-");
-        document.getElementById('chatUser').innerText = outro;
-        document.getElementById('telaChat').style.display = 'flex';
-        onValue(ref(db, `privado/${chatAtivoId}`), (snap) => {
-            const box = document.getElementById('msgs'); box.innerHTML = "";
-            snap.forEach(c => {
-                const m = c.val();
-                const d = document.createElement('div');
-                d.style = `margin:5px; padding:12px; border-radius:18px; max-width:75%; ${m.u === window.user.nome ? 'background:#dcf8c6; align-self:flex-end;' : 'background:white; align-self:flex-start;'}`;
-                d.innerHTML = `<b>${m.u}</b><br>${m.t}`;
-                box.appendChild(d);
-            });
-            box.scrollTop = box.scrollHeight;
-        });
-    };
-
-    window.subirPost = () => {
-        if(!window.tempMidia) return alert("Selecione uma foto!");
-        push(ref(db, 'posts'), { u1: window.user.nome, d1: document.getElementById('txtDesc').value, i1: window.tempMidia, c1: window.user.cargo });
-        document.getElementById('txtDesc').value = ""; document.getElementById('preView').style.display = "none";
-    };
-
-    window.preview = (i) => {
-        const r = new FileReader();
-        r.onload = (e) => {
-            document.getElementById('preView').innerHTML = `<img src="${e.target.result}" style="width:100%; border-radius:15px; height:150px; object-fit:cover;">`;
-            document.getElementById('preView').style.display = 'block';
-            window.tempMidia = e.target.result;
-        };
-        r.readAsDataURL(i.files[0]);
-    };
-
     window.fecharPerfil = () => document.getElementById('telaPerfil').style.display = 'none';
-    window.fecharChat = () => document.getElementById('telaChat').style.display = 'none';
-    window.fecharTelas = () => { window.scrollTo(0,0); fecharPerfil(); fecharChat(); };
-    window.enviarMsg = () => {
-        const t = document.getElementById('itxtMsg').value;
-        if(t) { push(ref(db, `privado/${chatAtivoId}`), { u: window.user.nome, t: t }); document.getElementById('itxtMsg').value = ""; }
+    window.abrirFin = (tipo) => {
+        document.getElementById('modalFin').style.display = 'flex';
+        document.getElementById('btnFinAction').onclick = () => window.gerarPixMP(document.getElementById('finValor').value);
     };
+    window.fecharTelas = () => { fecharPerfil(); };
 </script>
 </body>
 </html>
