@@ -16,7 +16,7 @@
         .btn-post { background: var(--primary); }
         .btn-offer { background: var(--secondary); margin-top: 10px; font-size: 12px; }
         .dupla { display: flex; gap: 10px; margin: 15px 0; align-items: flex-start; }
-        .lado { flex: 1; background: #f8f9fa; padding: 10px; border-radius: 8px; border: 1px solid #eee; text-align: center; font-size: 13px; min-height: 180px; }
+        .lado { flex: 1; background: #f8f9fa; padding: 10px; border-radius: 8px; border: 1px solid #eee; text-align: center; font-size: 13px; min-height: 180px; overflow: hidden; }
         .lado img { width: 100%; height: 120px; object-fit: cover; border-radius: 6px; margin-bottom: 8px; background: #ddd; }
         .vs { align-self: center; font-weight: bold; color: var(--primary); font-size: 18px; }
         input, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
@@ -29,7 +29,7 @@
         <h1 style="color:var(--primary)">ICE LOGIN</h1>
         <input type="text" id="lnome" placeholder="Seu Nome de Usuário">
         <input type="password" id="lpass" placeholder="Senha (ADM: 1533)">
-        <button class="btn btn-post" onclick="window.logar()">ENTRAR NO SISTEMA</button>
+        <button class="btn btn-post" onclick="logar()">ENTRAR NO SISTEMA</button>
     </div>
 </div>
 
@@ -41,18 +41,19 @@
 
     <div class="card">
         <h3 style="margin-top:0">Postar Item</h3>
-        <input type="file" id="f1" accept="image/*" onchange="window.lerImg(this)">
+        <input type="file" id="f1" accept="image/*" onchange="lerImg(this)">
         <img id="pre1" style="width:100%; max-height:200px; object-fit:contain; display:none; margin:10px 0; border-radius:8px">
         <textarea id="d1" placeholder="O que você tem para trocar?"></textarea>
-        <button class="btn btn-post" onclick="window.subirPost()">PUBLICAR</button>
+        <button class="btn btn-post" onclick="subirPost()">PUBLICAR</button>
     </div>
 
     <div id="feed"></div>
 </div>
 
 <script type="module">
-    import { initializeApp } from "https://www.gstatic.com";
-    import { getDatabase, ref, push, onValue, update, remove } from "https://www.gstatic.com";
+    // IMPORTAÇÕES CORRIGIDAS (Versão compatível com CDN)
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, push, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDM5M1_O-wfcBDGYJIiYgiHVbqhiKC-0dw",
@@ -67,11 +68,12 @@
     let imgBase64 = "";
     window.user = { n: "", c: "COMUM" };
 
-    // FUNÇÕES TORNADAS GLOBAIS COM 'window.' PARA NÃO TRAVAR
+    // FUNÇÕES GLOBAIS
     window.logar = () => {
-        const n = document.getElementById('lnome').value;
+        const n = document.getElementById('lnome').value.trim();
         const p = document.getElementById('lpass').value;
         if(!n) return alert("Digite seu nome!");
+        
         window.user = { n: n, c: (p === "1533" ? "ADM1" : "COMUM") };
         document.getElementById('loginS').style.display = 'none';
         document.getElementById('app').style.display = 'block';
@@ -86,6 +88,7 @@
                 img.onload = () => {
                     const canvas = document.createElement('canvas');
                     const ctx = canvas.getContext('2d');
+                    // Redimensionando para não travar o banco de dados
                     canvas.width = 400; 
                     canvas.height = 300;
                     ctx.drawImage(img, 0, 0, 400, 300);
@@ -102,13 +105,23 @@
     window.subirPost = () => {
         const d = document.getElementById('d1').value;
         if(!d || !imgBase64) return alert("Falta foto ou descrição!");
-        push(ref(db, 'posts'), { u1: window.user.n, d1: d, i1: imgBase64, u2: "", d2: "", i2: "" });
+        
+        push(ref(db, 'posts'), { 
+            u1: window.user.n, 
+            d1: d, 
+            i1: imgBase64, 
+            u2: "", 
+            d2: "", 
+            i2: "" 
+        });
+        
         document.getElementById('d1').value = "";
         document.getElementById('pre1').style.display = "none";
         document.getElementById('f1').value = "";
         imgBase64 = "";
     };
 
+    // ESCUTA O FEED EM TEMPO REAL
     onValue(ref(db, 'posts'), (snap) => {
         const feed = document.getElementById('feed');
         feed.innerHTML = "";
@@ -119,26 +132,46 @@
             card.className = "card";
             card.innerHTML = `
                 <div class="dupla">
-                    <div class="lado"><img src="${p.i1}"><b>${p.u1} TEM:</b><br>${p.d1}</div>
+                    <div class="lado">
+                        <img src="${p.i1}">
+                        <b>${p.u1} TEM:</b><br>${p.d1}
+                    </div>
                     <div class="vs">X</div>
                     <div class="lado">
-                        ${p.u2 ? `<img src="${p.i2}"><b>${p.u2} OFERECE:</b><br>${p.d2}` : 
-                        `<div style="margin-top:40px"><button class="btn btn-offer" onclick="window.fazerTroca('${id}')">OFERECER</button></div>`}
+                        ${p.u2 ? `
+                            <img src="${p.i2}">
+                            <b>${p.u2} OFERECE:</b><br>${p.d2}
+                        ` : `
+                            <div style="margin-top:60px">
+                                <button class="btn btn-offer" onclick="window.fazerTroca('${id}')">OFERECER TROCA</button>
+                            </div>
+                        `}
                     </div>
                 </div>
-                ${window.user.c === "ADM1" ? `<button onclick="window.removerPost('${id}')" style="color:red; background:none; border:none; cursor:pointer; font-size:11px; width:100%; text-align:right">🗑️ APAGAR</button>` : ""}
+                ${window.user.c === "ADM1" ? `
+                    <button onclick="window.removerPost('${id}')" style="color:#ff4d4d; background:none; border:none; cursor:pointer; font-size:11px; width:100%; text-align:right">🗑️ APAGAR POST</button>
+                ` : ""}
             `;
             feed.prepend(card);
         });
     });
 
     window.fazerTroca = (id) => {
-        const o = prompt("O que oferece?");
-        if(o) update(ref(db, `posts/${id}`), { u2: window.user.n, d2: o, i2: "https://via.placeholder.com" });
+        const o = prompt("O que você oferece em troca?");
+        if(o) {
+            update(ref(db, `posts/${id}`), { 
+                u2: window.user.n, 
+                d2: o, 
+                i2: "https://via.placeholder.com/150?text=Sem+Foto" 
+            });
+        }
     };
 
-    window.removerPost = (id) => confirm("Apagar?") && remove(ref(db, `posts/${id}`));
+    window.removerPost = (id) => {
+        if(confirm("Deseja realmente apagar este post?")) {
+            remove(ref(db, `posts/${id}`));
+        }
+    };
 </script>
 </body>
 </html>
-
