@@ -16,20 +16,17 @@ export default async function handler(req, res) {
                     transaction_amount: parseFloat(valor),
                     description: `Deposito ICE - ${usuario}`,
                     payment_method_id: "pix",
-                    payer: { 
-                        email: "pagamento@ice.com",
-                        first_name: usuario 
-                    }
+                    payer: { email: "pagamento@ice.com" }
                 })
             });
 
             const data = await response.json();
-            res.setHeader('Content-Type', 'application/json');
+            
+            // CRITICAL: Retorna apenas o JSON limpo para o navegador
             return res.status(200).json(data);
         } catch (error) {
-            return res.status(500).json({ error: 'Erro no servidor' });
+            return res.status(500).json({ error: 'Erro ao processar' });
         }
-    } else {
-        return res.status(405).json({ error: 'Metodo nao permitido' });
     }
 }
+
