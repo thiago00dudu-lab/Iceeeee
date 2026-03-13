@@ -7,26 +7,17 @@
     <style>
         :root { --bg: #f0f2f5; --primary: #0f3452; --secondary: #23c79c; --white: #ffffff; }
         body { margin: 0; font-family: sans-serif; background: var(--bg); color: #333; }
-        
-        /* LOGIN */
         #loginS { position: fixed; inset: 0; background: var(--white); z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
         .login-box { width: 100%; max-width: 350px; text-align: center; }
-        
-        /* HEADER */
         .header { padding: 15px; background: var(--primary); color: white; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-        
-        /* CARDS */
         .card { background: var(--white); border-radius: 12px; padding: 15px; margin: 15px auto; max-width: 500px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .btn { cursor: pointer; border: none; border-radius: 8px; font-weight: bold; padding: 12px; color: white; transition: 0.3s; width: 100%; }
+        .btn { cursor: pointer; border: none; border-radius: 8px; font-weight: bold; padding: 12px; color: white; width: 100%; }
         .btn-post { background: var(--primary); }
         .btn-offer { background: var(--secondary); margin-top: 10px; font-size: 12px; }
-        
-        /* TIMELINE */
         .dupla { display: flex; gap: 10px; margin: 15px 0; align-items: flex-start; }
         .lado { flex: 1; background: #f8f9fa; padding: 10px; border-radius: 8px; border: 1px solid #eee; text-align: center; font-size: 13px; min-height: 180px; }
         .lado img { width: 100%; height: 120px; object-fit: cover; border-radius: 6px; margin-bottom: 8px; background: #ddd; }
         .vs { align-self: center; font-weight: bold; color: var(--primary); font-size: 18px; }
-
         input, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
     </style>
 </head>
@@ -59,7 +50,6 @@
 </div>
 
 <script type="module">
-    // LINKS CORRIGIDOS E COMPLETOS
     import { initializeApp } from "https://www.gstatic.com";
     import { getDatabase, ref, push, onValue, update, remove } from "https://www.gstatic.com";
 
@@ -76,19 +66,18 @@
     let imgBase64 = "";
     window.user = { n: "", c: "COMUM" };
 
-    // FUNÇÃO DE LOGIN EXPOSTA PARA O WINDOW
+    // Login funcionando
     window.logar = () => {
         const n = document.getElementById('lnome').value;
         const p = document.getElementById('lpass').value;
         if(!n) return alert("Digite seu nome!");
-        
         window.user = { n: n, c: (p === "1533" ? "ADM1" : "COMUM") };
         document.getElementById('loginS').style.display = 'none';
         document.getElementById('app').style.display = 'block';
         document.getElementById('meuStatus').innerHTML = `👤 <b>${n}</b>`;
     };
 
-    // FUNÇÃO DE LER IMAGEM EXPOSTA PARA O WINDOW
+    // Imagem funcionando
     window.lerImg = (input) => {
         if (input.files && input.files[0]) {
             const reader = new FileReader();
@@ -104,43 +93,27 @@
     window.subirPost = () => {
         const d = document.getElementById('d1').value;
         if(!d || !imgBase64) return alert("Falta foto ou descrição!");
-        
-        push(ref(db, 'posts'), {
-            u1: window.user.n,
-            d1: d,
-            i1: imgBase64,
-            u2: "", d2: "", i2: ""
-        }).then(() => {
-            document.getElementById('d1').value = "";
-            document.getElementById('pre1').style.display = "none";
-            imgBase64 = "";
-        });
+        push(ref(db, 'posts'), { u1: window.user.n, d1: d, i1: imgBase64, u2: "", d2: "", i2: "" });
+        document.getElementById('d1').value = "";
+        document.getElementById('pre1').style.display = "none";
+        imgBase64 = "";
     };
 
-    onValue(ref(db, 'posts'), (snapshot) => {
+    onValue(ref(db, 'posts'), (snap) => {
         const feed = document.getElementById('feed');
         feed.innerHTML = "";
-        snapshot.forEach((child) => {
+        snap.forEach((child) => {
             const p = child.val();
             const id = child.key;
             const card = document.createElement('div');
             card.className = "card";
             card.innerHTML = `
                 <div class="dupla">
-                    <div class="lado">
-                        <img src="${p.i1}">
-                        <b>${p.u1} TEM:</b><br>${p.d1}
-                    </div>
+                    <div class="lado"><img src="${p.i1}"><b>${p.u1} TEM:</b><br>${p.d1}</div>
                     <div class="vs">X</div>
                     <div class="lado">
-                        ${p.u2 ? `
-                            <img src="${p.i2}">
-                            <b>${p.u2} OFERECE:</b><br>${p.d2}
-                        ` : `
-                            <div style="margin-top:40px">
-                                <button class="btn btn-offer" onclick="fazerTroca('${id}')">OFERECER TROCA</button>
-                            </div>
-                        `}
+                        ${p.u2 ? `<img src="${p.i2}"><b>${p.u2} OFERECE:</b><br>${p.d2}` : 
+                        `<div style="margin-top:40px"><button class="btn btn-offer" onclick="fazerTroca('${id}')">OFERECER</button></div>`}
                     </div>
                 </div>
                 ${window.user.c === "ADM1" ? `<button onclick="removerPost('${id}')" style="color:red; background:none; border:none; cursor:pointer; font-size:11px">🗑️ APAGAR</button>` : ""}
@@ -150,13 +123,8 @@
     });
 
     window.fazerTroca = (id) => {
-        const desc = prompt("O que você oferece?");
-        if(!desc) return;
-        update(ref(db, `posts/${id}`), {
-            u2: window.user.n,
-            d2: desc,
-            i2: "https://via.placeholder.com" 
-        });
+        const o = prompt("O que oferece?");
+        if(o) update(ref(db, `posts/${id}`), { u2: window.user.n, d2: o, i2: "https://via.placeholder.com" });
     };
 
     window.removerPost = (id) => confirm("Apagar?") && remove(ref(db, `posts/${id}`));
