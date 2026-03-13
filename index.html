@@ -3,57 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ICE - Trocas em Tempo Real</title>
+    <title>ICE - Sistema de Comando</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <style>
-        :root { --bg: #f0f2f5; --primary: #0f3452; --secondary: #23c79c; --white: #ffffff; }
-        body { margin: 0; font-family: sans-serif; background: var(--bg); color: #333; }
-        #loginS { position: fixed; inset: 0; background: var(--white); z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
-        .login-box { width: 100%; max-width: 350px; text-align: center; }
-        .header { padding: 15px; background: var(--primary); color: white; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-        .card { background: var(--white); border-radius: 12px; padding: 15px; margin: 15px auto; max-width: 500px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .btn { cursor: pointer; border: none; border-radius: 8px; font-weight: bold; padding: 12px; color: white; width: 100%; transition: 0.2s; }
-        .btn:active { transform: scale(0.98); }
-        .btn-post { background: var(--primary); }
-        .btn-offer { background: var(--secondary); margin-top: 10px; font-size: 12px; }
-        .dupla { display: flex; gap: 10px; margin: 15px 0; align-items: flex-start; }
-        .lado { flex: 1; background: #f8f9fa; padding: 10px; border-radius: 8px; border: 1px solid #eee; text-align: center; font-size: 13px; min-height: 180px; overflow: hidden; }
-        .lado img { width: 100%; height: 120px; object-fit: cover; border-radius: 6px; margin-bottom: 8px; background: #ddd; }
-        .vs { align-self: center; font-weight: bold; color: var(--primary); font-size: 18px; }
-        input, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        :root {
+            --bg1:#dff6ff; --bg2:#bfefff; --bg3:#8edcff; --sea:#0f3452;
+            --card:#eaf9ff; --line:#7ec8e6; --txt:#12344f; --gold: #ffd700; --blue: #007bff;
+        }
+        body {
+            margin:0; font-family:Arial, sans-serif; color:var(--txt);
+            background: linear-gradient(180deg,var(--bg1) 0%,var(--bg3) 100%);
+            min-height:100vh;
+        }
+        /* LOGIN */
+        .login-screen { position: fixed; inset: 0; background: var(--bg1); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; }
+        .card-login { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); width: 85%; max-width: 320px; text-align: center; border: 1px solid var(--line); }
+        
+        /* HEADER */
+        header {
+            padding:14px 16px; background:rgba(234,249,255,.88);
+            border-bottom:1px solid var(--line); backdrop-filter:blur(8px);
+            position:sticky; top:0; z-index:100; display: flex; justify-content: space-between; align-items: center;
+        }
+        .brand { display:flex; align-items:center; gap:12px; }
+        .logoBox { width:40px; height:40px; border-radius:10px; background:linear-gradient(180deg,#fff,#6fbce1); border:1px solid var(--line); }
+
+        .wrap { max-width:600px; margin:auto; padding:15px; }
+
+        /* POSTAGEM */
+        .post-box { background: white; padding: 15px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        textarea { width: 100%; height: 70px; border: 1px solid #ddd; border-radius: 8px; padding: 10px; box-sizing: border-box; font-family: sans-serif; resize: none; }
+        input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: var(--sea); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        button:active { transform: scale(0.98); }
+
+        /* FEED */
+        .feed-item { background: white; padding: 15px; border-radius: 12px; margin-bottom: 12px; border-left: 6px solid var(--sea); box-shadow: 0 2px 5px rgba(0,0,0,0.05); position: relative; }
+        .admin-star { color: var(--gold); font-weight: bold; font-size: 11px; }
+        .mod-star { color: var(--blue); font-weight: bold; font-size: 11px; }
+        .btn-del { background: #ff6b7a; font-size: 10px; width: auto; padding: 4px 8px; margin-top: 8px; }
+
+        /* GRADE APPS */
+        .grid-apps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px 0; }
+        .app-item { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: var(--txt); }
+        .icon-box { width: 55px; height: 55px; background: white; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 5px; box-shadow: 0 3px 10px rgba(0,0,0,0.1); color: var(--sea); }
+        .app-item span { font-size: 11px; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div id="loginS">
-    <div class="login-box">
-        <h1 style="color:var(--primary)">ICE LOGIN</h1>
-        <input type="text" id="lnome" placeholder="Seu Nome de Usuário">
-        <input type="password" id="lpass" placeholder="Senha (ADM: 1533)">
-        <button class="btn btn-post" onclick="logar()">ENTRAR NO SISTEMA</button>
+<div id="loginScreen" class="login-screen">
+    <div class="card-login">
+        <div class="logoBox" style="margin: 0 auto 15px auto;"></div>
+        <h3 style="margin-top:0">Acesso ICE</h3>
+        <input type="text" id="userName" placeholder="Seu Nome">
+        <input type="password" id="userPass" placeholder="Senha (ADM: 1533)">
+        <button onclick="fazerLogin()">Entrar no Sistema</button>
     </div>
 </div>
 
-<div id="app" style="display:none">
-    <header class="header">
-        <div id="meuStatus"></div>
-        <button onclick="location.reload()" style="background:none; border:none; color:#ff4d4d; font-weight:bold; cursor:pointer">SAIR</button>
+<div id="appContent" style="display:none">
+    <header>
+        <div class="brand">
+            <div class="logoBox"></div>
+            <div>
+                <strong id="displayName"></strong>
+                <div id="userBadge"></div>
+            </div>
+        </div>
+        <button onclick="location.reload()" style="width: auto; padding: 5px 10px; background: #ff4d4d; font-size: 12px;">Sair</button>
     </header>
 
-    <div class="card">
-        <h3 style="margin-top:0">Postar Item</h3>
-        <input type="file" id="f1" accept="image/*" onchange="lerImg(this)">
-        <img id="pre1" style="width:100%; max-height:200px; object-fit:contain; display:none; margin:10px 0; border-radius:8px">
-        <textarea id="d1" placeholder="O que você tem para trocar?"></textarea>
-        <button class="btn btn-post" onclick="subirPost()">PUBLICAR</button>
-    </div>
+    <div class="wrap">
+        <div style="text-align: center; font-size: 11px; margin-bottom: 15px;">
+            Sincronizado com: <b>icek-9cdd7</b> ✅
+        </div>
 
-    <div id="feed"></div>
+        <div class="post-box">
+            <textarea id="postText" placeholder="Digite uma ordem ou mensagem para a timeline..."></textarea>
+            <button onclick="criarPost()" style="margin-top:10px;">PUBLICAR NA TIMELINE</button>
+        </div>
+
+        <div class="grid-apps">
+            <div class="app-item"><div class="icon-box"><i class="fas fa-user"></i></div><span>Perfil</span></div>
+            <div class="app-item"><div class="icon-box"><i class="fas fa-envelope"></i></div><span>Chat</span></div>
+            <div class="app-item"><div class="icon-box"><i class="fas fa-gear"></i></div><span>Ajustes</span></div>
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid var(--line); margin: 20px 0;">
+
+        <div id="feed">
+            <p style="text-align:center; font-size:12px; color: #666;">Carregando timeline...</p>
+        </div>
+    </div>
 </div>
 
 <script type="module">
-    // IMPORTAÇÕES CORRIGIDAS (Versão compatível com CDN)
+    // IMPORTAÇÃO DO FIREBASE
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, push, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDM5M1_O-wfcBDGYJIiYgiHVbqhiKC-0dw",
@@ -65,113 +113,90 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
-    let imgBase64 = "";
-    window.user = { n: "", c: "COMUM" };
+    window.currentUser = { nome: "", cargo: "" };
 
-    // FUNÇÕES GLOBAIS
-    window.logar = () => {
-        const n = document.getElementById('lnome').value.trim();
-        const p = document.getElementById('lpass').value;
-        if(!n) return alert("Digite seu nome!");
+    // LOGIN
+    window.fazerLogin = () => {
+        const nome = document.getElementById('userName').value.trim();
+        const pass = document.getElementById('userPass').value;
+        if(!nome) return alert("Digite seu nome!");
+
+        window.currentUser = { 
+            nome: nome, 
+            cargo: (pass === "1533" ? "ADM" : "MODERADOR") 
+        };
+
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('appContent').style.display = 'block';
         
-        window.user = { n: n, c: (p === "1533" ? "ADM1" : "COMUM") };
-        document.getElementById('loginS').style.display = 'none';
-        document.getElementById('app').style.display = 'block';
-        document.getElementById('meuStatus').innerHTML = `👤 <b>${n}</b>`;
-    };
-
-    window.lerImg = (input) => {
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            reader.onload = (e) => { 
-                const img = new Image();
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    const ctx = canvas.getContext('2d');
-                    // Redimensionando para não travar o banco de dados
-                    canvas.width = 400; 
-                    canvas.height = 300;
-                    ctx.drawImage(img, 0, 0, 400, 300);
-                    imgBase64 = canvas.toDataURL('image/jpeg', 0.6);
-                    document.getElementById('pre1').src = imgBase64;
-                    document.getElementById('pre1').style.display = "block";
-                };
-                img.src = e.target.result;
-            };
-            reader.readAsDataURL(input.files[0]);
+        const badge = document.getElementById('userBadge');
+        if(window.currentUser.cargo === "ADM") {
+            badge.innerHTML = '<span class="admin-star">★ ADM OURO</span>';
+        } else {
+            badge.innerHTML = '<span class="mod-star">★ MOD AZUL</span>';
         }
+        document.getElementById('displayName').innerText = window.currentUser.nome;
     };
 
-    window.subirPost = () => {
-        const d = document.getElementById('d1').value;
-        if(!d || !imgBase64) return alert("Falta foto ou descrição!");
-        
-        push(ref(db, 'posts'), { 
-            u1: window.user.n, 
-            d1: d, 
-            i1: imgBase64, 
-            u2: "", 
-            d2: "", 
-            i2: "" 
+    // CRIAR POST (ENVIA PARA O FIREBASE)
+    window.criarPost = () => {
+        const text = document.getElementById('postText').value.trim();
+        if(!text) return alert("Escreva algo antes de postar!");
+
+        // Salva no banco de dados
+        push(ref(db, 'timeline'), {
+            usuario: window.currentUser.nome,
+            cargo: window.currentUser.cargo,
+            mensagem: text,
+            data: Date.now()
         });
-        
-        document.getElementById('d1').value = "";
-        document.getElementById('pre1').style.display = "none";
-        document.getElementById('f1').value = "";
-        imgBase64 = "";
+
+        document.getElementById('postText').value = "";
     };
 
-    // ESCUTA O FEED EM TEMPO REAL
-    onValue(ref(db, 'posts'), (snap) => {
+    // ESCUTAR A TIMELINE (CARREGA PARA TODOS EM TEMPO REAL)
+    onValue(ref(db, 'timeline'), (snapshot) => {
         const feed = document.getElementById('feed');
         feed.innerHTML = "";
-        snap.forEach((child) => {
-            const p = child.val();
-            const id = child.key;
-            const card = document.createElement('div');
-            card.className = "card";
-            card.innerHTML = `
-                <div class="dupla">
-                    <div class="lado">
-                        <img src="${p.i1}">
-                        <b>${p.u1} TEM:</b><br>${p.d1}
-                    </div>
-                    <div class="vs">X</div>
-                    <div class="lado">
-                        ${p.u2 ? `
-                            <img src="${p.i2}">
-                            <b>${p.u2} OFERECE:</b><br>${p.d2}
-                        ` : `
-                            <div style="margin-top:60px">
-                                <button class="btn btn-offer" onclick="window.fazerTroca('${id}')">OFERECER TROCA</button>
-                            </div>
-                        `}
-                    </div>
+        
+        if (!snapshot.exists()) {
+            feed.innerHTML = "<p style='text-align:center'>Nenhuma mensagem na timeline.</p>";
+            return;
+        }
+
+        const posts = [];
+        snapshot.forEach((child) => {
+            posts.push({ id: child.key, ...child.val() });
+        });
+
+        // Inverte para mostrar os mais novos primeiro
+        posts.reverse().forEach(post => {
+            const item = document.createElement('div');
+            item.className = 'feed-item';
+            
+            const star = post.cargo === "ADM" ? '<span class="admin-star">★</span>' : '<span class="mod-star">★</span>';
+            
+            item.innerHTML = `
+                <div style="font-size:11px; margin-bottom:5px; display:flex; justify-content:space-between">
+                    <span>${star} <strong>${post.usuario}</strong></span>
+                    <span style="color:#999">${new Date(post.data).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
                 </div>
-                ${window.user.c === "ADM1" ? `
-                    <button onclick="window.removerPost('${id}')" style="color:#ff4d4d; background:none; border:none; cursor:pointer; font-size:11px; width:100%; text-align:right">🗑️ APAGAR POST</button>
-                ` : ""}
+                <div style="font-size:14px; line-height:1.4">${post.mensagem}</div>
+                ${window.currentUser.cargo === "ADM" ? `
+                    <button class="btn-del" onclick="removerPost('${post.id}')">APAGAR</button>
+                ` : ''}
             `;
-            feed.prepend(card);
+            feed.appendChild(item);
         });
     });
 
-    window.fazerTroca = (id) => {
-        const o = prompt("O que você oferece em troca?");
-        if(o) {
-            update(ref(db, `posts/${id}`), { 
-                u2: window.user.n, 
-                d2: o, 
-                i2: "https://via.placeholder.com/150?text=Sem+Foto" 
-            });
+    // REMOVER POST (SÓ ADM)
+    window.removerPost = (id) => {
+        if(confirm("Deseja apagar esta mensagem da timeline?")) {
+            remove(ref(db, `timeline/${id}`));
         }
     };
 
-    window.removerPost = (id) => {
-        if(confirm("Deseja realmente apagar este post?")) {
-            remove(ref(db, `posts/${id}`));
-        }
-    };
 </script>
 </body>
 </html>
