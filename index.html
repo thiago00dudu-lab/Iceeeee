@@ -3,107 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ICE - Rede Conecta</title>
+    <title>ICE - Rede de Trocas</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <style>
         :root { --bg: #f0f2f5; --ice-blue: #00d4ff; --sea: #0f3452; --gold: #ffd700; --blue: #1877f2; --white: #fff; }
-        body { margin:0; font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--sea); }
+        body { margin:0; font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--sea); }
         
-        /* HEADER ICE DESTACADO */
-        .ice-header { background: linear-gradient(135deg, var(--sea), #1a4a73); color: white; padding: 25px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.3); position: relative; }
-        .ice-header h1 { margin: 0; font-size: 35px; letter-spacing: 6px; font-weight: 900; text-transform: uppercase; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
-        .ice-header p { margin: 5px 0 0; font-size: 13px; letter-spacing: 2px; opacity: 0.9; font-weight: 300; }
+        /* HEADER GIGANTE */
+        .topo-ice { background: var(--sea); color: white; padding: 30px 10px; text-align: center; }
+        .topo-ice h1 { margin: 0; font-size: 50px; letter-spacing: 8px; font-weight: 900; }
+        .topo-ice p { margin: 0; font-size: 14px; opacity: 0.8; letter-spacing: 2px; }
 
-        header { padding:12px 15px; background: var(--white); display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:100; border-bottom: 1px solid #ddd; }
-        .wrap { max-width: 500px; margin: auto; padding: 15px; padding-bottom: 90px; }
+        header { padding:15px; background: var(--white); display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:100; border-bottom: 1px solid #ddd; }
+        .wrap { max-width: 500px; margin: auto; padding: 15px; padding-bottom: 100px; }
 
-        /* CARDS E FEED */
-        .card { background: var(--white); border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+        /* CARDS */
+        .card { background: var(--white); border-radius: 15px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
         .dupla { display: flex; gap: 10px; position: relative; margin-top: 10px; }
-        .lado { flex: 1; text-align: center; background: #f8fbff; padding: 10px; border-radius: 12px; border: 1px solid #e0efff; overflow: hidden; }
-        .lado img { width: 100%; height: 130px; object-fit: cover; border-radius: 8px; border: 1px solid #eee; }
-        .vs { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: var(--sea); color: white; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 12px; border: 3px solid white; font-weight: bold; z-index: 5; }
+        .lado { flex: 1; text-align: center; background: #f8fbff; padding: 10px; border-radius: 12px; border: 1px solid #e0efff; }
+        .lado img { width: 100%; height: 130px; object-fit: cover; border-radius: 10px; }
+        .vs { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: var(--sea); color: white; border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; font-size: 12px; border: 3px solid white; font-weight: bold; z-index: 10; }
 
-        /* PERFIL ESTILO FACEBOOK */
+        /* PERFIL */
         #telaPerfil { display: none; background: var(--bg); min-height: 100vh; position: fixed; inset: 0; z-index: 500; overflow-y: auto; }
-        .capa { height: 160px; background: linear-gradient(to bottom, var(--sea), var(--ice-blue)); width: 100%; position: relative; }
-        .foto-perfil { width: 120px; height: 120px; border-radius: 50%; border: 5px solid white; position: absolute; bottom: -60px; left: 20px; background: #eee; display: flex; align-items: center; justify-content: center; font-size: 55px; color: #999; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
-        .info-perfil { margin-top: 65px; padding: 20px; background: white; min-height: 60vh; border-radius: 25px 25px 0 0; }
+        .capa { height: 180px; background: linear-gradient(135deg, var(--sea), var(--ice-blue)); position: relative; }
+        .foto-perfil { width: 120px; height: 120px; border-radius: 50%; border: 5px solid white; position: absolute; bottom: -60px; left: 20px; background: #eee; display: flex; align-items: center; justify-content: center; font-size: 60px; color: #ccc; }
+        .info-perfil { margin-top: 70px; padding: 20px; }
+        .perfil-posts-titulo { margin: 20px 0 10px; font-weight: bold; border-bottom: 2px solid var(--sea); padding-bottom: 5px; }
 
-        /* BOTAO FLUTUANTE */
-        .btn-float { position: fixed; bottom: 25px; right: 25px; width: 65px; height: 65px; background: #25d366; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); cursor: pointer; z-index: 400; border: none; }
-
-        /* CLASSES AUXILIARES */
-        .clickable { cursor: pointer; color: var(--blue); font-weight: bold; }
-        .clickable:hover { text-decoration: underline; }
-        .star-gold { color: var(--gold); font-weight: bold; }
-        .star-blue { color: var(--blue); font-weight: bold; }
-        input, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-family: inherit; }
-        button { cursor: pointer; border: none; border-radius: 8px; font-weight: bold; padding: 12px; width: 100%; transition: 0.2s; }
-        .btn-main { background: var(--sea); color: white; }
-        .btn-main:active { transform: scale(0.98); }
+        /* UTILITÁRIOS */
+        .user-link { cursor: pointer; color: var(--blue); font-weight: bold; }
+        .user-link:hover { text-decoration: underline; }
+        .btn-share { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; background: #25d366; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 450; border: none; }
+        
+        input, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; }
+        button { cursor: pointer; border: none; border-radius: 10px; font-weight: bold; padding: 12px; }
+        .btn-main { background: var(--sea); color: white; width: 100%; }
     </style>
 </head>
 <body>
 
 <div id="loginS" style="position:fixed; inset:0; background:var(--bg); z-index:1000; display:flex; align-items:center; justify-content:center;">
     <div class="card" style="width:85%; text-align:center; max-width: 350px;">
-        <h2 style="color:var(--sea); margin-bottom:5px;">ICE CONECTA</h2>
-        <p style="font-size:12px; color:#666;">Rede de Trocas Inteligentes</p>
-        <input type="text" id="inome" placeholder="Seu Nome/Usuário">
+        <h1>ICE</h1>
+        <input type="text" id="inome" placeholder="Nome de usuário">
         <input type="password" id="ipass" placeholder="Senha">
-        <button class="btn-main" onclick="logar()">ENTRAR NA REDE</button>
+        <button class="btn-main" onclick="logar()">ENTRAR</button>
     </div>
 </div>
 
 <div id="app" style="display:none">
-    <div class="ice-header">
+    <div class="topo-ice">
         <h1>ICE</h1>
-        <p>CONECTA • TROCAS • AFILIADOS</p>
+        <p>CONECTA</p>
     </div>
 
     <header>
-        <div onclick="abrirPerfil(window.user.nome)" class="clickable">
-            <span id="statusUser"></span>
-        </div>
-        <button onclick="location.reload()" style="width:auto; background:none; color:red; font-size:11px;">SAIR</button>
+        <span class="user-link" onclick="abrirPerfil(window.user.nome)">👤 <b id="meuNome"></b></span>
+        <button onclick="location.reload()" style="background:none; color:red;">Sair</button>
     </header>
 
     <div class="wrap">
         <div class="card">
-            <b style="font-size:14px;">O que você quer trocar hoje?</b>
-            <input type="file" accept="image/*" id="fileInp" onchange="preview(this)">
-            <img id="p1" style="width:100%; display:none; margin:10px 0; border-radius:8px;">
-            <textarea id="d1" placeholder="Descreva seu item..."></textarea>
-            <button class="btn-main" onclick="subirPost()">POSTAR NO FEED</button>
+            <b>Nova Troca</b>
+            <input type="file" accept="image/*" onchange="preview(this)">
+            <img id="p1" style="width:100%; display:none; margin:10px 0; border-radius:10px">
+            <textarea id="d1" placeholder="O que você tem para trocar?"></textarea>
+            <button class="btn-main" onclick="subirPost()">PUBLICAR</button>
         </div>
-        
         <div id="feed"></div>
     </div>
 
-    <button class="btn-float" onclick="compartilhar()" title="Convidar Amigos">
-        <i class="fas fa-share-alt"></i>
-    </button>
+    <button class="btn-share" onclick="compartilhar()"><i class="fas fa-share-alt"></i></button>
 </div>
 
 <div id="telaPerfil">
     <div class="capa">
-        <button onclick="document.getElementById('telaPerfil').style.display='none'" style="position:absolute; top:15px; left:15px; width:auto; background:rgba(0,0,0,0.5); color:white; border-radius:20px; padding:5px 15px;">← Voltar</button>
+        <button onclick="document.getElementById('telaPerfil').style.display='none'" style="margin:20px; padding:8px 15px; background:rgba(0,0,0,0.5); color:white;">← Voltar</button>
         <div class="foto-perfil"><i class="fas fa-user"></i></div>
     </div>
     <div class="info-perfil">
         <h2 id="perfNome" style="margin:0"></h2>
-        <p id="perfCargo" style="margin:5px 0;"></p>
-        <hr style="opacity:0.1; margin:15px 0;">
-        <p id="perfPai" style="font-size:14px; color:#28a745; margin:5px 0;"></p>
-        <p id="perfFilhos" style="font-size:14px; font-weight:bold;"></p>
-        
-        <div id="controlesAdm" style="display:none; margin-top:30px; padding:15px; background:#f9f9f9; border:1px solid #ddd; border-radius:12px;">
-            <p style="margin-top:0; font-size:13px;"><b>Ferramentas de Moderador</b></p>
-            <button style="background:var(--gold); color:black; margin-bottom:8px;" onclick="mudarCargo('ADM2')">Promover a ADM Ouro</button>
-            <button style="background:var(--blue); color:white; margin-bottom:8px;" onclick="mudarCargo('MOD')">Tornar Moderador</button>
-            <button style="background:#ff4d4d; color:white;" onclick="mudarCargo('BLOCK')">Bloquear Usuário</button>
+        <p id="perfCargo" style="margin:5px 0; color:#666;"></p>
+        <p id="perfPai" style="color:green; font-weight:bold;"></p>
+        <p id="perfFilhos"></p>
+
+        <div id="controlesAdm" style="display:none; padding:15px; background:#eee; border-radius:10px; margin:15px 0;">
+            <b>Ações de ADM:</b><br>
+            <button onclick="mudarCargo('ADM2')" style="background:var(--gold); margin:5px 0; width:100%">Promover a ADM Ouro</button>
+            <button onclick="mudarCargo('MOD')" style="background:var(--blue); color:white; margin:5px 0; width:100%">Tornar Moderador</button>
+            <button onclick="mudarCargo('BLOCK')" style="background:red; color:white; margin:5px 0; width:100%">Bloquear Usuário</button>
         </div>
+
+        <div class="perfil-posts-titulo">Postagens do Usuário</div>
+        <div id="perfilFeed"></div>
     </div>
 </div>
 
@@ -117,103 +110,126 @@
         projectId: "icek-9cdd7"
     };
 
-    const firebaseApp = initializeApp(firebaseConfig);
-    const db = getDatabase(firebaseApp);
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
     let imgBase = "";
     window.user = { nome: "", cargo: "USER", pai: "" };
     window.alvoNome = "";
 
-    // LOGIN E FILIAÇÃO
+    // LOGIN
     window.logar = () => {
         const n = document.getElementById('inome').value.trim();
         const p = document.getElementById('ipass').value;
-        if(!n) return alert("Digite um nome!");
+        if(!n) return alert("Nome!");
 
         const urlParams = new URLSearchParams(window.location.search);
-        const refPai = urlParams.get('ref');
+        const refID = urlParams.get('ref');
 
         onValue(ref(db, 'usuarios/' + n), (snap) => {
             let dados = snap.val();
             if(!dados) {
-                // Cadastro novo
-                dados = { 
-                    nome: n, 
-                    cargo: (p === "1533" ? "ADM1" : "USER"), 
-                    pai: (refPai && refPai !== n) ? refPai : "Sistema" 
-                };
+                dados = { nome: n, cargo: (p === "1533" ? "ADM1" : "USER"), pai: (refID && refID !== n) ? refID : "Sistema" };
                 set(ref(db, 'usuarios/' + n), dados);
             }
-            if(dados.cargo === "BLOCK") return alert("Acesso negado.");
+            if(dados.cargo === "BLOCK") return alert("Bloqueado!");
             window.user = dados;
             document.getElementById('loginS').style.display = 'none';
             document.getElementById('app').style.display = 'block';
-            document.getElementById('statusUser').innerHTML = `<b>👤 ${n}</b>`;
+            document.getElementById('meuNome').innerText = n;
         }, { onlyOnce: true });
     };
 
-    // COMPARTILHAR LINK
-    window.compartilhar = () => {
-        const link = window.location.origin + window.location.pathname + "?ref=" + window.user.nome;
-        if (navigator.share) {
-            navigator.share({ title: 'ICE Conecta', text: 'Vem trocar itens comigo!', url: link });
-        } else {
-            navigator.clipboard.writeText(link);
-            alert("Link de indicação copiado!");
-        }
-    };
-
-    // ABRIR QUALQUER PERFIL
+    // ABRIR PERFIL E FILTRAR POSTS
     window.abrirPerfil = (nome) => {
         if(!nome) return;
         window.alvoNome = nome;
+        
         onValue(ref(db, 'usuarios/' + nome), (snap) => {
             const d = snap.val();
             if(!d) return;
 
             document.getElementById('perfNome').innerText = d.nome;
-            
-            // Estilização do Cargo
-            let cargoTxt = "Membro da Rede";
-            if(d.cargo === "ADM1") cargoTxt = "<span class='star-gold'>★ ADM SUPREMO</span>";
-            else if(d.cargo === "ADM2") cargoTxt = "<span class='star-gold'>☆ ADM OURO</span>";
-            else if(d.cargo === "MOD") cargoTxt = "<span class='star-blue'>🛡️ MODERADOR</span>";
-            document.getElementById('perfCargo').innerHTML = cargoTxt;
-            
+            document.getElementById('perfCargo').innerText = "Nível: " + d.cargo;
             document.getElementById('perfPai').innerText = "Indicado por: " + d.pai;
 
-            // Contar Afiliados (Filhos)
-            onValue(ref(db, 'usuarios'), (all) => {
-                let cont = 0;
-                all.forEach(u => { if(u.val().pai === nome) cont++; });
-                document.getElementById('perfFilhos').innerHTML = `<i class="fas fa-users"></i> Indicou ${cont} pessoas`;
-            }, { onlyOnce: true });
-
-            // Lógica de Controle (Quem pode ver os botões de ADM)
-            const admBox = document.getElementById('controlesAdm');
-            admBox.style.display = "none";
-            
-            // Só mostra se quem está olhando não for o dono do perfil
+            // Painel Adm
+            const box = document.getElementById('controlesAdm');
+            box.style.display = "none";
             if(window.user.nome !== nome) {
-                if(window.user.cargo === "ADM1") {
-                    admBox.style.display = "block"; // ADM1 manda em tudo
-                } else if(window.user.cargo === "ADM2" && d.cargo !== "ADM1") {
-                    admBox.style.display = "block"; // ADM2 manda em MOD e USER
-                } else if(window.user.cargo === "MOD" && d.cargo === "USER") {
-                    admBox.style.display = "block"; // MOD manda em USER
-                }
+                if(window.user.cargo === "ADM1") box.style.display = "block";
+                else if(window.user.cargo === "ADM2" && d.cargo !== "ADM1") box.style.display = "block";
+                else if(window.user.cargo === "MOD" && d.cargo === "USER") box.style.display = "block";
             }
 
+            // Gerar Time Line do Perfil
+            carregarPostagensDoUsuario(nome);
+            
             document.getElementById('telaPerfil').style.display = 'block';
+            document.getElementById('telaPerfil').scrollTo(0,0);
         }, { onlyOnce: true });
     };
 
-    window.mudarCargo = (novo) => {
-        update(ref(db, 'usuarios/' + window.alvoNome), { cargo: novo });
-        alert("Status atualizado com sucesso!");
-        abrirPerfil(window.alvoNome);
-    };
+    function carregarPostagensDoUsuario(nome) {
+        onValue(ref(db, 'posts'), (snap) => {
+            const pFeed = document.getElementById('perfilFeed');
+            pFeed.innerHTML = "";
+            let temPost = false;
+            
+            snap.forEach(child => {
+                const p = child.val();
+                if(p.u1 === nome) {
+                    temPost = true;
+                    const card = document.createElement('div');
+                    card.className = "card";
+                    card.innerHTML = `
+                        <div class="dupla">
+                            <div class="lado">
+                                <img src="${p.i1}">
+                                <b>${p.u1}</b>
+                                <p style="font-size:11px">${p.d1}</p>
+                            </div>
+                            <div class="vs">VS</div>
+                            <div class="lado">
+                                ${p.u2 ? `<img src="${p.i2}"><b>${p.u2}</b><p style="font-size:11px">${p.d2}</p>` : '<i>Aguardando...</i>'}
+                            </div>
+                        </div>`;
+                    pFeed.prepend(card);
+                }
+            });
+            if(!temPost) pFeed.innerHTML = "<p style='text-align:center; opacity:0.5'>Nenhuma postagem ainda.</p>";
+        }, { onlyOnce: true });
+    }
 
-    // POSTS E FEED
+    // FEED PRINCIPAL
+    onValue(ref(db, 'posts'), (snap) => {
+        const feed = document.getElementById('feed');
+        feed.innerHTML = "";
+        snap.forEach(child => {
+            const p = child.val();
+            const id = child.key;
+            const div = document.createElement('div');
+            div.className = "card";
+            div.innerHTML = `
+                <div class="dupla">
+                    <div class="lado">
+                        <img src="${p.i1}">
+                        <div class="user-link" onclick="abrirPerfil('${p.u1}')">${p.u1}</div>
+                        <p style="font-size:11px">${p.d1}</p>
+                    </div>
+                    <div class="vs">VS</div>
+                    <div class="lado">
+                        ${p.u2 ? `
+                            <img src="${p.i2}">
+                            <div class="user-link" onclick="abrirPerfil('${p.u2}')">${p.u2}</div>
+                            <p style="font-size:11px">${p.d2}</p>
+                        ` : `<button onclick="ofertar('${id}')" style="margin-top:25px; font-size:10px; background:var(--blue); color:white">OFERECER</button>`}
+                    </div>
+                </div>`;
+            feed.prepend(div);
+        });
+    });
+
+    // OUTRAS FUNÇÕES
     window.preview = (input) => {
         const reader = new FileReader();
         reader.onload = (e) => {
@@ -226,41 +242,24 @@
 
     window.subirPost = () => {
         const d = document.getElementById('d1').value;
-        if(!imgBase || !d) return alert("Foto e texto são obrigatórios!");
+        if(!imgBase || !d) return alert("Falta foto/texto!");
         push(ref(db, 'posts'), { u1: window.user.nome, d1: d, i1: imgBase, u2: "", d2: "", i2: "" });
         document.getElementById('d1').value = "";
         document.getElementById('p1').style.display = "none";
         imgBase = "";
     };
 
-    onValue(ref(db, 'posts'), (snap) => {
-        const feed = document.getElementById('feed');
-        feed.innerHTML = "";
-        let lista = [];
-        snap.forEach(c => { lista.push({id: c.key, ...c.val()}) });
-        lista.reverse().forEach(p => {
-            const div = document.createElement('div');
-            div.className = "card";
-            div.innerHTML = `
-                <div class="dupla">
-                    <div class="lado">
-                        <img src="${p.i1}">
-                        <div class="clickable" onclick="abrirPerfil('${p.u1}')" style="margin-top:8px">${p.u1}</div>
-                        <p style="font-size:11px; color:#666; margin:5px 0;">${p.d1}</p>
-                    </div>
-                    <div class="vs">VS</div>
-                    <div class="lado">
-                        ${p.u2 ? `
-                            <img src="${p.i2}">
-                            <div class="clickable" onclick="abrirPerfil('${p.u2}')" style="margin-top:8px">${p.u2}</div>
-                            <p style="font-size:11px; color:#666; margin:5px 0;">${p.d2}</p>
-                        ` : `<button onclick="ofertar('${p.id}')" style="margin-top:30px; font-size:10px; background:var(--blue); color:white">OFERECER</button>`}
-                    </div>
-                </div>
-            `;
-            feed.appendChild(div);
-        });
-    });
+    window.compartilhar = () => {
+        const link = window.location.origin + window.location.pathname + "?ref=" + window.user.nome;
+        navigator.clipboard.writeText(link);
+        alert("Link de indicação copiado!");
+    };
+
+    window.mudarCargo = (novo) => {
+        update(ref(db, 'usuarios/' + window.alvoNome), { cargo: novo });
+        alert("Cargo alterado!");
+        abrirPerfil(window.alvoNome);
+    };
 
     window.ofertar = (id) => {
         const txt = prompt("Sua oferta:");
