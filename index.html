@@ -3,35 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ICE "trocas"</title>
+    <title>ICE "trocas" - Oficial</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <style>
-        :root { --bg: #f0f7ff; --ice: #a8dadc; --sea: #0f3452; --blue: #1877f2; --gold: #ffd700; --white: #fff; }
+        :root { --bg: #f0f7ff; --ice: #a8dadc; --sea: #0f3452; --blue: #1877f2; --gold: #ffd700; --white: #fff; --mod: #00ff44; }
         body { margin:0; font-family: sans-serif; background: var(--bg); color: var(--sea); }
         
-        /* BANNER TOPO */
-        .topo-visual { height: 180px; background: linear-gradient(rgba(15,52,82,0.8), rgba(168,218,220,0.4)), url('https://i.imgur.com/kS5xT6g.png'); background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; border-bottom: 4px solid var(--ice); }
-        .topo-visual h1 { color: white; font-size: 45px; letter-spacing: 5px; text-shadow: 2px 2px 10px rgba(0,0,0,0.5); margin: 0; }
-
+        /* HEADER & VISUAL */
+        .topo-visual { height: 150px; background: linear-gradient(rgba(15,52,82,0.8), rgba(168,218,220,0.4)), url('https://i.imgur.com/kS5xT6g.png'); background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; border-bottom: 4px solid var(--ice); }
+        .topo-visual h1 { color: white; font-size: 40px; letter-spacing: 5px; text-shadow: 2px 2px 10px rgba(0,0,0,0.5); margin: 0; }
         header { padding:15px; background: var(--white); display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:100; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        
         .wrap { max-width: 500px; margin: auto; padding: 15px; padding-bottom: 100px; }
 
         /* CARDS */
         .card { background: var(--white); border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); border: 1px solid rgba(0,0,0,0.05); }
         .dupla { display: flex; gap: 8px; position: relative; margin-top: 10px; }
-        .lado { flex: 1; text-align: center; background: #f8fbff; padding: 10px; border-radius: 10px; border: 1px solid var(--ice); min-height: 150px; }
-        .lado img { width: 100%; height: 120px; object-fit: cover; border-radius: 8px; }
-        .vs { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: var(--sea); color: white; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 10px; border: 3px solid white; font-weight: bold; z-index: 10; }
+        .lado { flex: 1; text-align: center; background: #f8fbff; padding: 10px; border-radius: 10px; border: 1px solid var(--ice); min-height: 180px; display: flex; flex-direction: column; justify-content: space-between; }
+        .lado img, .lado video { width: 100%; height: 110px; object-fit: cover; border-radius: 8px; background: #eee; }
+        .vs { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: var(--sea); color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-size: 10px; border: 3px solid white; font-weight: bold; z-index: 10; }
+
+        /* ESTRELAS E NÍVEIS */
+        .badge-adm { color: var(--gold); font-weight: bold; font-size: 11px; display: block; }
+        .badge-mod { color: var(--mod); font-weight: bold; font-size: 11px; display: block; }
+        .badge-user { color: #888; font-size: 10px; display: block; }
+
+        /* MODAL DE PROPOSTA */
+        #modalOferta { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:2000; align-items:center; justify-content:center; }
+        .modal-content { background:white; padding:20px; border-radius:15px; width:85%; max-width:400px; }
 
         /* PERFIL */
         #telaPerfil { display: none; background: #f0f2f5; min-height: 100vh; position: fixed; inset: 0; z-index: 500; overflow-y: auto; }
-        .capa { height: 140px; background: linear-gradient(135deg, var(--sea), var(--blue)); position: relative; }
-        .foto-perfil { width: 100px; height: 100px; border-radius: 50%; border: 4px solid white; position: absolute; bottom: -50px; left: 20px; background: #eee; overflow: hidden; }
+        .capa { height: 120px; background: linear-gradient(135deg, var(--sea), var(--blue)); position: relative; }
+        .foto-perfil { width: 80px; height: 80px; border-radius: 50%; border: 4px solid white; position: absolute; bottom: -40px; left: 20px; background: #eee; overflow: hidden; }
         .foto-perfil img { width: 100%; height: 100%; object-fit: cover; }
-        .info-perfil { margin-top: 60px; padding: 20px; }
 
         .btn-main { background: var(--sea); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; width: 100%; cursor: pointer; }
-        .user-link { cursor: pointer; color: var(--blue); font-weight: bold; }
+        .user-link { cursor: pointer; color: var(--blue); font-weight: bold; font-size: 13px; margin: 5px 0; }
     </style>
 </head>
 <body>
@@ -40,7 +48,7 @@
     <div class="card" style="width:80%; text-align:center;">
         <h2>ICE "trocas"</h2>
         <input type="text" id="inome" placeholder="Usuário" style="width:90%; padding:10px; margin:5px;">
-        <input type="password" id="ipass" placeholder="Senha" style="width:90%; padding:10px; margin:5px;">
+        <input type="password" id="ipass" placeholder="Senha (MOD: 1234 | ADM: 1533)" style="width:90%; padding:10px; margin:5px;">
         <button class="btn-main" onclick="logar()">ENTRAR</button>
     </div>
 </div>
@@ -54,9 +62,9 @@
 
     <div class="wrap">
         <div class="card">
-            <b>Nova Troca</b>
-            <input type="file" accept="image/*" id="inputFoto" onchange="preview(this)" style="margin:10px 0;">
-            <img id="imgPre" style="width:100%; display:none; border-radius:10px; margin-bottom:10px;">
+            <b>Nova Troca (Foto ou Vídeo)</b>
+            <input type="file" accept="image/*,video/*" id="inputFoto" onchange="preview(this)" style="margin:10px 0;">
+            <div id="containerPre" style="display:none; margin-bottom:10px;"></div>
             <textarea id="txtDesc" placeholder="O que você tem para trocar?" style="width:100%; height:60px; border-radius:8px; border:1px solid #ddd; padding:5px;"></textarea>
             <button class="btn-main" onclick="subirPost()" style="margin-top:10px;">PUBLICAR NA TIMELINE</button>
         </div>
@@ -64,16 +72,28 @@
     </div>
 </div>
 
+<div id="modalOferta">
+    <div class="modal-content">
+        <h3>Fazer Proposta</h3>
+        <input type="file" id="midiaOferta" accept="image/*,video/*" style="margin-bottom:10px; width: 100%;">
+        <textarea id="txtOferta" placeholder="O que você oferece?" style="width:100%; height:80px; margin-bottom:10px; border-radius:8px; padding:5px;"></textarea>
+        <button class="btn-main" id="btnEnviarOferta">ENVIAR PROPOSTA</button>
+        <button onclick="document.getElementById('modalOferta').style.display='none'" style="background:none; border:none; color:red; margin-top:10px; width:100%;">Cancelar</button>
+    </div>
+</div>
+
 <div id="telaPerfil">
     <div class="capa">
         <button onclick="fecharPerfil()" style="margin:15px; padding:5px 15px; border-radius:20px; border:none; background:rgba(0,0,0,0.5); color:white;">← Voltar</button>
-        <div class="foto-perfil" id="fotoPerfilContainer"><i class="fas fa-user" style="font-size:50px; color:#ccc; margin:25px;"></i></div>
+        <div class="foto-perfil"><i class="fas fa-user" style="font-size:40px; color:#ccc; margin:20px;"></i></div>
     </div>
-    <div class="info-perfil">
+    <div style="margin-top:50px; padding:20px;">
         <h2 id="perfNome" style="margin:0"></h2>
-        <p id="perfCargo" style="color:gray;"></p>
-        <div id="perfAções"></div> <h3 style="margin-top:30px; border-bottom:2px solid var(--ice); padding-bottom:5px;">Minhas Trocas</h3>
-        <div id="perfilPosts"></div> </div>
+        <p id="perfCargo"></p>
+        <hr>
+        <h3>Minhas Trocas</h3>
+        <div id="perfilPosts"></div>
+    </div>
 </div>
 
 <script type="module">
@@ -88,15 +108,22 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
-    let tempImg = "";
+    let tempMidia = "";
+    let idTrocaAtual = "";
     window.user = { nome: "", cargo: "" };
 
+    // LOGIN COM CARGOS
     window.logar = () => {
         const n = document.getElementById('inome').value.trim();
         const p = document.getElementById('ipass').value;
         if(!n) return;
+        
+        let cargoDefinido = "USER";
+        if(p === "1533") cargoDefinido = "ADM1";
+        if(p === "1234") cargoDefinido = "MOD";
+
         onValue(ref(db, 'usuarios/' + n), (snap) => {
-            let dados = snap.val() || { nome: n, cargo: (p === "1533" ? "ADM1" : "USER") };
+            let dados = snap.val() || { nome: n, cargo: cargoDefinido };
             if(!snap.val()) set(ref(db, 'usuarios/' + n), dados);
             window.user = dados;
             document.getElementById('loginS').style.display = 'none';
@@ -105,81 +132,129 @@
         }, { onlyOnce: true });
     };
 
-    // FUNÇÃO PARA SUBIR POST
+    // IDENTIFICAÇÃO POR ESTRELAS
+    function renderEstrelas(cargo) {
+        if(cargo === "ADM1") return '<span class="badge-adm">⭐⭐⭐ ADM</span>';
+        if(cargo === "MOD") return '<span class="badge-mod">⭐⭐ MOD</span>';
+        return '<span class="badge-user">⭐ USER</span>';
+    }
+
+    // PREVIEW DE MÍDIA (FOTO OU VÍDEO)
+    window.preview = (input) => {
+        const file = input.files[0];
+        const reader = new FileReader();
+        const container = document.getElementById('containerPre');
+        container.innerHTML = "";
+        
+        reader.onload = (e) => {
+            tempMidia = e.target.result;
+            if(file.type.includes("video")) {
+                container.innerHTML = `<video src="${tempMidia}" controls style="width:100%; border-radius:10px;"></video>`;
+            } else {
+                container.innerHTML = `<img src="${tempMidia}" style="width:100%; border-radius:10px;">`;
+            }
+            container.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    };
+
+    // POSTAR NA TIMELINE
     window.subirPost = () => {
         const desc = document.getElementById('txtDesc').value;
-        if(!tempImg || !desc) return alert("Coloque foto e descrição!");
-        push(ref(db, 'posts'), { u1: window.user.nome, d1: desc, i1: tempImg, u2: "", d2: "", i2: "" });
-        document.getElementById('txtDesc').value = "";
-        document.getElementById('imgPre').style.display = "none";
-        tempImg = "";
-    };
-
-    window.preview = (input) => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            tempImg = e.target.result;
-            document.getElementById('imgPre').src = tempImg;
-            document.getElementById('imgPre').style.display = 'block';
-        };
-        reader.readAsDataURL(input.files[0]);
-    };
-
-    // FEED PRINCIPAL
-    onValue(ref(db, 'posts'), (snap) => {
-        const feed = document.getElementById('feed');
-        feed.innerHTML = "";
-        snap.forEach(child => {
-            const p = child.val();
-            feed.prepend(gerarCard(child.key, p));
+        if(!tempMidia || !desc) return alert("Adicione mídia e descrição!");
+        
+        push(ref(db, 'posts'), { 
+            u1: window.user.nome, 
+            d1: desc, 
+            i1: tempMidia, 
+            c1: window.user.cargo,
+            u2: "", d2: "", i2: "", c2: "" 
         });
-    });
+        
+        document.getElementById('txtDesc').value = "";
+        document.getElementById('containerPre').style.display = "none";
+        tempMidia = "";
+    };
 
-    // GERAR O HTML DO CARD (USADO NO FEED E NO PERFIL)
+    // GERAR O CARD
     function gerarCard(id, p) {
+        const renderConteudo = (src) => {
+            if(!src) return '';
+            return src.includes("video") || src.startsWith("data:video") 
+                ? `<video src="${src}" controls></video>` 
+                : `<img src="${src}">`;
+        };
+
         const div = document.createElement('div');
         div.className = "card";
         div.innerHTML = `
             <div class="dupla">
                 <div class="lado">
-                    <img src="${p.i1}">
+                    ${renderConteudo(p.i1)}
                     <div class="user-link" onclick="abrirPerfil('${p.u1}')">${p.u1}</div>
-                    <p style="font-size:11px;">${p.d1}</p>
+                    ${renderEstrelas(p.c1)}
+                    <p style="font-size:11px; margin-top:5px;">${p.d1}</p>
                 </div>
                 <div class="vs">VS</div>
                 <div class="lado">
                     ${p.u2 ? `
-                        <img src="${p.i2}">
+                        ${renderConteudo(p.i2)}
                         <div class="user-link" onclick="abrirPerfil('${p.u2}')">${p.u2}</div>
-                        <p style="font-size:11px;">${p.d2}</p>
-                    ` : `<button onclick="ofertar('${id}')" style="margin-top:40px; background:var(--blue); color:white; border:none; padding:8px; border-radius:5px; cursor:pointer;">OFERECER</button>`}
+                        ${renderEstrelas(p.c2)}
+                        <p style="font-size:11px; margin-top:5px;">${p.d2}</p>
+                    ` : `<button onclick="abrirModalOferta('${id}')" style="margin-top:40px; background:var(--blue); color:white; border:none; padding:8px; border-radius:5px; cursor:pointer; font-weight:bold;">OFERECER</button>`}
                 </div>
             </div>`;
         return div;
     }
 
-    // ABRIR PERFIL E CARREGAR POSTS DELE
+    // FEED
+    onValue(ref(db, 'posts'), (snap) => {
+        const feed = document.getElementById('feed');
+        feed.innerHTML = "";
+        snap.forEach(child => feed.prepend(gerarCard(child.key, child.val())));
+    });
+
+    // SISTEMA DE PROPOSTA (MODAL)
+    window.abrirModalOferta = (id) => {
+        idTrocaAtual = id;
+        document.getElementById('modalOferta').style.display = 'flex';
+    };
+
+    document.getElementById('btnEnviarOferta').onclick = () => {
+        const file = document.getElementById('midiaOferta').files[0];
+        const desc = document.getElementById('txtOferta').value;
+        if(!file || !desc) return alert("Selecione a mídia e a descrição!");
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            update(ref(db, `posts/${idTrocaAtual}`), { 
+                u2: window.user.nome, 
+                d2: desc, 
+                i2: e.target.result,
+                c2: window.user.cargo 
+            }).then(() => {
+                alert("Oferta enviada!");
+                document.getElementById('modalOferta').style.display = 'none';
+                document.getElementById('txtOferta').value = "";
+            });
+        };
+        reader.readAsDataURL(file);
+    };
+
+    // PERFIL
     window.abrirPerfil = (nome) => {
         onValue(ref(db, 'usuarios/' + nome), (snap) => {
             const d = snap.val();
             document.getElementById('perfNome').innerText = d.nome;
-            document.getElementById('perfCargo').innerText = "Nível: " + d.cargo;
+            document.getElementById('perfCargo').innerHTML = renderEstrelas(d.cargo);
             
-            // Carregar posts desse usuário específico
-            const perfilPosts = document.getElementById('perfilPosts');
-            perfilPosts.innerHTML = "<p style='text-align:center; opacity:0.5;'>Carregando trocas...</p>";
-            
+            const pPosts = document.getElementById('perfilPosts');
+            pPosts.innerHTML = "";
             onValue(ref(db, 'posts'), (postSnap) => {
-                perfilPosts.innerHTML = "";
-                let temPost = false;
                 postSnap.forEach(child => {
-                    const p = child.val();
-                    if(p.u1 === nome) {
-                        temPost = true;
-                        perfilPosts.prepend(gerarCard(child.key, p));
-                    }
+                    if(child.val().u1 === nome) pPosts.prepend(gerarCard(child.key, child.val()));
                 });
-                if(!temPost) perfilPosts.innerHTML = "Nenhuma troca postada.";
             }, { onlyOnce: true });
 
             document.getElementById('telaPerfil').style.display = 'block';
@@ -187,26 +262,6 @@
     };
 
     window.fecharPerfil = () => { document.getElementById('telaPerfil').style.display = 'none'; };
-
-    // FUNÇÃO DE TRANSAÇÃO (OFERTAR)
-    window.ofertar = (id) => {
-        const txt = prompt("O que você oferece nesta troca?");
-        if(!txt) return;
-        const inp = document.createElement('input');
-        inp.type = 'file'; inp.accept = 'image/*';
-        inp.onchange = (e) => {
-            const reader = new FileReader();
-            reader.onload = (ev) => {
-                update(ref(db, `posts/${id}`), { 
-                    u2: window.user.nome, 
-                    d2: txt, 
-                    i2: ev.target.result 
-                }).then(() => alert("Oferta enviada!"));
-            };
-            reader.readAsDataURL(e.target.files[0]);
-        };
-        inp.click();
-    };
 </script>
 </body>
 </html>
