@@ -3,61 +3,92 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ICE - Sistema de Comando</title>
+<title>ICE - Comando de Trocas</title>
 <style>
-:root {
-    --bg: #dff6ff; --sea: #0f3452; --gold: #ffd700; --blue: #007bff;
-}
+:root { --bg: #dff6ff; --sea: #0f3452; --gold: #ffd700; --blue: #007bff; --white: #ffffff; }
 body { margin: 0; font-family: sans-serif; background: var(--bg); color: var(--sea); }
 .header { padding: 15px; background: rgba(255,255,255,0.7); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #7ec8e6; }
-.admin-star { color: var(--gold); font-size: 12px; display: block; }
-.mod-star { color: var(--blue); font-size: 12px; display: block; }
+.badge { font-weight: bold; font-size: 13px; margin-bottom: 3px; }
+.admin-star { color: var(--gold); }
+.mod-star { color: var(--blue); }
 
-.login-screen { position: fixed; inset: 0; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100; }
-.card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); width: 80%; max-width: 300px; text-align: center; }
-input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-button { width: 100%; padding: 10px; background: #1d5277; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+/* TELAS */
+.screen { display: none; padding: 15px; }
+.active { display: block; }
 
-.main-content { display: none; padding: 15px; }
-.post-box { background: white; padding: 15px; border-radius: 10px; margin-bottom: 20px; }
-.feed-item { background: white; padding: 10px; border-radius: 10px; margin-bottom: 10px; position: relative; border-left: 5px solid #1d5277; }
-.badge { font-weight: bold; font-size: 14px; }
-.btn-block { background: #ff6b7a; margin-top: 5px; font-size: 11px; width: auto; padding: 5px 10px; }
+/* LOGIN */
+.login-screen { position: fixed; inset: 0; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; }
+.card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); width: 85%; max-width: 320px; text-align: center; }
+input, textarea { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
+button { width: 100%; padding: 12px; background: #1d5277; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 5px; }
+
+/* TELA DUPLA DE TROCAS */
+.trade-container { display: flex; gap: 10px; margin-top: 15px; }
+.trade-side { flex: 1; background: var(--white); padding: 10px; border-radius: 10px; border: 2px dashed #7ec8e6; text-align: center; }
+.trade-side h4 { margin: 0 0 10px 0; font-size: 14px; color: #1d5277; }
+.preview-img { width: 100%; height: 80px; background: #eee; border-radius: 5px; margin-bottom: 5px; object-fit: cover; display: none; }
+
+/* FEED */
+.feed-item { background: white; padding: 12px; border-radius: 12px; margin-bottom: 15px; border-left: 5px solid #1d5277; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+.trade-display { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 10px; background: #f0faff; padding: 10px; border-radius: 8px; }
+.trade-box { flex: 1; font-size: 12px; text-align: center; }
+.vs-badge { background: #1d5277; color: white; padding: 5px; border-radius: 50%; font-size: 10px; font-weight: bold; }
 </style>
 </head>
 <body>
 
-<!-- TELA DE LOGIN -->
+<!-- 1. TELA DE LOGIN -->
 <div id="loginScreen" class="login-screen">
     <div class="card">
-        <h3>Acesso ICE</h3>
+        <h2 style="margin-top:0">ICE LOGIN</h2>
         <input type="text" id="userName" placeholder="Seu Nome">
         <input type="password" id="userPass" placeholder="Senha (ADM: 1533)">
-        <button onclick="fazerLogin()">Entrar no Sistema</button>
+        <button onclick="fazerLogin()">ACESSAR COMANDO</button>
     </div>
 </div>
 
-<!-- CONTEÚDO PRINCIPAL -->
-<div id="appContent" class="main-content">
+<!-- 2. TELA PRINCIPAL (FEED E TROCAS) -->
+<div id="appContent" class="screen">
     <header class="header">
         <div>
-            <span id="userBadge"></span>
+            <div id="userBadge"></div>
             <strong id="displayName"></strong>
         </div>
-        <button onclick="location.reload()" style="width: auto; background: none; color: red;">Sair</button>
+        <button onclick="location.reload()" style="width:auto; background:none; color:red; font-size:12px;">SAIR</button>
     </header>
 
-    <div class="status-bar" style="text-align: center; font-size: 11px; margin: 10px 0;">Firebase Conectado: icek-9cdd7 ✅</div>
-
-    <!-- ÁREA DE POSTAGEM (TELA DUPLA/POST) -->
-    <div class="post-box" id="postArea">
-        <textarea id="postText" placeholder="O que deseja postar?" style="width:100%; height:60px; border-radius: 5px; border:1px solid #ddd; padding:5px;"></textarea>
-        <button onclick="criarPost()" style="margin-top:10px;">Publicar Comando</button>
+    <div style="text-align: center; margin: 15px 0;">
+        <button onclick="abrirModalTroca()" style="background: #23c79c; width: 90%;">+ NOVO ANÚNCIO DE TROCA</button>
     </div>
 
-    <!-- FEED DE POSTAGENS -->
     <div id="feed">
-        <!-- Posts aparecem aqui -->
+        <p style="text-align:center; opacity:0.5;">Nenhuma troca ativa no momento...</p>
+    </div>
+</div>
+
+<!-- 3. TELA DE CRIAÇÃO DE TROCA (TELA DUPLA) -->
+<div id="tradeModal" class="screen" style="background: var(--bg); position: fixed; inset:0; z-index:500;">
+    <div style="padding:20px;">
+        <button onclick="fecharModal()" style="background:none; color:#1d5277; text-align:left; padding:0; margin-bottom:15px;">← Voltar</button>
+        <h3>Configurar Troca Dupla</h3>
+        
+        <div class="trade-container">
+            <!-- Lado Esquerdo: O que eu tenho -->
+            <div class="trade-side">
+                <h4>O QUE EU TENHO</h4>
+                <input type="text" id="img1" placeholder="Link da Foto/Vídeo">
+                <textarea id="desc1" placeholder="Descrição do item..."></textarea>
+            </div>
+
+            <!-- Lado Direito: O que eu quero -->
+            <div class="trade-side">
+                <h4>O QUE EU QUERO</h4>
+                <input type="text" id="img2" placeholder="Link da Foto/Vídeo">
+                <textarea id="desc2" placeholder="O que aceito trocar..."></textarea>
+            </div>
+        </div>
+
+        <button onclick="publicarTroca()" style="background:#1d5277; margin-top:20px; height:50px;">PUBLICAR TROCA NO FEED</button>
     </div>
 </div>
 
@@ -67,63 +98,67 @@ let currentUser = { nome: "", cargo: "" };
 function fazerLogin() {
     const nome = document.getElementById('userName').value;
     const pass = document.getElementById('userPass').value;
-
     if(!nome) return alert("Digite seu nome!");
 
-    if(pass === "1533") {
-        currentUser = { nome: nome, cargo: "ADM" };
-    } else {
-        currentUser = { nome: nome, cargo: "MODERADOR" };
-    }
-
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('appContent').style.display = 'block';
+    currentUser = { nome: nome, cargo: (pass === "1533") ? "ADM" : "MODERADOR" };
     
-    // Define a Estrela
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('appContent').classList.add('active');
+    
     const badge = document.getElementById('userBadge');
-    if(currentUser.cargo === "ADM") {
-        badge.innerHTML = '<span class="admin-star">★ ADM OURO</span>';
-        badge.className = "badge";
-    } else {
-        badge.innerHTML = '<span class="mod-star">★ MOD AZUL</span>';
-        badge.className = "badge";
-    }
+    const starClass = currentUser.cargo === "ADM" ? "admin-star" : "mod-star";
+    badge.innerHTML = `<span class="${starClass}">★ ${currentUser.cargo === "ADM" ? 'OURO' : 'AZUL'}</span>`;
     document.getElementById('displayName').innerText = currentUser.nome;
 }
 
-function criarPost() {
-    const text = document.getElementById('postText').value;
-    if(!text) return;
+function abrirModalTroca() {
+    document.getElementById('appContent').classList.remove('active');
+    document.getElementById('tradeModal').classList.add('active');
+}
+
+function fecharModal() {
+    document.getElementById('tradeModal').classList.remove('active');
+    document.getElementById('appContent').classList.add('active');
+}
+
+function publicarTroca() {
+    const d1 = document.getElementById('desc1').value;
+    const d2 = document.getElementById('desc2').value;
+    const i1 = document.getElementById('img1').value || 'https://via.placeholder.com';
+    const i2 = document.getElementById('img2').value || 'https://via.placeholder.com';
+
+    if(!d1 || !d2) return alert("Preencha as descrições dos dois lados!");
 
     const feed = document.getElementById('feed');
+    if(feed.innerHTML.includes('Nenhuma troca')) feed.innerHTML = '';
+
     const item = document.createElement('div');
     item.className = 'feed-item';
     
-    // Verifica se quem postou é ADM ou MOD para colocar a estrela no post
     const star = currentUser.cargo === "ADM" ? '<span class="admin-star">★</span>' : '<span class="mod-star">★</span>';
 
     item.innerHTML = `
-        <div style="font-size:12px; margin-bottom:5px;">${star} <strong>${currentUser.nome}</strong></div>
-        <div>${text}</div>
-        ${currentUser.cargo === "ADM" ? '<button class="btn-block" onclick="this.parentElement.style.opacity=0.3">BLOQUEAR DEMANDA</button>' : ''}
+        <div style="font-size:12px;">${star} <strong>${currentUser.nome}</strong> postou uma troca:</div>
+        <div class="trade-display">
+            <div class="trade-box">
+                <img src="${i1}" style="width:100%; border-radius:5px;">
+                <p><strong>TEM:</strong><br>${d1}</p>
+            </div>
+            <div class="vs-badge">X</div>
+            <div class="trade-box">
+                <img src="${i2}" style="width:100%; border-radius:5px;">
+                <p><strong>QUER:</strong><br>${d2}</p>
+            </div>
+        </div>
+        ${currentUser.cargo === "ADM" ? '<button style="background:#ff6b7a; font-size:10px; padding:5px; margin-top:5px;" onclick="this.parentElement.remove()">REMOVER TROCA (ADM)</button>' : ''}
     `;
     
     feed.prepend(item);
-    document.getElementById('postText').value = "";
+    fecharModal();
+    // Limpar campos
+    document.getElementById('desc1').value = ""; document.getElementById('desc2').value = "";
 }
 </script>
 
-<!-- SEU FIREBASE JÁ CONFIGURADO -->
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com";
-    const firebaseConfig = {
-      apiKey: "AIzaSyDM5M1_O-wfcBDGYJIiYgiHVbqhiKC-0dw",
-      authDomain: "icek-9cdd7.firebaseapp.com",
-      projectId: "icek-9cdd7",
-      appId: "1:929781654380:web:ddda1fdf6689ebd7cc8949"
-    };
-    initializeApp(firebaseConfig);
-</script>
 </body>
 </html>
-
