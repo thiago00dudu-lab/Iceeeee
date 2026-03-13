@@ -15,6 +15,7 @@
             --mod-blue: #00BFFF; 
             --white: #fff; 
             --red: #ff4d4d;
+            --green: #28a745;
             --glass: rgba(255, 255, 255, 0.8);
         }
         
@@ -63,6 +64,12 @@
         }
         .bio-area { margin-top: 60px; padding: 0 20px; }
 
+        /* Estilos Finanças */
+        .finance-btns { display: flex; gap: 10px; margin: 20px 0; }
+        .btn-fin { flex: 1; padding: 12px; border: none; border-radius: 12px; color: white; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; }
+        .deposito { background: var(--green); }
+        .saque { background: var(--blue); }
+
         .dupla-box { 
             display: flex; gap: 12px; margin-top: 20px; position: relative; 
             background: var(--white); padding: 12px; border-radius: 18px; 
@@ -84,21 +91,16 @@
             border-radius: 50px; z-index: 3000; box-shadow: 0 10px 30px rgba(0,0,0,0.4);
         }
         .nav i { color: white; font-size: 24px; cursor: pointer; transition: 0.3s; }
-        .nav i:hover { color: var(--ice); transform: scale(1.1); }
 
-        #telaPerfil, #telaChat, #modalOferta, #telaEdit { 
+        #telaPerfil, #telaChat, #modalOferta, #telaEdit, #modalFin { 
             display: none; position: fixed; inset: 0; 
             background: var(--bg); z-index: 2000; overflow-y: auto; 
         }
-        #modalOferta { background: rgba(15, 52, 82, 0.9); align-items: center; justify-content: center; padding: 20px; }
+        #modalOferta, #modalFin { background: rgba(15, 52, 82, 0.9); align-items: center; justify-content: center; padding: 20px; }
         
         #telaChat { flex-direction: column; background: #e5ddd5; }
         #msgs { flex: 1; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; gap: 8px; }
         
-        .master-panel { background: #fff3cd; border: 2px dashed #ffa500; padding: 15px; border-radius: 15px; margin: 15px 0; }
-        .btn-adm { padding: 10px; border-radius: 8px; border: none; font-weight: bold; margin: 4px; cursor: pointer; }
-
-        /* Estilo para o Input de Valor Pix */
         .pix-input {
             width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd;
             margin-bottom: 15px; box-sizing: border-box; font-weight: bold; color: var(--sea);
@@ -108,11 +110,11 @@
 <body>
 
 <div id="loginS" style="position:fixed; inset:0; background:var(--sea); z-index:5000; display:flex; align-items:center; justify-content:center;">
-    <div style="background:white; padding:40px 30px; border-radius:30px; width:85%; text-align:center; box-shadow: 0 20px 40px rgba(0,0,0,0.3);">
+    <div style="background:white; padding:40px 30px; border-radius:30px; width:85%; text-align:center;">
         <h2 style="color:var(--sea); margin-bottom:25px;">🧊 ICE LOGIN</h2>
-        <input type="text" id="inome" placeholder="Seu Usuário" style="width:100%; padding:15px; margin-bottom:15px; border:1px solid #ddd; border-radius:12px; outline:none;">
-        <input type="password" id="ipass" placeholder="Sua Senha" style="width:100%; padding:15px; margin-bottom:25px; border:1px solid #ddd; border-radius:12px; outline:none;">
-        <button onclick="logar()" style="background:var(--blue); color:white; width:100%; padding:16px; border:none; border-radius:12px; font-weight:bold; font-size:16px; cursor:pointer;">ENTRAR NO GELO</button>
+        <input type="text" id="inome" placeholder="Seu Usuário" style="width:100%; padding:15px; margin-bottom:15px; border:1px solid #ddd; border-radius:12px;">
+        <input type="password" id="ipass" placeholder="Sua Senha" style="width:100%; padding:15px; margin-bottom:25px; border:1px solid #ddd; border-radius:12px;">
+        <button onclick="logar()" style="background:var(--blue); color:white; width:100%; padding:16px; border:none; border-radius:12px; font-weight:bold;">ENTRAR NO GELO</button>
     </div>
 </div>
 
@@ -123,82 +125,83 @@
     </header>
 
     <div class="wrap">
-        <div style="background:var(--white); padding:20px; border-radius:20px; margin-bottom:25px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
+        <div style="background:var(--white); padding:20px; border-radius:20px; margin-bottom:25px;">
             <b style="color:var(--sea)">Nova Postagem</b>
             <input type="file" id="inputFoto" accept="image/*" onchange="preview(this)" style="margin:15px 0; width:100%;">
             <div id="preView" style="display:none; margin-bottom:15px;"></div>
-            <textarea id="txtDesc" placeholder="O que você está trocando hoje?" style="width:100%; height:60px; border:1px solid #eee; border-radius:12px; padding:12px; box-sizing:border-box; background:#f9f9f9; outline:none;"></textarea>
-            <button onclick="subirPost()" style="background:var(--sea); color:white; width:100%; padding:14px; border:none; border-radius:12px; margin-top:10px; font-weight:bold; cursor:pointer;">PUBLICAR AGORA</button>
+            <textarea id="txtDesc" placeholder="O que você está trocando hoje?" style="width:100%; height:60px; border:1px solid #eee; border-radius:12px; padding:12px; box-sizing:border-box; outline:none;"></textarea>
+            <button onclick="subirPost()" style="background:var(--sea); color:white; width:100%; padding:14px; border:none; border-radius:12px; margin-top:10px; font-weight:bold;">PUBLICAR AGORA</button>
         </div>
         <div id="feed"></div>
     </div>
 
     <div class="nav">
-        <i class="fas fa-home" onclick="window.scrollTo(0,0); fecharPerfil()"></i>
+        <i class="fas fa-home" onclick="fecharTelas()"></i>
         <i class="fas fa-user-circle" onclick="abrirPerfil(window.user.nome)"></i>
     </div>
 </div>
 
 <div id="telaPerfil">
     <div class="capa" id="pCapa">
-        <button onclick="fecharPerfil()" style="margin:15px; border:none; background:rgba(0,0,0,0.4); color:white; border-radius:50%; width:40px; height:40px; cursor:pointer;"><i class="fas fa-arrow-left"></i></button>
+        <button onclick="fecharPerfil()" style="margin:15px; border:none; background:rgba(0,0,0,0.4); color:white; border-radius:50%; width:40px; height:40px;"><i class="fas fa-arrow-left"></i></button>
     </div>
     <div class="avatar" id="pAvatar"></div>
     <div class="bio-area">
-        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-            <div>
-                <h2 id="perfNome" style="margin:0; color:var(--sea);"></h2>
-                <div id="perfBadge"></div>
-            </div>
-            <button id="btnEdit" onclick="document.getElementById('telaEdit').style.display='block'" style="display:none; padding:8px 16px; border-radius:20px; border:1px solid #ddd; background:white; font-weight:bold; font-size:12px;">Editar Perfil</button>
+        <h2 id="perfNome" style="margin:0; color:var(--sea);"></h2>
+        <div id="perfBadge"></div>
+        
+        <div class="finance-btns" id="btnsFinance" style="display:none;">
+            <button class="btn-fin deposito" onclick="abrirFin('deposito')"><i class="fas fa-wallet"></i> DEPÓSITO</button>
+            <button class="btn-fin saque" onclick="abrirFin('saque')"><i class="fas fa-hand-holding-usd"></i> SAQUE</button>
         </div>
-        <p id="perfBio" style="color:#555; margin-top:15px; font-size:14px; line-height:1.5;"></p>
-        <div id="masterControl" class="master-panel" style="display:none;">
-            <b style="font-size:13px;">⚙️ GESTÃO MASTER: <span id="targetUser"></span></b><br>
-            <button class="btn-adm" style="background:var(--light-yellow);" onclick="mudarCargo('ADM2')">ADM2</button>
-            <button class="btn-adm" style="background:var(--mod-blue); color:white;" onclick="mudarCargo('MOD')">MOD</button>
-            <button class="btn-adm" style="background:#ddd;" onclick="mudarCargo('USER')">USER</button>
-            <button class="btn-adm" style="background:var(--red); color:white;" onclick="bloquearUser()">BANIR</button>
-        </div>
+
+        <p id="perfBio" style="color:#555; margin-top:15px; font-size:14px;"></p>
+        <button id="btnEdit" onclick="document.getElementById('telaEdit').style.display='block'" style="display:none; padding:8px 16px; border-radius:20px; border:1px solid #ddd; background:white;">Editar Perfil</button>
         <hr style="opacity:0.2; margin:20px 0;">
-        <h4 id="anchorTrocas" style="color:var(--sea); margin-bottom:15px;"><i class="fas fa-exchange-alt"></i> Trocas Disponíveis</h4>
+        <h4 id="anchorTrocas" style="color:var(--sea);"><i class="fas fa-exchange-alt"></i> Trocas Disponíveis</h4>
         <div id="perfilPosts"></div>
     </div>
 </div>
 
-<div id="telaChat" style="flex-direction:column; display:none;">
+<div id="modalFin">
+    <div style="background:white; padding:30px; border-radius:25px; width:85%; max-width:400px; text-align:center;">
+        <h3 id="finTitle">Finanças</h3>
+        <input type="number" id="finValor" class="pix-input" placeholder="R$ 0,00">
+        <input type="text" id="finPix" class="pix-input" placeholder="Chave PIX (Para saques)" style="display:none;">
+        <button id="btnFinAction" style="background:var(--sea); color:white; width:100%; padding:15px; border:none; border-radius:12px; font-weight:bold;">CONFIRMAR</button>
+        <button onclick="document.getElementById('modalFin').style.display='none'" style="margin-top:15px; background:none; border:none; color:red; font-weight:bold;">CANCELAR</button>
+    </div>
+</div>
+
+<div id="telaChat">
     <div style="background:var(--sea); color:white; padding:15px; display:flex; justify-content:space-between; align-items:center;">
         <button onclick="fecharChat()" style="color:white; background:none; border:none; font-size:20px;"><i class="fas fa-chevron-left"></i></button>
-        <b id="chatUser">Nome do Usuário</b>
+        <b id="chatUser">Chat</b>
         <div style="width:20px;"></div>
     </div>
     <div id="msgs"></div>
-    <div style="padding:15px; background:white; display:flex; gap:10px; align-items:center;">
-        <input type="text" id="itxtMsg" placeholder="Digite sua mensagem..." style="flex:1; padding:14px; border-radius:30px; border:1px solid #eee; background:#f5f5f5; outline:none;">
+    <div style="padding:15px; background:white; display:flex; gap:10px;">
+        <input type="text" id="itxtMsg" placeholder="Mensagem..." style="flex:1; padding:14px; border-radius:30px; border:1px solid #eee;">
         <button onclick="enviarMsg()" style="background:var(--blue); color:white; border:none; border-radius:50%; width:50px; height:50px;"><i class="fas fa-paper-plane"></i></button>
     </div>
 </div>
 
-<div id="modalOferta" style="display:none; flex-direction:column;">
+<div id="modalOferta">
     <div style="background:white; padding:30px; border-radius:25px; width:85%; max-width:400px; text-align:center;">
-        <h3 style="margin-top:0;">Fazer Proposta</h3>
-        <p style="color:#666; font-size:12px; margin-bottom:10px;">Valor adicional em dinheiro (PIX):</p>
-        <input type="number" id="valorPix" class="pix-input" placeholder="R$ 0,00 (Opcional)">
-        
-        <p style="color:#666; font-size:12px;">Selecione sua mídia:</p>
+        <h3>Fazer Proposta</h3>
+        <input type="number" id="valorPix" class="pix-input" placeholder="Valor Pix Adicional (R$)">
         <input type="file" id="fOferta" accept="image/*" style="width:100%; margin-bottom:20px;">
-        
-        <button onclick="confirmarOferta()" style="background:var(--blue); color:white; width:100%; padding:15px; border:none; border-radius:12px; font-weight:bold;">CONFIRMAR E GERAR PIX</button>
-        <button onclick="document.getElementById('modalOferta').style.display='none'" style="margin-top:15px; background:none; border:none; color:red; font-weight:bold;">CANCELAR</button>
+        <button onclick="confirmarOferta()" style="background:var(--blue); color:white; width:100%; padding:15px; border:none; border-radius:12px; font-weight:bold;">CONFIRMAR PROPOSTA</button>
+        <button onclick="document.getElementById('modalOferta').style.display='none'" style="margin-top:15px; background:none; border:none; color:red;">CANCELAR</button>
     </div>
 </div>
 
 <div id="telaEdit">
     <div class="wrap" style="background:white; min-height:100vh; padding:30px;">
         <h3>Editar Meu Perfil</h3>
-        <label>FOTO DE CAPA:</label><input type="file" id="eCapa" accept="image/*" style="width:100%; margin-bottom:10px;">
-        <label>FOTO DE PERFIL:</label><input type="file" id="eAvatar" accept="image/*" style="width:100%; margin-bottom:10px;">
-        <label>MINHA BIO:</label><textarea id="eBio" style="width:100%; height:80px;"></textarea>
+        <label>CAPA:</label><input type="file" id="eCapa" accept="image/*" style="width:100%; margin-bottom:10px;">
+        <label>AVATAR:</label><input type="file" id="eAvatar" accept="image/*" style="width:100%; margin-bottom:10px;">
+        <label>BIO:</label><textarea id="eBio" style="width:100%; height:80px;"></textarea>
         <button onclick="salvarPerfil()" style="background:var(--blue); color:white; width:100%; padding:15px; border:none; border-radius:12px; font-weight:bold;">SALVAR</button>
         <button onclick="document.getElementById('telaEdit').style.display='none'" style="width:100%; margin-top:10px; background:none; border:none; color:red;">Voltar</button>
     </div>
@@ -214,35 +217,60 @@
     let postAtivoId = "", userDonoTroca = "", chatAtivoId = "";
     window.user = {};
 
-    // --- MERCADO PAGO INTEGRATION ---
+    // --- MERCADO PAGO ---
     window.gerarPixMP = async (valor) => {
         const token = "APP_USR-bd8c1628-3715-47fb-91ee-845b41bd6be1";
         const paymentData = {
             transaction_amount: parseFloat(valor),
-            description: `Duelo ICE: ${window.user.nome}`,
+            description: `Depósito ICE: ${window.user.nome}`,
             payment_method_id: "pix",
             payer: { email: `${window.user.nome}@ice.com`, first_name: window.user.nome }
         };
-
         try {
             const res = await fetch('https://api.mercadopago.com/v1/payments', {
                 method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'X-Idempotency-Key': Math.random().toString(36).slice(2),
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Authorization': `Bearer ${token}`, 'X-Idempotency-Key': Math.random().toString(36), 'Content-Type': 'application/json' },
                 body: JSON.stringify(paymentData)
             });
             const data = await res.json();
             if (data.point_of_interaction) {
                 const copiaCola = data.point_of_interaction.transaction_data.qr_code;
-                window.prompt("🧊 PIX GERADO! Copie e pague no seu banco:", copiaCola);
+                window.prompt("🧊 PIX GERADO! Copie e pague:", copiaCola);
                 return true;
             }
-            alert("Erro no Pix: Valor mínimo R$ 1,00.");
-            return false;
+            alert("Erro no Pix (Min R$ 1,00)"); return false;
         } catch (e) { return false; }
+    };
+
+    // --- FUNÇÕES FINANCEIRAS ---
+    window.abrirFin = (tipo) => {
+        const modal = document.getElementById('modalFin');
+        const iPix = document.getElementById('finPix');
+        const btn = document.getElementById('btnFinAction');
+        const title = document.getElementById('finTitle');
+        modal.style.display = 'flex';
+        document.getElementById('finValor').value = "";
+        
+        if(tipo === 'deposito'){
+            title.innerText = "💰 Realizar Depósito";
+            iPix.style.display = 'none';
+            btn.onclick = async () => {
+                const v = document.getElementById('finValor').value;
+                if(v >= 1) { await window.gerarPixMP(v); modal.style.display='none'; }
+            };
+        } else {
+            title.innerText = "💸 Solicitar Saque";
+            iPix.style.display = 'block';
+            btn.onclick = () => {
+                const v = document.getElementById('finValor').value;
+                const pix = iPix.value;
+                if(v >= 1 && pix) {
+                    push(ref(db, 'pedidos_saque'), { user: window.user.nome, valor: v, chave: pix, data: new Date().toLocaleString() });
+                    alert("Solicitação de saque enviada!");
+                    modal.style.display = 'none';
+                }
+            };
+        }
     };
 
     window.logar = () => {
@@ -292,6 +320,8 @@
             document.getElementById('pCapa').style.backgroundImage = `url(${d.capa || ''})`;
             document.getElementById('pAvatar').style.backgroundImage = `url(${d.avatar || ''})`;
             document.getElementById('btnEdit').style.display = (nome === window.user.nome) ? 'block' : 'none';
+            document.getElementById('btnsFinance').style.display = (nome === window.user.nome) ? 'flex' : 'none';
+            
             const pBox = document.getElementById('perfilPosts'); pBox.innerHTML = "";
             onValue(ref(db, 'posts'), (psnap) => {
                 psnap.forEach(c => {
@@ -312,18 +342,11 @@
         });
     };
 
-    window.abrirOferta = (id, dono) => { if(dono !== window.user.nome) { postAtivoId = id; document.getElementById('modalOferta').style.display = 'flex'; } };
-
     window.confirmarOferta = async () => {
         const valor = document.getElementById('valorPix').value;
         const file = document.getElementById('fOferta').files[0];
         if(!file) return alert("Selecione sua foto!");
-        
-        if(valor >= 1) {
-            const ok = await window.gerarPixMP(valor);
-            if(!ok) return;
-        }
-
+        if(valor >= 1) { const ok = await window.gerarPixMP(valor); if(!ok) return; }
         const r = new FileReader();
         r.onload = (e) => {
             update(ref(db, `posts/${postAtivoId}`), { u2: window.user.nome, i2: e.target.result });
@@ -350,11 +373,6 @@
         });
     };
 
-    window.enviarMsg = () => {
-        const t = document.getElementById('itxtMsg').value;
-        if(t) { push(ref(db, `privado/${chatAtivoId}`), { u: window.user.nome, t: t }); document.getElementById('itxtMsg').value = ""; }
-    };
-
     window.subirPost = () => {
         if(!window.tempMidia) return alert("Selecione uma foto!");
         push(ref(db, 'posts'), { u1: window.user.nome, d1: document.getElementById('txtDesc').value, i1: window.tempMidia, c1: window.user.cargo });
@@ -373,6 +391,11 @@
 
     window.fecharPerfil = () => document.getElementById('telaPerfil').style.display = 'none';
     window.fecharChat = () => document.getElementById('telaChat').style.display = 'none';
+    window.fecharTelas = () => { window.scrollTo(0,0); fecharPerfil(); fecharChat(); };
+    window.enviarMsg = () => {
+        const t = document.getElementById('itxtMsg').value;
+        if(t) { push(ref(db, `privado/${chatAtivoId}`), { u: window.user.nome, t: t }); document.getElementById('itxtMsg').value = ""; }
+    };
 </script>
 </body>
 </html>
