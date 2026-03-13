@@ -3,209 +3,247 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ICE - Sistema de Trocas</title>
+    <title>ICE - Rede de Trocas</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <style>
-        :root { --bg1:#dff6ff; --sea:#0f3452; --line:#7ec8e6; --txt:#12344f; --gold: #ffd700; --secondary: #23c79c; }
-        body { margin:0; font-family:Arial, sans-serif; background: linear-gradient(180deg,var(--bg1) 0%,#8edcff 100%); min-height:100vh; }
+        :root { --bg: #dff6ff; --sea: #0f3452; --gold: #ffd700; --blue: #007bff; --white: #fff; }
+        body { margin:0; font-family: sans-serif; background: var(--bg); color: var(--sea); }
         
-        /* LOGIN */
-        #loginScreen { position: fixed; inset: 0; background: var(--bg1); display: flex; align-items: center; justify-content: center; z-index: 2000; }
-        .card-login { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); width: 85%; max-width: 320px; text-align: center; }
-        
-        /* APP */
-        header { padding:14px 16px; background:rgba(255,255,255,.8); border-bottom:1px solid var(--line); backdrop-filter:blur(8px); position:sticky; top:0; z-index:100; display: flex; justify-content: space-between; align-items: center; }
-        .wrap { max-width:500px; margin:auto; padding:15px; }
+        /* HEADER */
+        header { padding:15px; background: var(--white); display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:100; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .wrap { max-width: 500px; margin: auto; padding: 15px; }
 
-        /* BOX DE POSTAGEM */
-        .post-box { background: white; padding: 15px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .preview-img { width: 100%; max-height: 150px; object-fit: cover; border-radius: 8px; margin: 10px 0; display: none; border: 1px solid #ddd; }
-        
-        /* FEED / TROCA DUPLA */
-        .card-troca { background: white; border-radius: 15px; padding: 12px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: 1px solid #eee; }
-        .dupla { display: flex; gap: 8px; align-items: stretch; margin-top: 10px; }
-        .lado { flex: 1; background: #f9f9f9; padding: 8px; border-radius: 10px; border: 1px solid #eee; text-align: center; min-height: 160px; display: flex; flex-direction: column; }
-        .lado img { width: 100%; height: 90px; object-fit: cover; border-radius: 6px; margin-bottom: 5px; background: #eee; }
-        .lado b { font-size: 11px; color: var(--sea); display: block; margin-bottom: 3px; }
-        .lado p { font-size: 12px; margin: 0; color: #555; overflow-wrap: break-word; }
-        .vs-circle { align-self: center; background: var(--sea); color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; z-index: 2; margin: 0 -15px; border: 2px solid white; }
-        
-        /* BOTÕES */
-        input, textarea { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background: var(--sea); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
-        .btn-offer { background: var(--secondary); font-size: 11px; padding: 6px; margin-top: auto; }
-        .btn-del { background: #ff6b7a; font-size: 10px; width: auto; padding: 4px 8px; margin-top: 10px; border-radius: 4px; }
+        /* CARDS */
+        .card { background: var(--white); border-radius: 15px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .dupla { display: flex; gap: 10px; position: relative; margin-top: 10px; }
+        .lado { flex: 1; text-align: center; background: #f8fbff; padding: 10px; border-radius: 12px; border: 1px solid #e0efff; }
+        .lado img { width: 100%; height: 110px; object-fit: cover; border-radius: 8px; }
+        .vs { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: var(--sea); color: white; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 10px; border: 2px solid white; font-weight: bold; }
+
+        /* PERFIL ESTILO FACEBOOK */
+        #telaPerfil { display: none; background: var(--bg); min-height: 100vh; position: fixed; inset: 0; z-index: 500; overflow-y: auto; padding-top: 20px; }
+        .capa { height: 120px; background: var(--sea); width: 100%; position: relative; }
+        .foto-perfil { width: 90px; height: 90px; border-radius: 50%; border: 4px solid white; position: absolute; bottom: -45px; left: 20px; background: #ddd; display: flex; align-items: center; justify-content: center; font-size: 40px; }
+        .info-perfil { margin-top: 50px; padding: 20px; }
+
+        /* ESTRELAS */
+        .star-gold { color: var(--gold); }
+        .star-blue { color: var(--blue); }
+
+        /* PROPAGANDA FLUTUANTE */
+        .ads-link { background: #fff5cc; padding: 10px; border-radius: 8px; border: 1px dashed orange; font-size: 12px; margin: 10px 0; cursor: pointer; }
+
+        input, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
+        button { cursor: pointer; border: none; border-radius: 8px; font-weight: bold; padding: 12px; width: 100%; margin-top: 5px; }
+        .btn-adm { background: var(--gold); color: #000; }
+        .btn-mod { background: var(--blue); color: #fff; }
+        .btn-block { background: #ff4d4d; color: #fff; }
     </style>
 </head>
 <body>
 
-<div id="loginScreen">
-    <div class="card-login">
-        <h3>ICE LOGIN</h3>
-        <input type="text" id="userName" placeholder="Seu Nome">
-        <input type="password" id="userPass" placeholder="Senha ADM (Opcional)">
-        <button onclick="fazerLogin()">ENTRAR</button>
+<div id="loginS" style="position:fixed; inset:0; background:var(--bg); z-index:1000; display:flex; align-items:center; justify-content:center;">
+    <div class="card" style="width:80%; text-align:center;">
+        <h2>ICE CONECTA</h2>
+        <input type="text" id="inome" placeholder="Seu Nome">
+        <input type="password" id="ipass" placeholder="Senha (ADM: 1533)">
+        <button style="background:var(--sea); color:white;" onclick="logar()">ENTRAR</button>
     </div>
 </div>
 
-<div id="appContent" style="display:none">
+<div id="app" style="display:none">
     <header>
-        <strong id="displayName"></strong>
-        <button onclick="location.reload()" style="width:auto; padding:5px 10px; background:red;">Sair</button>
+        <div onclick="abrirPerfil(window.user.nome)" style="cursor:pointer">
+            <b id="statusUser"></b>
+        </div>
+        <button onclick="location.reload()" style="width:auto; padding:5px; background:none; color:red">Sair</button>
     </header>
 
     <div class="wrap">
-        <div class="post-box">
-            <b style="font-size:13px">O que você tem para trocar?</b>
-            <input type="file" id="fileInput" accept="image/*" onchange="processarImg(this, 'preMain')">
-            <img id="preMain" class="preview-img">
-            <textarea id="descInput" placeholder="Ex: Tenho um casaco GG, troco por algo de frio..."></textarea>
-            <button onclick="subirTroca()">POSTAR TROCA</button>
+        <div class="card">
+            <div class="ads-link" onclick="copiarLink()">
+                📢 <b>Meu link de indicação (Clique para Copiar)</b><br>
+                <small id="meuLinkTxt"></small>
+            </div>
+            <hr>
+            <b>Postar Troca</b>
+            <input type="file" accept="image/*" onchange="preview(this)">
+            <img id="p1" style="width:100%; display:none; margin:10px 0; border-radius:8px">
+            <textarea id="d1" placeholder="O que você tem para trocar?"></textarea>
+            <button style="background:var(--sea); color:white;" onclick="subirPost()">PUBLICAR</button>
         </div>
-
         <div id="feed"></div>
+    </div>
+</div>
+
+<div id="telaPerfil">
+    <button onclick="document.getElementById('telaPerfil').style.display='none'" style="width:auto; margin:10px; background:var(--sea); color:white;">← Voltar</button>
+    <div class="capa">
+        <div class="foto-perfil" id="perfIcon"><i class="fas fa-user"></i></div>
+    </div>
+    <div class="info-perfil">
+        <h2 id="perfNome">Nome</h2>
+        <p id="perfCargo">Cargo</p>
+        <div id="perfPai" style="font-weight:bold; color:green;"></div>
+        <div id="perfFilhos" style="color:var(--sea)">Pai de 0 pessoas</div>
+        
+        <div id="controlesAdm" style="display:none; margin-top:20px; border-top:1px solid #ccc; pt:10px">
+            <p><b>Painel de Controle</b></p>
+            <button class="btn-adm" onclick="mudarCargo('ADM2')">Subir para ADM 2 (Estrela Ouro)</button>
+            <button class="btn-mod" onclick="mudarCargo('MOD')">Subir para Moderador (Estrela Azul)</button>
+            <button class="btn-block" onclick="mudarCargo('BLOCK')">Bloquear Usuário</button>
+        </div>
     </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, push, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, push, onValue, update, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     const firebaseConfig = {
-      apiKey: "AIzaSyDM5M1_O-wfcBDGYJIiYgiHVbqhiKC-0dw",
-      authDomain: "icek-9cdd7.firebaseapp.com",
-      databaseURL: "https://icek-9cdd7-default-rtdb.firebaseio.com",
-      projectId: "icek-9cdd7",
-      appId: "1:929781654380:web:ddda1fdf6689ebd7cc8949"
+        apiKey: "AIzaSyDM5M1_O-wfcBDGYJIiYgiHVbqhiKC-0dw",
+        databaseURL: "https://icek-9cdd7-default-rtdb.firebaseio.com",
+        projectId: "icek-9cdd7"
     };
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
-    let tempImgBase64 = "";
-    window.currentUser = { nome: "", cargo: "" };
+    let imgBase = "";
+    window.user = { nome: "", cargo: "USER", pai: "" };
+    window.alvoNome = "";
 
-    // LOGIN
-    window.fazerLogin = () => {
-        const n = document.getElementById('userName').value.trim();
-        const p = document.getElementById('userPass').value;
-        if(!n) return alert("Digite seu nome!");
-        window.currentUser = { nome: n, cargo: (p === "1533" ? "ADM" : "USER") };
-        document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('appContent').style.display = 'block';
-        document.getElementById('displayName').innerText = "👤 " + n;
+    // LÓGICA DE LOGIN E AFILIADO
+    window.logar = () => {
+        const n = document.getElementById('inome').value.trim();
+        const p = document.getElementById('ipass').value;
+        if(!n) return alert("Nome!");
+
+        // Pega o ID do Pai pela URL se existir
+        const urlParams = new URLSearchParams(window.location.search);
+        const paiId = urlParams.get('ref');
+
+        onValue(ref(db, 'usuarios/' + n), (snap) => {
+            let dados = snap.val();
+            if(!dados) {
+                // Novo Cadastro
+                dados = { nome: n, cargo: (p === "1533" ? "ADM1" : "USER"), pai: paiId || "Sistema" };
+                set(ref(db, 'usuarios/' + n), dados);
+            }
+            
+            if(dados.cargo === "BLOCK") return alert("Bloqueado!");
+            window.user = dados;
+            
+            document.getElementById('loginS').style.display = 'none';
+            document.getElementById('app').style.display = 'block';
+            document.getElementById('statusUser').innerText = "👤 " + n;
+            document.getElementById('meuLinkTxt').innerText = window.location.origin + "?ref=" + n;
+        }, { onlyOnce: true });
     };
 
-    // PROCESSAR IMAGEM (GALERIA)
-    window.processarImg = (input, targetId) => {
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const img = new Image();
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    const ctx = canvas.getContext('2d');
-                    canvas.width = 400; canvas.height = 300; // Reduz para não pesar
-                    ctx.drawImage(img, 0, 0, 400, 300);
-                    tempImgBase64 = canvas.toDataURL('image/jpeg', 0.7);
-                    document.getElementById(targetId).src = tempImgBase64;
-                    document.getElementById(targetId).style.display = "block";
-                };
-                img.src = e.target.result;
-            };
-            reader.readAsDataURL(input.files[0]);
-        }
+    // ABRIR PERFIL ESTILO FACEBOOK
+    window.abrirPerfil = (nome) => {
+        window.alvoNome = nome;
+        onValue(ref(db, 'usuarios/' + nome), (snap) => {
+            const d = snap.val();
+            document.getElementById('perfNome').innerText = d.nome;
+            document.getElementById('perfCargo').innerHTML = d.cargo.includes("ADM") ? "<span class='star-gold'>★ " + d.cargo + "</span>" : (d.cargo === "MOD" ? "<span class='star-blue'>☆ Moderador</span>" : "Membro");
+            document.getElementById('perfPai').innerText = "Filho de: " + d.pai;
+            
+            // Contagem de filhos
+            onValue(ref(db, 'usuarios'), (all) => {
+                let cont = 0;
+                all.forEach(u => { if(u.val().pai === nome) cont++; });
+                document.getElementById('perfFilhos').innerText = "Pai de " + cont + " pessoas";
+            }, { onlyOnce: true });
+
+            // HIERARQUIA DE CONTROLE
+            const admBox = document.getElementById('controlesAdm');
+            admBox.style.display = "none";
+            if(window.user.nome !== nome) {
+                if(window.user.cargo === "ADM1") admBox.style.display = "block";
+                if(window.user.cargo === "ADM2" && d.cargo !== "ADM1") admBox.style.display = "block";
+                if(window.user.cargo === "MOD" && d.cargo === "USER") admBox.style.display = "block";
+            }
+
+            document.getElementById('telaPerfil').style.display = 'block';
+        }, { onlyOnce: true });
     };
 
-    // SUBIR POSTAGEM ORIGINAL
-    window.subirTroca = () => {
-        const desc = document.getElementById('descInput').value;
-        if(!tempImgBase64 || !desc) return alert("Coloque foto e descrição!");
-        
-        push(ref(db, 'trocas'), {
-            u1: window.currentUser.nome,
-            d1: desc,
-            i1: tempImgBase64,
-            u2: "", d2: "", i2: "", // Lado 2 começa vazio
-            data: Date.now()
-        });
-
-        document.getElementById('descInput').value = "";
-        document.getElementById('preMain').style.display = "none";
-        tempImgBase64 = "";
+    window.mudarCargo = (novo) => {
+        update(ref(db, 'usuarios/' + window.alvoNome), { cargo: novo });
+        alert("Cargo alterado!");
+        abrirPerfil(window.alvoNome);
     };
 
-    // LISTAR TROCAS EM TEMPO REAL
-    onValue(ref(db, 'trocas'), (snap) => {
+    window.copiarLink = () => {
+        const link = document.getElementById('meuLinkTxt').innerText;
+        navigator.clipboard.writeText(link);
+        alert("Link copiado! Compartilhe para ganhar filhos.");
+    };
+
+    // POSTAGEM E FEED
+    window.preview = (input) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            imgBase = e.target.result;
+            document.getElementById('p1').src = imgBase;
+            document.getElementById('p1').style.display = 'block';
+        };
+        reader.readAsDataURL(input.files[0]);
+    };
+
+    window.subirPost = () => {
+        const d = document.getElementById('d1').value;
+        if(!imgBase || !d) return alert("Falta foto/texto!");
+        push(ref(db, 'posts'), { u1: window.user.nome, d1: d, i1: imgBase, u2: "", d2: "", i2: "" });
+        document.getElementById('d1').value = "";
+        document.getElementById('p1').style.display = "none";
+        imgBase = "";
+    };
+
+    onValue(ref(db, 'posts'), (snap) => {
         const feed = document.getElementById('feed');
         feed.innerHTML = "";
         snap.forEach(child => {
-            const t = child.val();
+            const p = child.val();
             const id = child.key;
-            const card = document.createElement('div');
-            card.className = 'card-troca';
-            card.innerHTML = `
-                <div style="font-size:10px; color:#999">ID: ${id.slice(-5)}</div>
+            const div = document.createElement('div');
+            div.className = "card";
+            div.innerHTML = `
                 <div class="dupla">
                     <div class="lado">
-                        <img src="${t.i1}">
-                        <b>${t.u1}</b>
-                        <p>${t.d1}</p>
+                        <img src="${p.i1}">
+                        <b onclick="abrirPerfil('${p.u1}')" style="cursor:pointer; color:var(--sea)">${p.u1}</b>
+                        <p style="font-size:12px">${p.d1}</p>
                     </div>
-                    <div class="vs-circle">VS</div>
-                    <div class="lado" id="lado2-${id}">
-                        ${t.u2 ? `
-                            <img src="${t.i2}">
-                            <b>${t.u2}</b>
-                            <p>${t.d2}</p>
-                        ` : `
-                            <div style="margin:auto">
-                                <i class="fas fa-box-open" style="font-size:24px; color:#ccc"></i>
-                                <p style="font-size:10px; color:#999; margin-top:5px">Aguardando oferta...</p>
-                                <button class="btn-offer" onclick="window.abrirOferta('${id}')">OFERECER</button>
-                            </div>
-                        `}
+                    <div class="vs">VS</div>
+                    <div class="lado">
+                        ${p.u2 ? `
+                            <img src="${p.i2}">
+                            <b onclick="abrirPerfil('${p.u2}')" style="cursor:pointer">${p.u2}</b>
+                            <p style="font-size:12px">${p.d2}</p>
+                        ` : `<button onclick="ofertar('${id}')" style="margin-top:20px; font-size:10px; background:var(--blue); color:white">OFERECER</button>`}
                     </div>
                 </div>
-                ${window.currentUser.cargo === 'ADM' ? `<button class="btn-del" onclick="window.remover('${id}')">APAGAR</button>` : ''}
             `;
-            feed.prepend(card);
+            feed.prepend(div);
         });
     });
 
-    // SISTEMA DE OFERECER (ABRE GALERIA E INPUT)
-    window.abrirOferta = (id) => {
-        const ofer = prompt("O que você oferece?");
-        if(!ofer) return;
-
-        // Criar um input invisível para pegar a foto
+    window.ofertar = (id) => {
+        const txt = prompt("Sua oferta:");
+        if(!txt) return;
         const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = 'image/*';
+        input.type = 'file'; input.accept = 'image/*';
         input.onchange = (e) => {
             const reader = new FileReader();
             reader.onload = (ev) => {
-                const img = new Image();
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = 400; canvas.height = 300;
-                    canvas.getContext('2d').drawImage(img, 0, 0, 400, 300);
-                    const imgOferta = canvas.toDataURL('image/jpeg', 0.7);
-                    
-                    // Salva no Firebase no Lado 2 desse post específico
-                    update(ref(db, `trocas/${id}`), {
-                        u2: window.currentUser.nome,
-                        d2: ofer,
-                        i2: imgOferta
-                    });
-                };
-                img.src = ev.target.result;
+                update(ref(db, `posts/${id}`), { u2: window.user.nome, d2: txt, i2: ev.target.result });
             };
             reader.readAsDataURL(e.target.files[0]);
         };
-        input.click(); // Abre a galeria
+        input.click();
     };
-
-    window.remover = (id) => confirm("Apagar?") && remove(ref(db, `trocas/${id}`));
 </script>
 </body>
 </html>
