@@ -1,25 +1,25 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ICE - Trocas em Tempo Real</title>
-<style>
-:root { --bg: #dff6ff; --sea: #0f3452; --gold: #ffd700; --blue: #007bff; --green: #23c79c; }
-body { margin: 0; font-family: sans-serif; background: var(--bg); color: var(--sea); }
-.header { padding: 15px; background: white; display: flex; justify-content: space-between; border-bottom: 1px solid #7ec8e6; position: sticky; top: 0; z-index: 100; }
-.card { background: white; border-radius: 15px; padding: 15px; margin: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-.btn { cursor: pointer; border: none; border-radius: 8px; font-weight: bold; padding: 10px; color: white; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICE - Trocas em Tempo Real</title>
+    <style>
+        :root { --bg: #dff6ff; --sea: #0f3452; --gold: #ffd700; --blue: #007bff; --green: #23c79c; }
+        body { margin: 0; font-family: sans-serif; background: var(--bg); color: var(--sea); }
+        .header { padding: 15px; background: white; display: flex; justify-content: space-between; border-bottom: 1px solid #7ec8e6; position: sticky; top: 0; z-index: 100; }
+        .card { background: white; border-radius: 15px; padding: 15px; margin: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .btn { cursor: pointer; border: none; border-radius: 8px; font-weight: bold; padding: 10px; color: white; }
 
-/* TELA DUPLA */
-.dupla { display: flex; gap: 10px; margin: 10px 0; align-items: stretch; }
-.lado { flex: 1; background: #f0faff; padding: 8px; border-radius: 10px; border: 1px solid #ddd; text-align: center; font-size: 12px; }
-.lado img { width: 100%; height: 100px; object-fit: cover; border-radius: 8px; margin-bottom: 5px; background: #eee; }
-.vs { align-self: center; font-weight: bold; color: var(--sea); }
+        /* TELA DUPLA */
+        .dupla { display: flex; gap: 10px; margin: 10px 0; align-items: stretch; }
+        .lado { flex: 1; background: #f0faff; padding: 8px; border-radius: 10px; border: 1px solid #ddd; text-align: center; font-size: 12px; min-height: 150px; }
+        .lado img { width: 100%; height: 100px; object-fit: cover; border-radius: 8px; margin-bottom: 5px; background: #eee; }
+        .vs { align-self: center; font-weight: bold; color: var(--sea); }
 
-input, textarea { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
-#loginS { position: fixed; inset: 0; background: white; z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-</style>
+        input, textarea { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
+        #loginS { position: fixed; inset: 0; background: white; z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    </style>
 </head>
 <body>
 
@@ -39,7 +39,7 @@ input, textarea { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #
     <div class="card">
         <h3>Postar o que eu tenho</h3>
         <input type="file" id="f1" accept="image/*" onchange="lerImg(this, 'pre1')">
-        <img id="pre1" style="width:100%; height:100px; object-fit:contain; display:none">
+        <img id="pre1" style="width:100%; height:100px; object-fit:contain; display:none; margin-bottom: 10px;">
         <textarea id="d1" placeholder="Descreva o seu item..."></textarea>
         <button class="btn" style="background:var(--sea); width:100%" onclick="subirPost()">POSTAR NA TIMELINE</button>
     </div>
@@ -48,98 +48,112 @@ input, textarea { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #
 </div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com";
-import { getDatabase, ref, push, onValue, update, remove } from "https://www.gstatic.com";
+    // URLs CORRIGIDAS PARA FUNCIONAR EM QUALQUER LUGAR
+    import { initializeApp } from "https://www.gstatic.com";
+    import { getDatabase, ref, push, onValue, update, remove } from "https://www.gstatic.com";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDM5M1_O-wfcBDGYJIiYgiHVbqhiKC-0dw",
-  authDomain: "icek-9cdd7.firebaseapp.com",
-  databaseURL: "https://icek-9cdd7-default-rtdb.firebaseio.com",
-  projectId: "icek-9cdd7",
-  appId: "1:929781654380:web:ddda1fdf6689ebd7cc8949"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-
-window.user = { n: "", c: "COMUM" };
-let imgBase64 = "";
-
-window.logar = () => {
-    const n = document.getElementById('lnome').value;
-    const p = document.getElementById('lpass').value;
-    if(!n) return alert("Nome!");
-    window.user = { n: n, c: (p==="1533"?"ADM1":"COMUM") };
-    document.getElementById('loginS').style.display='none';
-    document.getElementById('app').style.display='block';
-    document.getElementById('meuStatus').innerHTML = `<strong>${window.user.n}</strong> (${window.user.c})`;
-};
-
-window.lerImg = (input, id) => {
-    const reader = new FileReader();
-    reader.onload = (e) => { 
-        imgBase64 = e.target.result;
-        document.getElementById(id).src = imgBase64;
-        document.getElementById(id).style.display = "block";
+    const firebaseConfig = {
+      apiKey: "AIzaSyDM5M1_O-wfcBDGYJIiYgiHVbqhiKC-0dw",
+      authDomain: "icek-9cdd7.firebaseapp.com",
+      databaseURL: "https://icek-9cdd7-default-rtdb.firebaseio.com",
+      projectId: "icek-9cdd7",
+      appId: "1:929781654380:web:ddda1fdf6689ebd7cc8949"
     };
-    reader.readAsDataURL(input.files[0]);
-};
 
-window.subirPost = () => {
-    const d = document.getElementById('d1').value;
-    if(!d || !imgBase64) return alert("Coloque foto e descrição!");
-    push(ref(db, 'posts'), {
-        u1: window.user.n,
-        d1: d,
-        i1: imgBase64,
-        u2: "", d2: "", i2: "" // Lado B começa vazio
-    });
-    document.getElementById('d1').value="";
-    document.getElementById('pre1').style.display="none";
-    imgBase64 = "";
-};
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
 
-// ATUALIZA A TIMELINE PRA TODO MUNDO
-onValue(ref(db, 'posts'), (snapshot) => {
-    const feed = document.getElementById('feed');
-    feed.innerHTML = "";
-    snapshot.forEach((child) => {
-        const p = child.val();
-        const id = child.key;
-        const card = document.createElement('div');
-        card.className = "card";
+    window.user = { n: "", c: "COMUM" };
+    let imgBase64 = "";
+
+    window.logar = () => {
+        const n = document.getElementById('lnome').value;
+        const p = document.getElementById('lpass').value;
+        if(!n) return alert("Digite seu nome!");
+        window.user = { n: n, c: (p === "1533" ? "ADM1" : "COMUM") };
+        document.getElementById('loginS').style.display = 'none';
+        document.getElementById('app').style.display = 'block';
+        document.getElementById('meuStatus').innerHTML = `<strong>${window.user.n}</strong> (${window.user.c})`;
+    };
+
+    window.lerImg = (input, id) => {
+        const reader = new FileReader();
+        reader.onload = (e) => { 
+            imgBase64 = e.target.result;
+            document.getElementById(id).src = imgBase64;
+            document.getElementById(id).style.display = "block";
+        };
+        reader.readAsDataURL(input.files[0]);
+    };
+
+    window.subirPost = () => {
+        const d = document.getElementById('d1').value;
+        if(!d || !imgBase64) return alert("Coloque foto e descrição!");
         
-        card.innerHTML = `
-            <div style="font-size:11px">Postado por: <strong>${p.u1}</strong></div>
-            <div class="dupla">
-                <div class="lado">
-                    <img src="${p.i1}">
-                    <b>${p.u1} TEM:</b><br>${p.d1}
+        push(ref(db, 'posts'), {
+            u1: window.user.n,
+            d1: d,
+            i1: imgBase64,
+            u2: "", d2: "", i2: "" 
+        });
+
+        document.getElementById('d1').value = "";
+        document.getElementById('pre1').style.display = "none";
+        imgBase64 = "";
+        alert("Postado com sucesso!");
+    };
+
+    onValue(ref(db, 'posts'), (snapshot) => {
+        const feed = document.getElementById('feed');
+        feed.innerHTML = "";
+        snapshot.forEach((child) => {
+            const p = child.val();
+            const id = child.key;
+            const card = document.createElement('div');
+            card.className = "card";
+            
+            card.innerHTML = `
+                <div style="font-size:11px; margin-bottom: 5px;">Postado por: <strong>${p.u1}</strong></div>
+                <div class="dupla">
+                    <div class="lado">
+                        <img src="${p.i1}">
+                        <b>${p.u1} TEM:</b><br>${p.d1}
+                    </div>
+                    <div class="vs">X</div>
+                    <div class="lado">
+                        ${p.u2 ? `
+                            <img src="${p.i2 || 'https://via.placeholder.com'}">
+                            <b>${p.u2} OFERECE:</b><br>${p.d2}
+                        ` : `
+                            <div style="padding-top: 40px;">
+                                <button class="btn" style="background:var(--green); font-size:10px" onclick="fazerTroca('${id}')">OFERECER TROCA</button>
+                            </div>
+                        `}
+                    </div>
                 </div>
-                <div class="vs">X</div>
-                <div class="lado" id="ladoB-${id}">
-                    ${p.u2 ? `<img src="${p.i2}"><b>${p.u2} OFERECE:</b><br>${p.d2}` : 
-                    `<button class="btn" style="background:var(--green); font-size:10px" onclick="fazerTroca('${id}')">OFERECER TROCA</button>`}
-                </div>
-            </div>
-            ${window.user.c === "ADM1" ? `<button onclick="removerPost('${id}')" style="color:red; background:none; border:none; font-size:10px">REMOVER</button>` : ""}
-        `;
-        feed.prepend(card);
+                ${window.user.c === "ADM1" ? `<button onclick="removerPost('${id}')" style="color:red; background:none; border:none; font-size:10px; cursor:pointer">🗑️ REMOVER POST</button>` : ""}
+            `;
+            feed.prepend(card);
+        });
     });
-});
 
-window.fazerTroca = (id) => {
-    const desc = prompt("O que você oferece em troca?");
-    if(!desc) return;
-    update(ref(db, `posts/${id}`), {
-        u2: window.user.n,
-        d2: desc,
-        i2: "https://via.placeholder.com" // Aqui poderia ser a foto do segundo
-    });
-};
+    window.fazerTroca = (id) => {
+        const desc = prompt("O que você oferece em troca?");
+        if(!desc) return;
+        
+        update(ref(db, `posts/${id}`), {
+            u2: window.user.n,
+            d2: desc,
+            i2: "https://via.placeholder.com" // Placeholder para a segunda imagem
+        }).then(() => alert("Oferta enviada!"));
+    };
 
-window.removerPost = (id) => remove(ref(db, `posts/${id}`));
-
+    window.removerPost = (id) => {
+        if(confirm("Deseja mesmo apagar?")) {
+            remove(ref(db, `posts/${id}`));
+        }
+    };
 </script>
 </body>
 </html>
+
