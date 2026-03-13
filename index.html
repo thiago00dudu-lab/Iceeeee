@@ -3,105 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ICE - Conecta</title>
+    <title>ICE - Rede Conecta</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <style>
         :root { --bg: #f0f2f5; --ice-blue: #00d4ff; --sea: #0f3452; --gold: #ffd700; --blue: #1877f2; --white: #fff; }
-        body { margin:0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); color: var(--sea); }
+        body { margin:0; font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--sea); }
         
         /* HEADER ICE DESTACADO */
-        .ice-header { background: linear-gradient(135deg, var(--sea), #1a4a73); color: white; padding: 20px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
-        .ice-header h1 { margin: 0; font-size: 28px; letter-spacing: 4px; font-weight: 900; text-transform: uppercase; }
-        .ice-header span { font-size: 12px; letter-spacing: 1px; opacity: 0.8; }
+        .ice-header { background: linear-gradient(135deg, var(--sea), #1a4a73); color: white; padding: 25px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.3); position: relative; }
+        .ice-header h1 { margin: 0; font-size: 35px; letter-spacing: 6px; font-weight: 900; text-transform: uppercase; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+        .ice-header p { margin: 5px 0 0; font-size: 13px; letter-spacing: 2px; opacity: 0.9; font-weight: 300; }
 
-        header { padding:10px 15px; background: var(--white); display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:100; border-bottom: 1px solid #ddd; }
-        .wrap { max-width: 500px; margin: auto; padding: 15px; padding-bottom: 80px; }
+        header { padding:12px 15px; background: var(--white); display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:100; border-bottom: 1px solid #ddd; }
+        .wrap { max-width: 500px; margin: auto; padding: 15px; padding-bottom: 90px; }
 
-        /* CARDS */
-        .card { background: var(--white); border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        /* CARDS E FEED */
+        .card { background: var(--white); border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
         .dupla { display: flex; gap: 10px; position: relative; margin-top: 10px; }
-        .lado { flex: 1; text-align: center; background: #f8fbff; padding: 10px; border-radius: 12px; border: 1px solid #e0efff; }
-        .lado img { width: 100%; height: 120px; object-fit: cover; border-radius: 8px; }
-        .vs { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: var(--sea); color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-size: 12px; border: 3px solid white; font-weight: bold; }
+        .lado { flex: 1; text-align: center; background: #f8fbff; padding: 10px; border-radius: 12px; border: 1px solid #e0efff; overflow: hidden; }
+        .lado img { width: 100%; height: 130px; object-fit: cover; border-radius: 8px; border: 1px solid #eee; }
+        .vs { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: var(--sea); color: white; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 12px; border: 3px solid white; font-weight: bold; z-index: 5; }
 
         /* PERFIL ESTILO FACEBOOK */
-        #telaPerfil { display: none; background: #fff; min-height: 100vh; position: fixed; inset: 0; z-index: 500; overflow-y: auto; }
-        .capa { height: 150px; background: linear-gradient(to bottom, var(--sea), var(--ice-blue)); width: 100%; position: relative; }
-        .foto-perfil { width: 110px; height: 110px; border-radius: 50%; border: 4px solid white; position: absolute; bottom: -55px; left: 20px; background: #eee; display: flex; align-items: center; justify-content: center; font-size: 50px; overflow: hidden; }
-        .info-perfil { margin-top: 60px; padding: 20px; }
+        #telaPerfil { display: none; background: var(--bg); min-height: 100vh; position: fixed; inset: 0; z-index: 500; overflow-y: auto; }
+        .capa { height: 160px; background: linear-gradient(to bottom, var(--sea), var(--ice-blue)); width: 100%; position: relative; }
+        .foto-perfil { width: 120px; height: 120px; border-radius: 50%; border: 5px solid white; position: absolute; bottom: -60px; left: 20px; background: #eee; display: flex; align-items: center; justify-content: center; font-size: 55px; color: #999; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .info-perfil { margin-top: 65px; padding: 20px; background: white; min-height: 60vh; border-radius: 25px 25px 0 0; }
 
-        /* BOTAO FLUTUANTE DE COMPARTILHAR */
-        .btn-float { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; background: #25d366; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); cursor: pointer; z-index: 400; border: none; transition: 0.3s; }
-        .btn-float:active { transform: scale(0.9); }
+        /* BOTAO FLUTUANTE */
+        .btn-float { position: fixed; bottom: 25px; right: 25px; width: 65px; height: 65px; background: #25d366; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); cursor: pointer; z-index: 400; border: none; }
 
-        .star-gold { color: var(--gold); }
-        .star-blue { color: var(--blue); }
-        input, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; background: #f9f9f9; }
-        button { cursor: pointer; border: none; border-radius: 8px; font-weight: bold; padding: 12px; width: 100%; }
-        .btn-main { background: var(--sea); color: white; }
-        .clickable { cursor: pointer; color: var(--blue); }
+        /* CLASSES AUXILIARES */
+        .clickable { cursor: pointer; color: var(--blue); font-weight: bold; }
         .clickable:hover { text-decoration: underline; }
+        .star-gold { color: var(--gold); font-weight: bold; }
+        .star-blue { color: var(--blue); font-weight: bold; }
+        input, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-family: inherit; }
+        button { cursor: pointer; border: none; border-radius: 8px; font-weight: bold; padding: 12px; width: 100%; transition: 0.2s; }
+        .btn-main { background: var(--sea); color: white; }
+        .btn-main:active { transform: scale(0.98); }
     </style>
 </head>
 <body>
 
 <div id="loginS" style="position:fixed; inset:0; background:var(--bg); z-index:1000; display:flex; align-items:center; justify-content:center;">
     <div class="card" style="width:85%; text-align:center; max-width: 350px;">
-        <div style="font-size: 40px; color: var(--sea); font-weight: 900; margin-bottom: 10px;">ICE</div>
-        <p>Acesse a Rede de Trocas</p>
-        <input type="text" id="inome" placeholder="Como quer ser chamado?">
-        <input type="password" id="ipass" placeholder="Senha (ADM: 1533)">
-        <button class="btn-main" onclick="logar()">ENTRAR AGORA</button>
+        <h2 style="color:var(--sea); margin-bottom:5px;">ICE CONECTA</h2>
+        <p style="font-size:12px; color:#666;">Rede de Trocas Inteligentes</p>
+        <input type="text" id="inome" placeholder="Seu Nome/Usuário">
+        <input type="password" id="ipass" placeholder="Senha">
+        <button class="btn-main" onclick="logar()">ENTRAR NA REDE</button>
     </div>
 </div>
 
 <div id="app" style="display:none">
     <div class="ice-header">
         <h1>ICE</h1>
-        <span>REDE DE TROCAS CONECTA</span>
+        <p>CONECTA • TROCAS • AFILIADOS</p>
     </div>
 
     <header>
         <div onclick="abrirPerfil(window.user.nome)" class="clickable">
-            <b id="statusUser"></b>
+            <span id="statusUser"></span>
         </div>
-        <button onclick="location.reload()" style="width:auto; padding:5px; background:none; color:#ff4d4d; font-size: 12px;">SAIR</button>
+        <button onclick="location.reload()" style="width:auto; background:none; color:red; font-size:11px;">SAIR</button>
     </header>
 
     <div class="wrap">
         <div class="card">
-            <b>Nova Troca</b>
-            <input type="file" accept="image/*" id="fileInput" onchange="preview(this)" style="font-size: 12px;">
-            <img id="p1" style="width:100%; display:none; margin:10px 0; border-radius:8px; border: 1px solid #ddd;">
-            <textarea id="d1" placeholder="Ex: Troco meu iPhone 12 por PS5..."></textarea>
-            <button class="btn-main" onclick="subirPost()">PUBLICAR</button>
+            <b style="font-size:14px;">O que você quer trocar hoje?</b>
+            <input type="file" accept="image/*" id="fileInp" onchange="preview(this)">
+            <img id="p1" style="width:100%; display:none; margin:10px 0; border-radius:8px;">
+            <textarea id="d1" placeholder="Descreva seu item..."></textarea>
+            <button class="btn-main" onclick="subirPost()">POSTAR NO FEED</button>
         </div>
         
         <div id="feed"></div>
     </div>
 
-    <button class="btn-float" onclick="compartilharMeuLink()" title="Compartilhar meu link">
+    <button class="btn-float" onclick="compartilhar()" title="Convidar Amigos">
         <i class="fas fa-share-alt"></i>
     </button>
 </div>
 
 <div id="telaPerfil">
     <div class="capa">
-        <button onclick="document.getElementById('telaPerfil').style.display='none'" style="position:absolute; top:10px; left:10px; width:auto; padding:8px 15px; background: rgba(0,0,0,0.5); color:white; border-radius: 20px; font-size: 12px;">← Voltar</button>
-        <div class="foto-perfil" id="perfIcon"><i class="fas fa-user"></i></div>
+        <button onclick="document.getElementById('telaPerfil').style.display='none'" style="position:absolute; top:15px; left:15px; width:auto; background:rgba(0,0,0,0.5); color:white; border-radius:20px; padding:5px 15px;">← Voltar</button>
+        <div class="foto-perfil"><i class="fas fa-user"></i></div>
     </div>
     <div class="info-perfil">
-        <h2 id="perfNome" style="margin:0">Nome</h2>
-        <p id="perfCargo" style="margin:5px 0; color: #666;">Cargo</p>
-        <hr style="opacity: 0.2;">
-        <div id="perfPai" style="font-weight:bold; color:#28a745; margin-bottom: 5px;"></div>
-        <div id="perfFilhos" style="color:var(--sea); font-weight: bold;">Carregando afiliados...</div>
+        <h2 id="perfNome" style="margin:0"></h2>
+        <p id="perfCargo" style="margin:5px 0;"></p>
+        <hr style="opacity:0.1; margin:15px 0;">
+        <p id="perfPai" style="font-size:14px; color:#28a745; margin:5px 0;"></p>
+        <p id="perfFilhos" style="font-size:14px; font-weight:bold;"></p>
         
-        <div id="controlesAdm" style="display:none; margin-top:30px; padding: 15px; background: #fff4e6; border-radius: 12px;">
-            <p style="margin-top:0"><b>Gestão de Usuário</b></p>
-            <button style="background:var(--gold); color:black; margin-bottom: 5px;" onclick="mudarCargo('ADM2')">Promover a ADM Ouro</button>
-            <button style="background:var(--blue); color:white; margin-bottom: 5px;" onclick="mudarCargo('MOD')">Promover a Moderador</button>
-            <button style="background:#ff4d4d; color:white;" onclick="mudarCargo('BLOCK')">Bloquear Acesso</button>
+        <div id="controlesAdm" style="display:none; margin-top:30px; padding:15px; background:#f9f9f9; border:1px solid #ddd; border-radius:12px;">
+            <p style="margin-top:0; font-size:13px;"><b>Ferramentas de Moderador</b></p>
+            <button style="background:var(--gold); color:black; margin-bottom:8px;" onclick="mudarCargo('ADM2')">Promover a ADM Ouro</button>
+            <button style="background:var(--blue); color:white; margin-bottom:8px;" onclick="mudarCargo('MOD')">Tornar Moderador</button>
+            <button style="background:#ff4d4d; color:white;" onclick="mudarCargo('BLOCK')">Bloquear Usuário</button>
         </div>
     </div>
 </div>
@@ -116,92 +117,90 @@
         projectId: "icek-9cdd7"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
+    const firebaseApp = initializeApp(firebaseConfig);
+    const db = getDatabase(firebaseApp);
     let imgBase = "";
     window.user = { nome: "", cargo: "USER", pai: "" };
     window.alvoNome = "";
 
-    // LOGIN COM LÓGICA DE AFILIADO
+    // LOGIN E FILIAÇÃO
     window.logar = () => {
         const n = document.getElementById('inome').value.trim();
         const p = document.getElementById('ipass').value;
-        if(!n) return alert("Digite seu nome!");
+        if(!n) return alert("Digite um nome!");
 
-        // Verifica se há um pai no link (?ref=NomeDoPai)
         const urlParams = new URLSearchParams(window.location.search);
-        const paiDoLink = urlParams.get('ref');
+        const refPai = urlParams.get('ref');
 
         onValue(ref(db, 'usuarios/' + n), (snap) => {
             let dados = snap.val();
             if(!dados) {
-                // Cadastro Novo: Define o pai se veio por link, senão é "Sistema"
+                // Cadastro novo
                 dados = { 
                     nome: n, 
                     cargo: (p === "1533" ? "ADM1" : "USER"), 
-                    pai: (paiDoLink && paiDoLink !== n) ? paiDoLink : "Sistema" 
+                    pai: (refPai && refPai !== n) ? refPai : "Sistema" 
                 };
                 set(ref(db, 'usuarios/' + n), dados);
             }
-            
-            if(dados.cargo === "BLOCK") return alert("Sua conta está bloqueada.");
+            if(dados.cargo === "BLOCK") return alert("Acesso negado.");
             window.user = dados;
-            
             document.getElementById('loginS').style.display = 'none';
             document.getElementById('app').style.display = 'block';
-            document.getElementById('statusUser').innerText = "👤 " + n;
+            document.getElementById('statusUser').innerHTML = `<b>👤 ${n}</b>`;
         }, { onlyOnce: true });
     };
 
-    // COMPARTILHAR LINK COM ID
-    window.compartilharMeuLink = async () => {
+    // COMPARTILHAR LINK
+    window.compartilhar = () => {
         const link = window.location.origin + window.location.pathname + "?ref=" + window.user.nome;
-        const shareData = {
-            title: 'ICE Conecta',
-            text: `Ei, entre na rede ICE através do meu convite!`,
-            url: link
-        };
-
-        try {
-            if (navigator.share) {
-                await navigator.share(shareData);
-            } else {
-                navigator.clipboard.writeText(link);
-                alert("Link de indicação copiado para a área de transferência!");
-            }
-        } catch (err) {
-            console.log("Erro ao compartilhar");
+        if (navigator.share) {
+            navigator.share({ title: 'ICE Conecta', text: 'Vem trocar itens comigo!', url: link });
+        } else {
+            navigator.clipboard.writeText(link);
+            alert("Link de indicação copiado!");
         }
     };
 
-    // VER PERFIL (ESTILO FACEBOOK)
+    // ABRIR QUALQUER PERFIL
     window.abrirPerfil = (nome) => {
+        if(!nome) return;
         window.alvoNome = nome;
         onValue(ref(db, 'usuarios/' + nome), (snap) => {
             const d = snap.val();
             if(!d) return;
 
             document.getElementById('perfNome').innerText = d.nome;
-            document.getElementById('perfCargo').innerHTML = d.cargo.includes("ADM") ? 
-                "<span class='star-gold'><i class='fas fa-star'></i> ADM Nível " + d.cargo.replace("ADM", "") + "</span>" : 
-                (d.cargo === "MOD" ? "<span class='star-blue'><i class='fas fa-shield-halved'></i> Moderador</span>" : "Membro ICE");
             
-            document.getElementById('perfPai').innerText = "Convidado por: " + (d.pai || "Sistema");
+            // Estilização do Cargo
+            let cargoTxt = "Membro da Rede";
+            if(d.cargo === "ADM1") cargoTxt = "<span class='star-gold'>★ ADM SUPREMO</span>";
+            else if(d.cargo === "ADM2") cargoTxt = "<span class='star-gold'>☆ ADM OURO</span>";
+            else if(d.cargo === "MOD") cargoTxt = "<span class='star-blue'>🛡️ MODERADOR</span>";
+            document.getElementById('perfCargo').innerHTML = cargoTxt;
             
-            // Contagem de filhos (afiliados)
+            document.getElementById('perfPai').innerText = "Indicado por: " + d.pai;
+
+            // Contar Afiliados (Filhos)
             onValue(ref(db, 'usuarios'), (all) => {
                 let cont = 0;
                 all.forEach(u => { if(u.val().pai === nome) cont++; });
-                document.getElementById('perfFilhos').innerHTML = `<i class="fas fa-users"></i> Trouxe ${cont} pessoas para a rede`;
+                document.getElementById('perfFilhos').innerHTML = `<i class="fas fa-users"></i> Indicou ${cont} pessoas`;
             }, { onlyOnce: true });
 
-            // Painel de Controle (Hierarquia)
+            // Lógica de Controle (Quem pode ver os botões de ADM)
             const admBox = document.getElementById('controlesAdm');
             admBox.style.display = "none";
+            
+            // Só mostra se quem está olhando não for o dono do perfil
             if(window.user.nome !== nome) {
-                if(window.user.cargo === "ADM1") admBox.style.display = "block";
-                if(window.user.cargo === "ADM2" && d.cargo !== "ADM1") admBox.style.display = "block";
-                if(window.user.cargo === "MOD" && d.cargo === "USER") admBox.style.display = "block";
+                if(window.user.cargo === "ADM1") {
+                    admBox.style.display = "block"; // ADM1 manda em tudo
+                } else if(window.user.cargo === "ADM2" && d.cargo !== "ADM1") {
+                    admBox.style.display = "block"; // ADM2 manda em MOD e USER
+                } else if(window.user.cargo === "MOD" && d.cargo === "USER") {
+                    admBox.style.display = "block"; // MOD manda em USER
+                }
             }
 
             document.getElementById('telaPerfil').style.display = 'block';
@@ -210,11 +209,11 @@
 
     window.mudarCargo = (novo) => {
         update(ref(db, 'usuarios/' + window.alvoNome), { cargo: novo });
-        alert("Nível de acesso atualizado!");
+        alert("Status atualizado com sucesso!");
         abrirPerfil(window.alvoNome);
     };
 
-    // POSTAGENS
+    // POSTS E FEED
     window.preview = (input) => {
         const reader = new FileReader();
         reader.onload = (e) => {
@@ -227,41 +226,35 @@
 
     window.subirPost = () => {
         const d = document.getElementById('d1').value;
-        if(!imgBase || !d) return alert("Adicione uma foto e uma descrição!");
-        push(ref(db, 'posts'), { 
-            u1: window.user.nome, d1: d, i1: imgBase, 
-            u2: "", d2: "", i2: "", 
-            timestamp: Date.now() 
-        });
+        if(!imgBase || !d) return alert("Foto e texto são obrigatórios!");
+        push(ref(db, 'posts'), { u1: window.user.nome, d1: d, i1: imgBase, u2: "", d2: "", i2: "" });
         document.getElementById('d1').value = "";
         document.getElementById('p1').style.display = "none";
-        document.getElementById('fileInput').value = "";
         imgBase = "";
     };
 
-    // FEED EM TEMPO REAL
     onValue(ref(db, 'posts'), (snap) => {
         const feed = document.getElementById('feed');
         feed.innerHTML = "";
-        let posts = [];
-        snap.forEach(c => { posts.push({id: c.key, ...c.val()}) });
-        posts.reverse().forEach(p => {
+        let lista = [];
+        snap.forEach(c => { lista.push({id: c.key, ...c.val()}) });
+        lista.reverse().forEach(p => {
             const div = document.createElement('div');
             div.className = "card";
             div.innerHTML = `
                 <div class="dupla">
                     <div class="lado">
                         <img src="${p.i1}">
-                        <div class="clickable" style="font-weight:bold; margin: 5px 0" onclick="abrirPerfil('${p.u1}')">${p.u1}</div>
-                        <p style="font-size:11px; margin:0; opacity: 0.8">${p.d1}</p>
+                        <div class="clickable" onclick="abrirPerfil('${p.u1}')" style="margin-top:8px">${p.u1}</div>
+                        <p style="font-size:11px; color:#666; margin:5px 0;">${p.d1}</p>
                     </div>
                     <div class="vs">VS</div>
                     <div class="lado">
                         ${p.u2 ? `
                             <img src="${p.i2}">
-                            <div class="clickable" style="font-weight:bold; margin: 5px 0" onclick="abrirPerfil('${p.u2}')">${p.u2}</div>
-                            <p style="font-size:11px; margin:0; opacity: 0.8">${p.d2}</p>
-                        ` : `<button onclick="ofertar('${p.id}')" style="margin-top:25px; font-size:10px; background:var(--blue); color:white">FAZER OFERTA</button>`}
+                            <div class="clickable" onclick="abrirPerfil('${p.u2}')" style="margin-top:8px">${p.u2}</div>
+                            <p style="font-size:11px; color:#666; margin:5px 0;">${p.d2}</p>
+                        ` : `<button onclick="ofertar('${p.id}')" style="margin-top:30px; font-size:10px; background:var(--blue); color:white">OFERECER</button>`}
                     </div>
                 </div>
             `;
@@ -270,18 +263,18 @@
     });
 
     window.ofertar = (id) => {
-        const txt = prompt("Qual sua oferta para essa troca?");
+        const txt = prompt("Sua oferta:");
         if(!txt) return;
-        const input = document.createElement('input');
-        input.type = 'file'; input.accept = 'image/*';
-        input.onchange = (e) => {
+        const inp = document.createElement('input');
+        inp.type = 'file'; inp.accept = 'image/*';
+        inp.onchange = (e) => {
             const reader = new FileReader();
             reader.onload = (ev) => {
                 update(ref(db, `posts/${id}`), { u2: window.user.nome, d2: txt, i2: ev.target.result });
             };
             reader.readAsDataURL(e.target.files[0]);
         };
-        input.click();
+        inp.click();
     };
 </script>
 </body>
