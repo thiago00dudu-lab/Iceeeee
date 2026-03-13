@@ -3,105 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ICE - Sistema de Comando</title>
+    <title>ICE - Sistema de Trocas</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <style>
-        :root {
-            --bg1:#dff6ff; --bg2:#bfefff; --bg3:#8edcff; --sea:#0f3452;
-            --card:#eaf9ff; --line:#7ec8e6; --txt:#12344f; --gold: #ffd700; --blue: #007bff;
-        }
-        body {
-            margin:0; font-family:Arial, sans-serif; color:var(--txt);
-            background: linear-gradient(180deg,var(--bg1) 0%,var(--bg3) 100%);
-            min-height:100vh;
-        }
-        /* LOGIN */
-        .login-screen { position: fixed; inset: 0; background: var(--bg1); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; }
-        .card-login { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); width: 85%; max-width: 320px; text-align: center; border: 1px solid var(--line); }
+        :root { --bg1:#dff6ff; --sea:#0f3452; --line:#7ec8e6; --txt:#12344f; --gold: #ffd700; --secondary: #23c79c; }
+        body { margin:0; font-family:Arial, sans-serif; background: linear-gradient(180deg,var(--bg1) 0%,#8edcff 100%); min-height:100vh; }
         
-        /* HEADER */
-        header {
-            padding:14px 16px; background:rgba(234,249,255,.88);
-            border-bottom:1px solid var(--line); backdrop-filter:blur(8px);
-            position:sticky; top:0; z-index:100; display: flex; justify-content: space-between; align-items: center;
-        }
-        .brand { display:flex; align-items:center; gap:12px; }
-        .logoBox { width:40px; height:40px; border-radius:10px; background:linear-gradient(180deg,#fff,#6fbce1); border:1px solid var(--line); }
+        /* LOGIN */
+        #loginScreen { position: fixed; inset: 0; background: var(--bg1); display: flex; align-items: center; justify-content: center; z-index: 2000; }
+        .card-login { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); width: 85%; max-width: 320px; text-align: center; }
+        
+        /* APP */
+        header { padding:14px 16px; background:rgba(255,255,255,.8); border-bottom:1px solid var(--line); backdrop-filter:blur(8px); position:sticky; top:0; z-index:100; display: flex; justify-content: space-between; align-items: center; }
+        .wrap { max-width:500px; margin:auto; padding:15px; }
 
-        .wrap { max-width:600px; margin:auto; padding:15px; }
-
-        /* POSTAGEM */
-        .post-box { background: white; padding: 15px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        textarea { width: 100%; height: 70px; border: 1px solid #ddd; border-radius: 8px; padding: 10px; box-sizing: border-box; font-family: sans-serif; resize: none; }
-        input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-        button { width: 100%; padding: 12px; background: var(--sea); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        button:active { transform: scale(0.98); }
-
-        /* FEED */
-        .feed-item { background: white; padding: 15px; border-radius: 12px; margin-bottom: 12px; border-left: 6px solid var(--sea); box-shadow: 0 2px 5px rgba(0,0,0,0.05); position: relative; }
-        .admin-star { color: var(--gold); font-weight: bold; font-size: 11px; }
-        .mod-star { color: var(--blue); font-weight: bold; font-size: 11px; }
-        .btn-del { background: #ff6b7a; font-size: 10px; width: auto; padding: 4px 8px; margin-top: 8px; }
-
-        /* GRADE APPS */
-        .grid-apps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px 0; }
-        .app-item { display: flex; flex-direction: column; align-items: center; text-decoration: none; color: var(--txt); }
-        .icon-box { width: 55px; height: 55px; background: white; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 5px; box-shadow: 0 3px 10px rgba(0,0,0,0.1); color: var(--sea); }
-        .app-item span { font-size: 11px; font-weight: bold; }
+        /* BOX DE POSTAGEM */
+        .post-box { background: white; padding: 15px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .preview-img { width: 100%; max-height: 150px; object-fit: cover; border-radius: 8px; margin: 10px 0; display: none; border: 1px solid #ddd; }
+        
+        /* FEED / TROCA DUPLA */
+        .card-troca { background: white; border-radius: 15px; padding: 12px; margin-bottom: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); border: 1px solid #eee; }
+        .dupla { display: flex; gap: 8px; align-items: stretch; margin-top: 10px; }
+        .lado { flex: 1; background: #f9f9f9; padding: 8px; border-radius: 10px; border: 1px solid #eee; text-align: center; min-height: 160px; display: flex; flex-direction: column; }
+        .lado img { width: 100%; height: 90px; object-fit: cover; border-radius: 6px; margin-bottom: 5px; background: #eee; }
+        .lado b { font-size: 11px; color: var(--sea); display: block; margin-bottom: 3px; }
+        .lado p { font-size: 12px; margin: 0; color: #555; overflow-wrap: break-word; }
+        .vs-circle { align-self: center; background: var(--sea); color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; z-index: 2; margin: 0 -15px; border: 2px solid white; }
+        
+        /* BOTÕES */
+        input, textarea { width: 100%; padding: 10px; margin: 5px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: var(--sea); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .btn-offer { background: var(--secondary); font-size: 11px; padding: 6px; margin-top: auto; }
+        .btn-del { background: #ff6b7a; font-size: 10px; width: auto; padding: 4px 8px; margin-top: 10px; border-radius: 4px; }
     </style>
 </head>
 <body>
 
-<div id="loginScreen" class="login-screen">
+<div id="loginScreen">
     <div class="card-login">
-        <div class="logoBox" style="margin: 0 auto 15px auto;"></div>
-        <h3 style="margin-top:0">Acesso ICE</h3>
+        <h3>ICE LOGIN</h3>
         <input type="text" id="userName" placeholder="Seu Nome">
-        <input type="password" id="userPass" placeholder="Senha (ADM: 1533)">
-        <button onclick="fazerLogin()">Entrar no Sistema</button>
+        <input type="password" id="userPass" placeholder="Senha ADM (Opcional)">
+        <button onclick="fazerLogin()">ENTRAR</button>
     </div>
 </div>
 
 <div id="appContent" style="display:none">
     <header>
-        <div class="brand">
-            <div class="logoBox"></div>
-            <div>
-                <strong id="displayName"></strong>
-                <div id="userBadge"></div>
-            </div>
-        </div>
-        <button onclick="location.reload()" style="width: auto; padding: 5px 10px; background: #ff4d4d; font-size: 12px;">Sair</button>
+        <strong id="displayName"></strong>
+        <button onclick="location.reload()" style="width:auto; padding:5px 10px; background:red;">Sair</button>
     </header>
 
     <div class="wrap">
-        <div style="text-align: center; font-size: 11px; margin-bottom: 15px;">
-            Sincronizado com: <b>icek-9cdd7</b> ✅
-        </div>
-
         <div class="post-box">
-            <textarea id="postText" placeholder="Digite uma ordem ou mensagem para a timeline..."></textarea>
-            <button onclick="criarPost()" style="margin-top:10px;">PUBLICAR NA TIMELINE</button>
+            <b style="font-size:13px">O que você tem para trocar?</b>
+            <input type="file" id="fileInput" accept="image/*" onchange="processarImg(this, 'preMain')">
+            <img id="preMain" class="preview-img">
+            <textarea id="descInput" placeholder="Ex: Tenho um casaco GG, troco por algo de frio..."></textarea>
+            <button onclick="subirTroca()">POSTAR TROCA</button>
         </div>
 
-        <div class="grid-apps">
-            <div class="app-item"><div class="icon-box"><i class="fas fa-user"></i></div><span>Perfil</span></div>
-            <div class="app-item"><div class="icon-box"><i class="fas fa-envelope"></i></div><span>Chat</span></div>
-            <div class="app-item"><div class="icon-box"><i class="fas fa-gear"></i></div><span>Ajustes</span></div>
-        </div>
-
-        <hr style="border: 0; border-top: 1px solid var(--line); margin: 20px 0;">
-
-        <div id="feed">
-            <p style="text-align:center; font-size:12px; color: #666;">Carregando timeline...</p>
-        </div>
+        <div id="feed"></div>
     </div>
 </div>
 
 <script type="module">
-    // IMPORTAÇÃO DO FIREBASE
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, push, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDM5M1_O-wfcBDGYJIiYgiHVbqhiKC-0dw",
@@ -113,90 +81,131 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
+    let tempImgBase64 = "";
     window.currentUser = { nome: "", cargo: "" };
 
     // LOGIN
     window.fazerLogin = () => {
-        const nome = document.getElementById('userName').value.trim();
-        const pass = document.getElementById('userPass').value;
-        if(!nome) return alert("Digite seu nome!");
-
-        window.currentUser = { 
-            nome: nome, 
-            cargo: (pass === "1533" ? "ADM" : "MODERADOR") 
-        };
-
+        const n = document.getElementById('userName').value.trim();
+        const p = document.getElementById('userPass').value;
+        if(!n) return alert("Digite seu nome!");
+        window.currentUser = { nome: n, cargo: (p === "1533" ? "ADM" : "USER") };
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('appContent').style.display = 'block';
-        
-        const badge = document.getElementById('userBadge');
-        if(window.currentUser.cargo === "ADM") {
-            badge.innerHTML = '<span class="admin-star">★ ADM OURO</span>';
-        } else {
-            badge.innerHTML = '<span class="mod-star">★ MOD AZUL</span>';
-        }
-        document.getElementById('displayName').innerText = window.currentUser.nome;
+        document.getElementById('displayName').innerText = "👤 " + n;
     };
 
-    // CRIAR POST (ENVIA PARA O FIREBASE)
-    window.criarPost = () => {
-        const text = document.getElementById('postText').value.trim();
-        if(!text) return alert("Escreva algo antes de postar!");
+    // PROCESSAR IMAGEM (GALERIA)
+    window.processarImg = (input, targetId) => {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = 400; canvas.height = 300; // Reduz para não pesar
+                    ctx.drawImage(img, 0, 0, 400, 300);
+                    tempImgBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                    document.getElementById(targetId).src = tempImgBase64;
+                    document.getElementById(targetId).style.display = "block";
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    };
 
-        // Salva no banco de dados
-        push(ref(db, 'timeline'), {
-            usuario: window.currentUser.nome,
-            cargo: window.currentUser.cargo,
-            mensagem: text,
+    // SUBIR POSTAGEM ORIGINAL
+    window.subirTroca = () => {
+        const desc = document.getElementById('descInput').value;
+        if(!tempImgBase64 || !desc) return alert("Coloque foto e descrição!");
+        
+        push(ref(db, 'trocas'), {
+            u1: window.currentUser.nome,
+            d1: desc,
+            i1: tempImgBase64,
+            u2: "", d2: "", i2: "", // Lado 2 começa vazio
             data: Date.now()
         });
 
-        document.getElementById('postText').value = "";
+        document.getElementById('descInput').value = "";
+        document.getElementById('preMain').style.display = "none";
+        tempImgBase64 = "";
     };
 
-    // ESCUTAR A TIMELINE (CARREGA PARA TODOS EM TEMPO REAL)
-    onValue(ref(db, 'timeline'), (snapshot) => {
+    // LISTAR TROCAS EM TEMPO REAL
+    onValue(ref(db, 'trocas'), (snap) => {
         const feed = document.getElementById('feed');
         feed.innerHTML = "";
-        
-        if (!snapshot.exists()) {
-            feed.innerHTML = "<p style='text-align:center'>Nenhuma mensagem na timeline.</p>";
-            return;
-        }
-
-        const posts = [];
-        snapshot.forEach((child) => {
-            posts.push({ id: child.key, ...child.val() });
-        });
-
-        // Inverte para mostrar os mais novos primeiro
-        posts.reverse().forEach(post => {
-            const item = document.createElement('div');
-            item.className = 'feed-item';
-            
-            const star = post.cargo === "ADM" ? '<span class="admin-star">★</span>' : '<span class="mod-star">★</span>';
-            
-            item.innerHTML = `
-                <div style="font-size:11px; margin-bottom:5px; display:flex; justify-content:space-between">
-                    <span>${star} <strong>${post.usuario}</strong></span>
-                    <span style="color:#999">${new Date(post.data).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+        snap.forEach(child => {
+            const t = child.val();
+            const id = child.key;
+            const card = document.createElement('div');
+            card.className = 'card-troca';
+            card.innerHTML = `
+                <div style="font-size:10px; color:#999">ID: ${id.slice(-5)}</div>
+                <div class="dupla">
+                    <div class="lado">
+                        <img src="${t.i1}">
+                        <b>${t.u1}</b>
+                        <p>${t.d1}</p>
+                    </div>
+                    <div class="vs-circle">VS</div>
+                    <div class="lado" id="lado2-${id}">
+                        ${t.u2 ? `
+                            <img src="${t.i2}">
+                            <b>${t.u2}</b>
+                            <p>${t.d2}</p>
+                        ` : `
+                            <div style="margin:auto">
+                                <i class="fas fa-box-open" style="font-size:24px; color:#ccc"></i>
+                                <p style="font-size:10px; color:#999; margin-top:5px">Aguardando oferta...</p>
+                                <button class="btn-offer" onclick="window.abrirOferta('${id}')">OFERECER</button>
+                            </div>
+                        `}
+                    </div>
                 </div>
-                <div style="font-size:14px; line-height:1.4">${post.mensagem}</div>
-                ${window.currentUser.cargo === "ADM" ? `
-                    <button class="btn-del" onclick="removerPost('${post.id}')">APAGAR</button>
-                ` : ''}
+                ${window.currentUser.cargo === 'ADM' ? `<button class="btn-del" onclick="window.remover('${id}')">APAGAR</button>` : ''}
             `;
-            feed.appendChild(item);
+            feed.prepend(card);
         });
     });
 
-    // REMOVER POST (SÓ ADM)
-    window.removerPost = (id) => {
-        if(confirm("Deseja apagar esta mensagem da timeline?")) {
-            remove(ref(db, `timeline/${id}`));
-        }
+    // SISTEMA DE OFERECER (ABRE GALERIA E INPUT)
+    window.abrirOferta = (id) => {
+        const ofer = prompt("O que você oferece?");
+        if(!ofer) return;
+
+        // Criar um input invisível para pegar a foto
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*';
+        input.onchange = (e) => {
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 400; canvas.height = 300;
+                    canvas.getContext('2d').drawImage(img, 0, 0, 400, 300);
+                    const imgOferta = canvas.toDataURL('image/jpeg', 0.7);
+                    
+                    // Salva no Firebase no Lado 2 desse post específico
+                    update(ref(db, `trocas/${id}`), {
+                        u2: window.currentUser.nome,
+                        d2: ofer,
+                        i2: imgOferta
+                    });
+                };
+                img.src = ev.target.result;
+            };
+            reader.readAsDataURL(e.target.files[0]);
+        };
+        input.click(); // Abre a galeria
     };
 
+    window.remover = (id) => confirm("Apagar?") && remove(ref(db, `trocas/${id}`));
 </script>
 </body>
 </html>
