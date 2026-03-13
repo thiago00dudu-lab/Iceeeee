@@ -86,31 +86,43 @@
     const db = getDatabase(app);
     window.user = {};
 
-    // --- CORREÇÃO DO PIX: CHAMA A PASTA API DA VERCEL ---
+    // --- CORREÇÃO DO PIX: LÓGICA DE SERVIDOR VERCEL ---
     window.executarPix = async () => {
         const valor = document.getElementById('finValor').value;
         if (!valor || valor < 1) return alert("Valor mínimo R$ 1,00");
 
         try {
+            // Chamada para a sua função na pasta api/pix.js
             const res = await fetch('/api/pix', { 
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ valor: valor, usuario: window.user.nome })
             });
             const data = await res.json();
-            if (data.point_of_interaction) {
-                window.prompt("🧊 PIX GERADO! Copie o código abaixo:", data.point_of_interaction.transaction_data.qr_code);
+            
+            // Extrai apenas o código do QR Code para evitar erro no banco
+            if (data.point_of_interaction && data.point_of_interaction.transaction_data) {
+                const copiaCola = data.point_of_interaction.transaction_data.qr_code;
+                window.prompt("🧊 PIX GERADO! Copie o código abaixo e pague no seu banco:", copiaCola);
                 document.getElementById('modalFin').style.display = 'none';
-            } else { alert("Erro ao gerar Pix. Verifique sua chave secreta na Vercel."); }
-        } catch (e) { alert("Erro de conexão com o servidor."); }
+            } else { 
+                alert("Erro ao gerar Pix. Verifique se o Access Token está configurado na Vercel."); 
+            }
+        } catch (e) { 
+            alert("Erro de conexão. Verifique se a pasta 'api' (minúscula) está no GitHub."); 
+        }
     };
 
     // --- FUNÇÃO COMPARTILHAR ---
     window.compartilharApp = () => {
         if (navigator.share) {
-            navigator.share({ title: 'ICE TROCAS', text: 'Confira essa troca no ICE!', url: window.location.href });
+            navigator.share({ 
+                title: 'ICE TROCAS', 
+                text: 'Dê uma olhada nesta troca no ICE!', 
+                url: window.location.href 
+            }).catch(() => console.log('Cancelado'));
         } else {
-            window.prompt("Copie o link:", window.location.href);
+            window.prompt("Copie o link abaixo para compartilhar:", window.location.href);
         }
     };
 
@@ -133,7 +145,9 @@
                 <div class="card-info"><b>${p.u1}</b></div>
                 <div class="actions">
                     <button class="btn-action"><i class="fas fa-comment"></i> CHAT</button>
-                    <button class="btn-action" onclick="compartilharApp()"><i class="fas fa-share-alt"></i> COMPARTILHAR</button>
+                    <button class="btn-action" onclick="compartilharApp()">
+                        <i class="fas fa-share-alt"></i> COMPARTILHAR
+                    </button>
                 </div>`;
             f.prepend(div);
         });
