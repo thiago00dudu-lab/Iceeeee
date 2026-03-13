@@ -3,98 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ICE TROCAS</title>
+    <title>ICE TROCAS - Oficial</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <style>
-        :root { --bg: #e3effd; --sea: #0f3452; --blue: #1877f2; --white: #fff; }
-        body { margin:0; font-family: 'Segoe UI', sans-serif; background: var(--bg); padding-bottom: 80px; }
-        header { padding: 15px; background: var(--sea); color: white; text-align: center; font-weight: 900; position: sticky; top: 0; z-index: 100; }
+        :root { 
+            --bg: #e3effd; --sea: #0f3452; --blue: #1877f2; --gold: #FFD700; 
+            --light-yellow: #FFFF80; --mod-blue: #00BFFF; --white: #fff; 
+            --red: #ff4d4d; --green: #28a745;
+        }
+        body { margin:0; font-family: 'Segoe UI', sans-serif; background: var(--bg); padding-bottom: 90px; }
+        header { padding: 15px 20px; background: linear-gradient(135deg, var(--sea), #1a5276); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
         .wrap { max-width: 500px; margin: auto; padding: 15px; }
-        .card { background: var(--white); border-radius: 20px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); cursor: pointer; }
-        .card img { width: 100%; height: 300px; object-fit: cover; }
-        .card-info { padding: 15px; display: flex; align-items: center; gap: 10px; }
-        /* Estilo da tela de perfil */
-        #telaPerfil { display: none; position: fixed; inset: 0; background: var(--bg); z-index: 2000; overflow-y: auto; }
-        .capa { height: 150px; background: linear-gradient(to bottom, var(--blue), var(--sea)); position: relative; }
-        .back-btn { position: absolute; top: 15px; left: 15px; background: rgba(0,0,0,0.5); color: white; border: none; border-radius: 50%; width: 40px; height: 40px; }
-        .avatar-perfil { width: 90px; height: 90px; border-radius: 50%; border: 4px solid white; position: absolute; bottom: -45px; left: 20px; background: #ccc center/cover; }
-        .perfil-content { margin-top: 55px; padding: 20px; }
-        .nav { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background: var(--sea); display: flex; gap: 60px; padding: 12px 40px; border-radius: 50px; }
-        .nav i { color: white; font-size: 22px; }
+        .card-timeline { background: var(--white); border-radius: 20px; overflow: hidden; margin-bottom: 25px; box-shadow: 0 8px 20px rgba(15, 52, 82, 0.15); cursor: pointer; }
+        .card-timeline img { width: 100%; height: 350px; object-fit: cover; }
+        .card-info { padding: 18px; }
+        .capa { height: 160px; background: linear-gradient(to bottom, var(--blue), var(--sea)); position: relative; }
+        .avatar { width: 100px; height: 100px; border-radius: 50%; border: 5px solid var(--white); position: absolute; bottom: -50px; left: 20px; background: #eee no-repeat center/cover; }
+        .bio-area { margin-top: 60px; padding: 0 20px; }
+        .nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--sea); display: flex; gap: 50px; padding: 14px 40px; border-radius: 50px; z-index: 3000; }
+        .nav i { color: white; font-size: 24px; cursor: pointer; }
+        .btn-troca { background: var(--blue); color: white; border: none; width: 100%; padding: 15px; border-radius: 12px; font-weight: bold; margin-top: 20px; }
     </style>
 </head>
 <body>
 
-<header>ICE TROCAS</header>
-
-<div class="wrap" id="feed">
-    </div>
-
-<div id="telaPerfil">
-    <div class="capa">
-        <button class="back-btn" onclick="fecharPerfil()"><i class="fas fa-arrow-left"></i></button>
-        <div class="avatar-perfil"></div>
-    </div>
-    <div class="perfil-content">
-        <h2 id="nomeNoPerfil">Usuário</h2>
-        <p style="color: #666;">Interessado em trocas 🧊</p>
-        <hr>
-        <button style="width: 100%; padding: 15px; background: var(--blue); color: white; border: none; border-radius: 10px; font-weight: bold;">
-            SOLICITAR TROCA
-        </button>
+<div id="loginS" style="position:fixed; inset:0; background:var(--sea); z-index:5000; display:flex; align-items:center; justify-content:center;">
+    <div style="background:white; padding:40px 30px; border-radius:30px; width:85%; text-align:center;">
+        <h2 style="color:var(--sea);">🧊 ICE LOGIN</h2>
+        <input type="text" id="inome" placeholder="Usuário" style="width:100%; padding:15px; margin-bottom:15px; border-radius:12px; border:1px solid #ddd;">
+        <button onclick="logar()" style="background:var(--blue); color:white; width:100%; padding:16px; border:none; border-radius:12px; font-weight:bold;">ENTRAR</button>
     </div>
 </div>
 
-<div class="nav">
-    <i class="fas fa-home" onclick="fecharPerfil()"></i>
-    <i class="fas fa-plus-circle"></i>
-    <i class="fas fa-user"></i>
+<div id="app" style="display:none">
+    <header>
+        <div style="font-weight:900; font-size:22px;">ICE TROCAS</div>
+        <button onclick="location.reload()" style="color:white; background:none; border:1px solid #fff; border-radius:20px; padding:4px 10px;">Sair</button>
+    </header>
+    <div class="wrap"><div id="feed"></div></div>
+    <div class="nav">
+        <i class="fas fa-home" onclick="fecharPerfil()"></i>
+        <i class="fas fa-user-circle" onclick="abrirPerfil(window.user.nome)"></i>
+    </div>
+</div>
+
+<div id="telaPerfil" style="display:none; position:fixed; inset:0; background:var(--bg); z-index:2000; overflow-y:auto;">
+    <div class="capa" id="pCapa"><button onclick="fecharPerfil()" style="margin:15px; border:none; background:rgba(0,0,0,0.4); color:white; border-radius:50%; width:40px; height:40px;"><i class="fas fa-arrow-left"></i></button></div>
+    <div class="avatar" id="pAvatar"></div>
+    <div class="bio-area">
+        <h2 id="perfNome" style="color:var(--sea);"></h2>
+        <p style="color: #555;">Pronto para trocas no gelo ❄️</p>
+        <button class="btn-troca" onclick="alert('Iniciando troca!')">SOLICITAR TROCA</button>
+        <div id="perfilPosts" style="margin-top:20px;"></div>
+    </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-    const firebaseConfig = { 
-        apiKey: "AIzaSyDM5M1_O-wfcBDGYJIiYgiHVbqhiKC-0dw", 
-        databaseURL: "https://icek-9cdd7-default-rtdb.firebaseio.com", 
-        projectId: "icek-9cdd7" 
-    };
-    
+    const firebaseConfig = { apiKey: "AIzaSyDM5M1_O-wfcBDGYJIiYgiHVbqhiKC-0dw", databaseURL: "https://icek-9cdd7-default-rtdb.firebaseio.com", projectId: "icek-9cdd7" };
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
+    window.user = {};
 
-    // Carregar postagens e dar a função de clique
+    window.logar = () => {
+        const n = document.getElementById('inome').value.trim();
+        if(!n) return;
+        window.user = { nome: n };
+        document.getElementById('loginS').style.display = 'none';
+        document.getElementById('app').style.display = 'block';
+    };
+
+    // Carregar Timeline com clique para Perfil
     onValue(ref(db, 'posts'), (snap) => {
-        const feed = document.getElementById('feed');
-        feed.innerHTML = "";
+        const f = document.getElementById('feed'); f.innerHTML = "";
         snap.forEach(c => {
             const p = c.val();
-            const card = document.createElement('div');
-            card.className = "card";
-            // AQUI ESTÁ A MÁGICA: Ao clicar em qualquer lugar do card, vai pro perfil
-            card.onclick = () => abrirPerfil(p.u1); 
+            const div = document.createElement('div');
+            div.className = "card-timeline";
             
-            card.innerHTML = `
-                <img src="${p.i1}">
+            // FUNÇÃO: Clicou na publicação, abre o perfil do autor
+            div.onclick = () => abrirPerfil(p.u1);
+
+            div.innerHTML = `
                 <div class="card-info">
-                    <i class="fas fa-user-circle" style="font-size: 24px; color: var(--sea)"></i>
-                    <b style="color: var(--sea)">${p.u1}</b>
+                    <b style="color:var(--sea);"><i class="fas fa-user-circle"></i> ${p.u1}</b>
                 </div>
-            `;
-            feed.prepend(card);
+                <img src="${p.i1}">
+                <div style="padding:15px; font-size:12px; color:var(--blue); font-weight:bold; text-align:center;">
+                   🧊 TOQUE PARA VER PERFIL E TROCAR
+                </div>`;
+            f.prepend(div);
         });
     });
 
     window.abrirPerfil = (nome) => {
-        document.getElementById('nomeNoPerfil').innerText = nome;
+        document.getElementById('perfNome').innerText = nome;
         document.getElementById('telaPerfil').style.display = 'block';
+        window.scrollTo(0,0);
     };
 
     window.fecharPerfil = () => {
         document.getElementById('telaPerfil').style.display = 'none';
     };
 </script>
-
 </body>
 </html>
