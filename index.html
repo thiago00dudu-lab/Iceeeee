@@ -3,95 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ICE - Rede de Trocas</title>
+    <title>ICE - Conecta</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <style>
-        :root { --bg: #dff6ff; --sea: #0f3452; --gold: #ffd700; --blue: #007bff; --white: #fff; }
-        body { margin:0; font-family: sans-serif; background: var(--bg); color: var(--sea); }
+        :root { --bg: #f0f2f5; --ice-blue: #00d4ff; --sea: #0f3452; --gold: #ffd700; --blue: #1877f2; --white: #fff; }
+        body { margin:0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); color: var(--sea); }
         
-        /* HEADER */
-        header { padding:15px; background: var(--white); display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:100; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .wrap { max-width: 500px; margin: auto; padding: 15px; }
+        /* HEADER ICE DESTACADO */
+        .ice-header { background: linear-gradient(135deg, var(--sea), #1a4a73); color: white; padding: 20px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+        .ice-header h1 { margin: 0; font-size: 28px; letter-spacing: 4px; font-weight: 900; text-transform: uppercase; }
+        .ice-header span { font-size: 12px; letter-spacing: 1px; opacity: 0.8; }
+
+        header { padding:10px 15px; background: var(--white); display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:100; border-bottom: 1px solid #ddd; }
+        .wrap { max-width: 500px; margin: auto; padding: 15px; padding-bottom: 80px; }
 
         /* CARDS */
-        .card { background: var(--white); border-radius: 15px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .card { background: var(--white); border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
         .dupla { display: flex; gap: 10px; position: relative; margin-top: 10px; }
         .lado { flex: 1; text-align: center; background: #f8fbff; padding: 10px; border-radius: 12px; border: 1px solid #e0efff; }
-        .lado img { width: 100%; height: 110px; object-fit: cover; border-radius: 8px; }
-        .vs { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: var(--sea); color: white; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 10px; border: 2px solid white; font-weight: bold; }
+        .lado img { width: 100%; height: 120px; object-fit: cover; border-radius: 8px; }
+        .vs { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: var(--sea); color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-size: 12px; border: 3px solid white; font-weight: bold; }
 
         /* PERFIL ESTILO FACEBOOK */
-        #telaPerfil { display: none; background: var(--bg); min-height: 100vh; position: fixed; inset: 0; z-index: 500; overflow-y: auto; padding-top: 20px; }
-        .capa { height: 120px; background: var(--sea); width: 100%; position: relative; }
-        .foto-perfil { width: 90px; height: 90px; border-radius: 50%; border: 4px solid white; position: absolute; bottom: -45px; left: 20px; background: #ddd; display: flex; align-items: center; justify-content: center; font-size: 40px; }
-        .info-perfil { margin-top: 50px; padding: 20px; }
+        #telaPerfil { display: none; background: #fff; min-height: 100vh; position: fixed; inset: 0; z-index: 500; overflow-y: auto; }
+        .capa { height: 150px; background: linear-gradient(to bottom, var(--sea), var(--ice-blue)); width: 100%; position: relative; }
+        .foto-perfil { width: 110px; height: 110px; border-radius: 50%; border: 4px solid white; position: absolute; bottom: -55px; left: 20px; background: #eee; display: flex; align-items: center; justify-content: center; font-size: 50px; overflow: hidden; }
+        .info-perfil { margin-top: 60px; padding: 20px; }
 
-        /* ESTRELAS */
+        /* BOTAO FLUTUANTE DE COMPARTILHAR */
+        .btn-float { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; background: #25d366; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); cursor: pointer; z-index: 400; border: none; transition: 0.3s; }
+        .btn-float:active { transform: scale(0.9); }
+
         .star-gold { color: var(--gold); }
         .star-blue { color: var(--blue); }
-
-        /* PROPAGANDA FLUTUANTE */
-        .ads-link { background: #fff5cc; padding: 10px; border-radius: 8px; border: 1px dashed orange; font-size: 12px; margin: 10px 0; cursor: pointer; }
-
-        input, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
-        button { cursor: pointer; border: none; border-radius: 8px; font-weight: bold; padding: 12px; width: 100%; margin-top: 5px; }
-        .btn-adm { background: var(--gold); color: #000; }
-        .btn-mod { background: var(--blue); color: #fff; }
-        .btn-block { background: #ff4d4d; color: #fff; }
+        input, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; background: #f9f9f9; }
+        button { cursor: pointer; border: none; border-radius: 8px; font-weight: bold; padding: 12px; width: 100%; }
+        .btn-main { background: var(--sea); color: white; }
+        .clickable { cursor: pointer; color: var(--blue); }
+        .clickable:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
 
 <div id="loginS" style="position:fixed; inset:0; background:var(--bg); z-index:1000; display:flex; align-items:center; justify-content:center;">
-    <div class="card" style="width:80%; text-align:center;">
-        <h2>ICE CONECTA</h2>
-        <input type="text" id="inome" placeholder="Seu Nome">
+    <div class="card" style="width:85%; text-align:center; max-width: 350px;">
+        <div style="font-size: 40px; color: var(--sea); font-weight: 900; margin-bottom: 10px;">ICE</div>
+        <p>Acesse a Rede de Trocas</p>
+        <input type="text" id="inome" placeholder="Como quer ser chamado?">
         <input type="password" id="ipass" placeholder="Senha (ADM: 1533)">
-        <button style="background:var(--sea); color:white;" onclick="logar()">ENTRAR</button>
+        <button class="btn-main" onclick="logar()">ENTRAR AGORA</button>
     </div>
 </div>
 
 <div id="app" style="display:none">
+    <div class="ice-header">
+        <h1>ICE</h1>
+        <span>REDE DE TROCAS CONECTA</span>
+    </div>
+
     <header>
-        <div onclick="abrirPerfil(window.user.nome)" style="cursor:pointer">
+        <div onclick="abrirPerfil(window.user.nome)" class="clickable">
             <b id="statusUser"></b>
         </div>
-        <button onclick="location.reload()" style="width:auto; padding:5px; background:none; color:red">Sair</button>
+        <button onclick="location.reload()" style="width:auto; padding:5px; background:none; color:#ff4d4d; font-size: 12px;">SAIR</button>
     </header>
 
     <div class="wrap">
         <div class="card">
-            <div class="ads-link" onclick="copiarLink()">
-                📢 <b>Meu link de indicação (Clique para Copiar)</b><br>
-                <small id="meuLinkTxt"></small>
-            </div>
-            <hr>
-            <b>Postar Troca</b>
-            <input type="file" accept="image/*" onchange="preview(this)">
-            <img id="p1" style="width:100%; display:none; margin:10px 0; border-radius:8px">
-            <textarea id="d1" placeholder="O que você tem para trocar?"></textarea>
-            <button style="background:var(--sea); color:white;" onclick="subirPost()">PUBLICAR</button>
+            <b>Nova Troca</b>
+            <input type="file" accept="image/*" id="fileInput" onchange="preview(this)" style="font-size: 12px;">
+            <img id="p1" style="width:100%; display:none; margin:10px 0; border-radius:8px; border: 1px solid #ddd;">
+            <textarea id="d1" placeholder="Ex: Troco meu iPhone 12 por PS5..."></textarea>
+            <button class="btn-main" onclick="subirPost()">PUBLICAR</button>
         </div>
+        
         <div id="feed"></div>
     </div>
+
+    <button class="btn-float" onclick="compartilharMeuLink()" title="Compartilhar meu link">
+        <i class="fas fa-share-alt"></i>
+    </button>
 </div>
 
 <div id="telaPerfil">
-    <button onclick="document.getElementById('telaPerfil').style.display='none'" style="width:auto; margin:10px; background:var(--sea); color:white;">← Voltar</button>
     <div class="capa">
+        <button onclick="document.getElementById('telaPerfil').style.display='none'" style="position:absolute; top:10px; left:10px; width:auto; padding:8px 15px; background: rgba(0,0,0,0.5); color:white; border-radius: 20px; font-size: 12px;">← Voltar</button>
         <div class="foto-perfil" id="perfIcon"><i class="fas fa-user"></i></div>
     </div>
     <div class="info-perfil">
-        <h2 id="perfNome">Nome</h2>
-        <p id="perfCargo">Cargo</p>
-        <div id="perfPai" style="font-weight:bold; color:green;"></div>
-        <div id="perfFilhos" style="color:var(--sea)">Pai de 0 pessoas</div>
+        <h2 id="perfNome" style="margin:0">Nome</h2>
+        <p id="perfCargo" style="margin:5px 0; color: #666;">Cargo</p>
+        <hr style="opacity: 0.2;">
+        <div id="perfPai" style="font-weight:bold; color:#28a745; margin-bottom: 5px;"></div>
+        <div id="perfFilhos" style="color:var(--sea); font-weight: bold;">Carregando afiliados...</div>
         
-        <div id="controlesAdm" style="display:none; margin-top:20px; border-top:1px solid #ccc; pt:10px">
-            <p><b>Painel de Controle</b></p>
-            <button class="btn-adm" onclick="mudarCargo('ADM2')">Subir para ADM 2 (Estrela Ouro)</button>
-            <button class="btn-mod" onclick="mudarCargo('MOD')">Subir para Moderador (Estrela Azul)</button>
-            <button class="btn-block" onclick="mudarCargo('BLOCK')">Bloquear Usuário</button>
+        <div id="controlesAdm" style="display:none; margin-top:30px; padding: 15px; background: #fff4e6; border-radius: 12px;">
+            <p style="margin-top:0"><b>Gestão de Usuário</b></p>
+            <button style="background:var(--gold); color:black; margin-bottom: 5px;" onclick="mudarCargo('ADM2')">Promover a ADM Ouro</button>
+            <button style="background:var(--blue); color:white; margin-bottom: 5px;" onclick="mudarCargo('MOD')">Promover a Moderador</button>
+            <button style="background:#ff4d4d; color:white;" onclick="mudarCargo('BLOCK')">Bloquear Acesso</button>
         </div>
     </div>
 </div>
@@ -112,51 +122,80 @@
     window.user = { nome: "", cargo: "USER", pai: "" };
     window.alvoNome = "";
 
-    // LÓGICA DE LOGIN E AFILIADO
+    // LOGIN COM LÓGICA DE AFILIADO
     window.logar = () => {
         const n = document.getElementById('inome').value.trim();
         const p = document.getElementById('ipass').value;
-        if(!n) return alert("Nome!");
+        if(!n) return alert("Digite seu nome!");
 
-        // Pega o ID do Pai pela URL se existir
+        // Verifica se há um pai no link (?ref=NomeDoPai)
         const urlParams = new URLSearchParams(window.location.search);
-        const paiId = urlParams.get('ref');
+        const paiDoLink = urlParams.get('ref');
 
         onValue(ref(db, 'usuarios/' + n), (snap) => {
             let dados = snap.val();
             if(!dados) {
-                // Novo Cadastro
-                dados = { nome: n, cargo: (p === "1533" ? "ADM1" : "USER"), pai: paiId || "Sistema" };
+                // Cadastro Novo: Define o pai se veio por link, senão é "Sistema"
+                dados = { 
+                    nome: n, 
+                    cargo: (p === "1533" ? "ADM1" : "USER"), 
+                    pai: (paiDoLink && paiDoLink !== n) ? paiDoLink : "Sistema" 
+                };
                 set(ref(db, 'usuarios/' + n), dados);
             }
             
-            if(dados.cargo === "BLOCK") return alert("Bloqueado!");
+            if(dados.cargo === "BLOCK") return alert("Sua conta está bloqueada.");
             window.user = dados;
             
             document.getElementById('loginS').style.display = 'none';
             document.getElementById('app').style.display = 'block';
             document.getElementById('statusUser').innerText = "👤 " + n;
-            document.getElementById('meuLinkTxt').innerText = window.location.origin + "?ref=" + n;
         }, { onlyOnce: true });
     };
 
-    // ABRIR PERFIL ESTILO FACEBOOK
+    // COMPARTILHAR LINK COM ID
+    window.compartilharMeuLink = async () => {
+        const link = window.location.origin + window.location.pathname + "?ref=" + window.user.nome;
+        const shareData = {
+            title: 'ICE Conecta',
+            text: `Ei, entre na rede ICE através do meu convite!`,
+            url: link
+        };
+
+        try {
+            if (navigator.share) {
+                await navigator.share(shareData);
+            } else {
+                navigator.clipboard.writeText(link);
+                alert("Link de indicação copiado para a área de transferência!");
+            }
+        } catch (err) {
+            console.log("Erro ao compartilhar");
+        }
+    };
+
+    // VER PERFIL (ESTILO FACEBOOK)
     window.abrirPerfil = (nome) => {
         window.alvoNome = nome;
         onValue(ref(db, 'usuarios/' + nome), (snap) => {
             const d = snap.val();
+            if(!d) return;
+
             document.getElementById('perfNome').innerText = d.nome;
-            document.getElementById('perfCargo').innerHTML = d.cargo.includes("ADM") ? "<span class='star-gold'>★ " + d.cargo + "</span>" : (d.cargo === "MOD" ? "<span class='star-blue'>☆ Moderador</span>" : "Membro");
-            document.getElementById('perfPai').innerText = "Filho de: " + d.pai;
+            document.getElementById('perfCargo').innerHTML = d.cargo.includes("ADM") ? 
+                "<span class='star-gold'><i class='fas fa-star'></i> ADM Nível " + d.cargo.replace("ADM", "") + "</span>" : 
+                (d.cargo === "MOD" ? "<span class='star-blue'><i class='fas fa-shield-halved'></i> Moderador</span>" : "Membro ICE");
             
-            // Contagem de filhos
+            document.getElementById('perfPai').innerText = "Convidado por: " + (d.pai || "Sistema");
+            
+            // Contagem de filhos (afiliados)
             onValue(ref(db, 'usuarios'), (all) => {
                 let cont = 0;
                 all.forEach(u => { if(u.val().pai === nome) cont++; });
-                document.getElementById('perfFilhos').innerText = "Pai de " + cont + " pessoas";
+                document.getElementById('perfFilhos').innerHTML = `<i class="fas fa-users"></i> Trouxe ${cont} pessoas para a rede`;
             }, { onlyOnce: true });
 
-            // HIERARQUIA DE CONTROLE
+            // Painel de Controle (Hierarquia)
             const admBox = document.getElementById('controlesAdm');
             admBox.style.display = "none";
             if(window.user.nome !== nome) {
@@ -171,17 +210,11 @@
 
     window.mudarCargo = (novo) => {
         update(ref(db, 'usuarios/' + window.alvoNome), { cargo: novo });
-        alert("Cargo alterado!");
+        alert("Nível de acesso atualizado!");
         abrirPerfil(window.alvoNome);
     };
 
-    window.copiarLink = () => {
-        const link = document.getElementById('meuLinkTxt').innerText;
-        navigator.clipboard.writeText(link);
-        alert("Link copiado! Compartilhe para ganhar filhos.");
-    };
-
-    // POSTAGEM E FEED
+    // POSTAGENS
     window.preview = (input) => {
         const reader = new FileReader();
         reader.onload = (e) => {
@@ -194,44 +227,50 @@
 
     window.subirPost = () => {
         const d = document.getElementById('d1').value;
-        if(!imgBase || !d) return alert("Falta foto/texto!");
-        push(ref(db, 'posts'), { u1: window.user.nome, d1: d, i1: imgBase, u2: "", d2: "", i2: "" });
+        if(!imgBase || !d) return alert("Adicione uma foto e uma descrição!");
+        push(ref(db, 'posts'), { 
+            u1: window.user.nome, d1: d, i1: imgBase, 
+            u2: "", d2: "", i2: "", 
+            timestamp: Date.now() 
+        });
         document.getElementById('d1').value = "";
         document.getElementById('p1').style.display = "none";
+        document.getElementById('fileInput').value = "";
         imgBase = "";
     };
 
+    // FEED EM TEMPO REAL
     onValue(ref(db, 'posts'), (snap) => {
         const feed = document.getElementById('feed');
         feed.innerHTML = "";
-        snap.forEach(child => {
-            const p = child.val();
-            const id = child.key;
+        let posts = [];
+        snap.forEach(c => { posts.push({id: c.key, ...c.val()}) });
+        posts.reverse().forEach(p => {
             const div = document.createElement('div');
             div.className = "card";
             div.innerHTML = `
                 <div class="dupla">
                     <div class="lado">
                         <img src="${p.i1}">
-                        <b onclick="abrirPerfil('${p.u1}')" style="cursor:pointer; color:var(--sea)">${p.u1}</b>
-                        <p style="font-size:12px">${p.d1}</p>
+                        <div class="clickable" style="font-weight:bold; margin: 5px 0" onclick="abrirPerfil('${p.u1}')">${p.u1}</div>
+                        <p style="font-size:11px; margin:0; opacity: 0.8">${p.d1}</p>
                     </div>
                     <div class="vs">VS</div>
                     <div class="lado">
                         ${p.u2 ? `
                             <img src="${p.i2}">
-                            <b onclick="abrirPerfil('${p.u2}')" style="cursor:pointer">${p.u2}</b>
-                            <p style="font-size:12px">${p.d2}</p>
-                        ` : `<button onclick="ofertar('${id}')" style="margin-top:20px; font-size:10px; background:var(--blue); color:white">OFERECER</button>`}
+                            <div class="clickable" style="font-weight:bold; margin: 5px 0" onclick="abrirPerfil('${p.u2}')">${p.u2}</div>
+                            <p style="font-size:11px; margin:0; opacity: 0.8">${p.d2}</p>
+                        ` : `<button onclick="ofertar('${p.id}')" style="margin-top:25px; font-size:10px; background:var(--blue); color:white">FAZER OFERTA</button>`}
                     </div>
                 </div>
             `;
-            feed.prepend(div);
+            feed.appendChild(div);
         });
     });
 
     window.ofertar = (id) => {
-        const txt = prompt("Sua oferta:");
+        const txt = prompt("Qual sua oferta para essa troca?");
         if(!txt) return;
         const input = document.createElement('input');
         input.type = 'file'; input.accept = 'image/*';
