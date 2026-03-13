@@ -14,14 +14,12 @@
         body { margin:0; font-family: 'Segoe UI', sans-serif; background: var(--bg); padding-bottom: 90px; }
         header { padding: 15px 20px; background: linear-gradient(135deg, var(--sea), #1a5276); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
         .wrap { max-width: 500px; margin: auto; padding: 15px; }
-        .badge { font-size: 11px; font-weight: 900; display: flex; align-items: center; gap: 4px; margin-top: 4px; text-transform: uppercase; }
-        .star-gold { color: var(--gold); }
         .card-timeline { background: var(--white); border-radius: 20px; overflow: hidden; margin-bottom: 25px; box-shadow: 0 8px 20px rgba(15, 52, 82, 0.15); }
         .card-timeline img { width: 100%; height: 350px; object-fit: cover; }
         .card-info { padding: 18px; }
         .actions { display: flex; padding: 12px 18px; gap: 15px; border-top: 1px solid #eee; background: #fafafa; justify-content: space-around; }
         .btn-action { background: none; border: none; color: var(--sea); font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 6px; font-size: 13px; }
-        .capa { height: 160px; background: linear-gradient(to bottom, var(--blue), var(--sea)); position: relative; background-size: cover; }
+        .capa { height: 160px; background: linear-gradient(to bottom, var(--blue), var(--sea)); position: relative; }
         .avatar { width: 100px; height: 100px; border-radius: 50%; border: 5px solid var(--white); position: absolute; bottom: -50px; left: 20px; background: #eee no-repeat center/cover; }
         .bio-area { margin-top: 60px; padding: 0 20px; }
         .finance-btns { display: flex; gap: 10px; margin: 20px 0; }
@@ -29,8 +27,8 @@
         .deposito { background: var(--green); }
         .saque { background: var(--blue); }
         .nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--sea); display: flex; gap: 50px; padding: 14px 40px; border-radius: 50px; z-index: 3000; }
-        .nav i { color: white; font-size: 24px; }
-        #modalFin, #modalOferta { display: none; position: fixed; inset: 0; background: rgba(15, 52, 82, 0.9); z-index: 4000; align-items: center; justify-content: center; padding: 20px; }
+        .nav i { color: white; font-size: 24px; cursor: pointer; }
+        #modalFin { display: none; position: fixed; inset: 0; background: rgba(15, 52, 82, 0.9); z-index: 4000; align-items: center; justify-content: center; padding: 20px; }
         .pix-input { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ddd; margin-bottom: 15px; }
     </style>
 </head>
@@ -58,13 +56,13 @@
 </div>
 
 <div id="telaPerfil" style="display:none; position:fixed; inset:0; background:var(--bg); z-index:2000; overflow-y:auto;">
-    <div class="capa" id="pCapa"><button onclick="fecharPerfil()" style="margin:15px; border:none; background:rgba(0,0,0,0.4); color:white; border-radius:50%; width:40px; height:40px;"><i class="fas fa-arrow-left"></i></button></div>
+    <div class="capa" id="pCapa"><button onclick="fecharTelas()" style="margin:15px; border:none; background:rgba(0,0,0,0.4); color:white; border-radius:50%; width:40px; height:40px;"><i class="fas fa-arrow-left"></i></button></div>
     <div class="avatar" id="pAvatar"></div>
     <div class="bio-area">
         <h2 id="perfNome" style="color:var(--sea);"></h2>
-        <div class="finance-btns" id="btnsFinance" style="display:none;">
-            <button class="btn-fin deposito" onclick="abrirFin('deposito')"><i class="fas fa-wallet"></i> DEPÓSITO</button>
-            <button class="btn-fin saque" onclick="abrirFin('saque')"><i class="fas fa-hand-holding-usd"></i> SAQUE</button>
+        <div class="finance-btns" id="btnsFinance">
+            <button class="btn-fin deposito" onclick="abrirFin()"><i class="fas fa-wallet"></i> DEPÓSITO</button>
+            <button class="btn-fin saque"><i class="fas fa-hand-holding-usd"></i> SAQUE</button>
         </div>
         <div id="perfilPosts"></div>
     </div>
@@ -72,57 +70,45 @@
 
 <div id="modalFin">
     <div style="background:white; padding:30px; border-radius:25px; width:85%; max-width:400px; text-align:center;">
-        <h3 id="finTitle">Finanças</h3>
+        <h3>💰 Realizar Depósito</h3>
         <input type="number" id="finValor" class="pix-input" placeholder="R$ 0,00">
-        <button id="btnFinAction" style="background:var(--sea); color:white; width:100%; padding:15px; border:none; border-radius:12px; font-weight:bold;">GERAR PIX</button>
+        <button id="btnFinAction" onclick="executarPix()" style="background:var(--sea); color:white; width:100%; padding:15px; border:none; border-radius:12px; font-weight:bold;">GERAR PIX AGORA</button>
         <button onclick="document.getElementById('modalFin').style.display='none'" style="margin-top:15px; background:none; border:none; color:red;">CANCELAR</button>
     </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, push, onValue, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     const firebaseConfig = { apiKey: "AIzaSyDM5M1_O-wfcBDGYJIiYgiHVbqhiKC-0dw", databaseURL: "https://icek-9cdd7-default-rtdb.firebaseio.com", projectId: "icek-9cdd7" };
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
     window.user = {};
 
-    // --- CORREÇÃO DO PIX (Usando Proxy para evitar erro) ---
-    window.gerarPixMP = async (valor) => {
-        const token = "APP_USR-bd8c1628-3715-47fb-91ee-845b41bd6be1";
+    // --- CORREÇÃO DO PIX: CHAMA A PASTA API DA VERCEL ---
+    window.executarPix = async () => {
+        const valor = document.getElementById('finValor').value;
+        if (!valor || valor < 1) return alert("Valor mínimo R$ 1,00");
+
         try {
-            // Usamos um serviço de proxy (CORS Anywhere) ou similar para contornar o erro de bloqueio do navegador
-            const res = await fetch('https://api.mercadopago.com/v1/payments', {
+            const res = await fetch('/api/pix', { 
                 method: 'POST',
-                headers: { 
-                    'Authorization': `Bearer ${token}`, 
-                    'Content-Type': 'application/json',
-                    'X-Idempotency-Key': Math.random().toString() 
-                },
-                body: JSON.stringify({
-                    transaction_amount: parseFloat(valor),
-                    description: "Depósito ICE",
-                    payment_method_id: "pix",
-                    payer: { email: "user@ice.com" }
-                })
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ valor: valor, usuario: window.user.nome })
             });
             const data = await res.json();
-            if(data.point_of_interaction) {
-                const copiaCola = data.point_of_interaction.transaction_data.qr_code;
-                window.prompt("Copiado! Pague no seu banco:", copiaCola);
-            } else { alert("Erro: O Mercado Pago exige que essa chamada seja feita via Servidor (Back-end)."); }
-        } catch (e) { alert("Erro de conexão com a API."); }
+            if (data.point_of_interaction) {
+                window.prompt("🧊 PIX GERADO! Copie o código abaixo:", data.point_of_interaction.transaction_data.qr_code);
+                document.getElementById('modalFin').style.display = 'none';
+            } else { alert("Erro ao gerar Pix. Verifique sua chave secreta na Vercel."); }
+        } catch (e) { alert("Erro de conexão com o servidor."); }
     };
 
     // --- FUNÇÃO COMPARTILHAR ---
     window.compartilharApp = () => {
         if (navigator.share) {
-            navigator.share({
-                title: 'ICE TROCAS',
-                text: 'Venha negociar no ICE TROCAS!',
-                url: window.location.href
-            });
+            navigator.share({ title: 'ICE TROCAS', text: 'Confira essa troca no ICE!', url: window.location.href });
         } else {
             window.prompt("Copie o link:", window.location.href);
         }
@@ -155,15 +141,10 @@
 
     window.abrirPerfil = (nome) => {
         document.getElementById('perfNome').innerText = nome;
-        document.getElementById('btnsFinance').style.display = 'flex';
         document.getElementById('telaPerfil').style.display = 'block';
     };
-    window.fecharPerfil = () => document.getElementById('telaPerfil').style.display = 'none';
-    window.abrirFin = (tipo) => {
-        document.getElementById('modalFin').style.display = 'flex';
-        document.getElementById('btnFinAction').onclick = () => window.gerarPixMP(document.getElementById('finValor').value);
-    };
-    window.fecharTelas = () => { fecharPerfil(); };
+    window.fecharTelas = () => { document.getElementById('telaPerfil').style.display = 'none'; };
+    window.abrirFin = () => { document.getElementById('modalFin').style.display = 'flex'; };
 </script>
 </body>
 </html>
