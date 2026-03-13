@@ -86,43 +86,43 @@
     const db = getDatabase(app);
     window.user = {};
 
-    // --- CORREÇÃO DO PIX: LÓGICA DE SERVIDOR VERCEL ---
+    // Função ajustada para puxar o Pix do servidor Vercel
     window.executarPix = async () => {
         const valor = document.getElementById('finValor').value;
-        if (!valor || valor < 1) return alert("Valor mínimo R$ 1,00");
+        const usuario = window.user.nome || "Usuario";
+
+        if (!valor || valor < 1) return alert("Erro no Pix (Min R$ 1,00)");
 
         try {
-            // Chamada para a sua função na pasta api/pix.js
-            const res = await fetch('/api/pix', { 
+            const res = await fetch('/api/Pix', { 
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ valor: valor, usuario: window.user.nome })
+                body: JSON.stringify({ valor: valor, usuario: usuario })
             });
+
             const data = await res.json();
             
-            // Extrai apenas o código do QR Code para evitar erro no banco
             if (data.point_of_interaction && data.point_of_interaction.transaction_data) {
                 const copiaCola = data.point_of_interaction.transaction_data.qr_code;
-                window.prompt("🧊 PIX GERADO! Copie o código abaixo e pague no seu banco:", copiaCola);
+                window.prompt("🧊 PIX GERADO! Copie o código abaixo:", copiaCola);
                 document.getElementById('modalFin').style.display = 'none';
             } else { 
-                alert("Erro ao gerar Pix. Verifique se o Access Token está configurado na Vercel."); 
+                alert("Erro ao gerar Pix. Verifique o Access Token."); 
             }
         } catch (e) { 
-            alert("Erro de conexão. Verifique se a pasta 'api' (minúscula) está no GitHub."); 
+            alert("Erro de conexão. Verifique se o arquivo api/Pix.js existe no GitHub."); 
         }
     };
 
-    // --- FUNÇÃO COMPARTILHAR ---
     window.compartilharApp = () => {
         if (navigator.share) {
             navigator.share({ 
                 title: 'ICE TROCAS', 
-                text: 'Dê uma olhada nesta troca no ICE!', 
+                text: 'Confira essa troca no ICE!', 
                 url: window.location.href 
             }).catch(() => console.log('Cancelado'));
         } else {
-            window.prompt("Copie o link abaixo para compartilhar:", window.location.href);
+            window.prompt("Copie o link:", window.location.href);
         }
     };
 
