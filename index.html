@@ -6,8 +6,8 @@
     <title>ICE TROCAS - Oficial</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <style>
-        :root { --bg: #f0f7ff; --ice: #a8dadc; --sea: #0f3452; --blue: #1877f2; --gold: #FFD700; --light-yellow: #FFFF80; --mod-blue: #00BFFF; --white: #fff; --red: #ff4d4d; }
-        body { margin:0; font-family: sans-serif; background: var(--bg); color: var(--sea); padding-bottom: 80px; }
+        :root { --bg: #f4f7f9; --sea: #0f3452; --blue: #1877f2; --gold: #FFD700; --light-yellow: #FFFF80; --mod-blue: #00BFFF; --white: #fff; --red: #ff4d4d; }
+        body { margin:0; font-family: sans-serif; background: var(--bg); padding-bottom: 80px; }
         
         header { padding:15px; background: var(--white); display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:100; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .wrap { max-width: 500px; margin: auto; padding: 15px; }
@@ -19,89 +19,89 @@
         .star-blue { color: var(--mod-blue); }
 
         /* TIMELINE */
-        .card-timeline { background: var(--white); border-radius: 15px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 1px solid #e1e8ed; }
-        .card-timeline img { width: 100%; height: 300px; object-fit: cover; }
+        .card-timeline { background: var(--white); border-radius: 15px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .card-timeline img { width: 100%; height: 320px; object-fit: cover; cursor: pointer; }
         .card-info { padding: 15px; }
-        .post-actions { display: flex; gap: 15px; padding: 10px 15px; border-top: 1px solid #eee; }
+        .actions { display: flex; padding: 10px 15px; gap: 20px; border-top: 1px solid #f0f0f0; }
+        .btn-chat { background: none; border: none; color: var(--blue); font-weight: bold; cursor: pointer; }
 
-        /* PERFIL CUSTOM */
-        .capa-perfil { height: 120px; background: #ddd; position: relative; background-size: cover; background-position: center; }
-        .avatar-perfil { width: 80px; height: 80px; border-radius: 50%; border: 4px solid var(--white); position: absolute; bottom: -40px; left: 20px; background: #eee; background-size: cover; }
-        .bio-box { margin-top: 50px; padding: 0 20px; font-size: 14px; color: #555; }
+        /* PERFIL & DUPLO */
+        .capa { height: 140px; background: #ccc no-repeat center/cover; position: relative; }
+        .avatar { width: 90px; height: 90px; border-radius: 50%; border: 4px solid var(--white); position: absolute; bottom: -45px; left: 20px; background: #eee no-repeat center/cover; }
+        .bio-area { margin-top: 55px; padding: 0 20px; }
+        
+        .dupla-box { display: flex; gap: 10px; margin-top: 20px; position: relative; background: white; padding: 10px; border-radius: 12px; border: 1px solid #ddd; }
+        .lado { flex: 1; text-align: center; }
+        .lado img { width: 100%; height: 130px; object-fit: cover; border-radius: 8px; }
+        .vs-circle { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: var(--sea); color: white; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-size: 10px; border: 2px solid white; z-index: 5; }
 
-        /* MENU FLUTUANTE RODAPÉ */
-        .nav-bar { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--sea); display: flex; gap: 30px; padding: 12px 30px; border-radius: 30px; box-shadow: 0 5px 20px rgba(0,0,0,0.3); z-index: 3000; }
-        .nav-item { color: white; font-size: 20px; cursor: pointer; text-decoration: none; }
+        /* NAV */
+        .nav { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background: var(--sea); display: flex; gap: 40px; padding: 12px 35px; border-radius: 40px; z-index: 3000; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+        .nav i { color: white; font-size: 22px; cursor: pointer; }
 
-        /* TELAS */
-        #telaPerfil, #telaEdit, #telaChat { display: none; position: fixed; inset: 0; background: var(--bg); z-index: 2000; overflow-y: auto; }
-        .master-panel { background: #fff3cd; border: 2px dashed orange; padding: 15px; border-radius: 10px; margin-top: 15px; }
-        .btn-adm { padding: 8px 12px; border-radius: 5px; border: none; font-weight: bold; margin: 3px; color: #333; cursor: pointer; }
+        #telaPerfil, #telaEdit, #telaChat, #modalOferta { display: none; position: fixed; inset: 0; background: var(--bg); z-index: 2000; overflow-y: auto; }
+        #modalOferta { background: rgba(0,0,0,0.8); align-items: center; justify-content: center; padding: 20px; }
+        .master-panel { background: #fff3cd; border: 1px dashed orange; padding: 15px; border-radius: 10px; margin: 15px 0; }
     </style>
 </head>
 <body>
 
 <div id="loginS" style="position:fixed; inset:0; background:var(--bg); z-index:5000; display:flex; align-items:center; justify-content:center;">
-    <div style="background:white; padding:30px; border-radius:20px; width:80%; text-align:center;">
-        <h2>ICE Login</h2>
-        <input type="text" id="inome" placeholder="Usuário" style="width:90%; padding:12px; margin-bottom:10px; border-radius:8px; border:1px solid #ddd;">
-        <input type="password" id="ipass" placeholder="Senha" style="width:90%; padding:12px; margin-bottom:20px; border-radius:8px; border:1px solid #ddd;">
-        <button onclick="logar()" style="background:var(--sea); color:white; width:100%; padding:12px; border:none; border-radius:8px; font-weight:bold;">ENTRAR</button>
+    <div style="background:white; padding:30px; border-radius:20px; width:85%; text-align:center;">
+        <h2 style="color:var(--sea)">ICE Login</h2>
+        <input type="text" id="inome" placeholder="Usuário" style="width:100%; padding:12px; margin:10px 0; border:1px solid #ddd; border-radius:8px; box-sizing:border-box;">
+        <input type="password" id="ipass" placeholder="Senha" style="width:100%; padding:12px; margin:10px 0; border:1px solid #ddd; border-radius:8px; box-sizing:border-box;">
+        <button onclick="logar()" style="background:var(--sea); color:white; width:100%; padding:14px; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">ENTRAR</button>
     </div>
 </div>
 
 <div id="app" style="display:none">
-    <header>
-        <div style="font-weight:900; font-size:22px;">ICE</div>
-        <button onclick="location.reload()" style="border:none; background:none; color:var(--red); font-weight:bold;">SAIR</button>
-    </header>
-
+    <header><b>ICE TROCAS</b><button onclick="location.reload()" style="color:red; border:none; background:none; font-weight:bold;">SAIR</button></header>
     <div class="wrap">
+        <div style="background:white; padding:15px; border-radius:15px; margin-bottom:20px;">
+            <b>O que quer trocar?</b>
+            <input type="file" id="inputFoto" accept="image/*" onchange="preview(this)" style="margin:10px 0; width:100%;">
+            <div id="preView" style="display:none; margin-bottom:10px;"></div>
+            <textarea id="txtDesc" placeholder="Descrição..." style="width:100%; height:50px; border:1px solid #ddd; border-radius:8px; padding:8px; box-sizing:border-box;"></textarea>
+            <button onclick="subirPost()" style="background:var(--sea); color:white; width:100%; padding:12px; border:none; border-radius:8px; margin-top:5px; font-weight:bold;">PUBLICAR</button>
+        </div>
         <div id="feed"></div>
     </div>
-
-    <div class="nav-bar">
-        <div class="nav-item" onclick="window.scrollTo(0,0)"><i class="fas fa-home"></i></div>
-        <div class="nav-item" onclick="abrirPerfil(window.user.nome)"><i class="fas fa-user-circle"></i></div>
+    <div class="nav">
+        <i class="fas fa-home" onclick="window.scrollTo(0,0); fecharPerfil()"></i>
+        <i class="fas fa-user-circle" onclick="abrirPerfil(window.user.nome)"></i>
     </div>
 </div>
 
 <div id="telaPerfil">
-    <div class="capa-perfil" id="pCapa">
-        <button onclick="fecharPerfil()" style="margin:10px; border:none; background:rgba(0,0,0,0.5); color:white; border-radius:50%; width:35px; height:35px;">←</button>
-    </div>
-    <div class="avatar-perfil" id="pAvatar"></div>
-    
-    <div class="bio-box">
-        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-            <div>
-                <h2 id="perfNome" style="margin:0"></h2>
-                <div id="perfBadge"></div>
-            </div>
-            <button id="btnEdit" onclick="abrirEditor()" style="display:none; padding:5px 15px; border-radius:15px; border:1px solid #ddd; background:white; font-size:12px;">Editar Perfil</button>
+    <div class="capa" id="pCapa"><button onclick="fecharPerfil()" style="margin:10px; border:none; background:rgba(0,0,0,0.5); color:white; border-radius:50%; width:35px; height:35px;">←</button></div>
+    <div class="avatar" id="pAvatar"></div>
+    <div class="bio-area">
+        <div style="display:flex; justify-content:space-between;">
+            <div><h2 id="perfNome" style="margin:0"></h2><div id="perfBadge"></div></div>
+            <button id="btnEdit" onclick="document.getElementById('telaEdit').style.display='block'" style="display:none; padding:8px 15px; border-radius:20px; border:1px solid #ddd; background:white;">Editar Perfil</button>
         </div>
-        <p id="perfBio" style="margin-top:10px; line-height:1.4;">Sem bio definida.</p>
+        <p id="perfBio" style="color:#666; font-size:14px;"></p>
         
         <div id="masterControl" class="master-panel" style="display:none;">
-            <b>⚙️ GESTÃO MASTER: <span id="targetUser"></span></b><br>
-            <button class="btn-adm" style="background:var(--light-yellow);" onclick="mudarCargo('ADM2')">ADM2</button>
-            <button class="btn-adm" style="background:var(--mod-blue);" onclick="mudarCargo('MOD')">MODERADOR</button>
-            <button class="btn-adm" style="background:#eee;" onclick="mudarCargo('USER')">REBAIXAR USER</button>
-            <button class="btn-adm" style="background:var(--red); color:white;" onclick="bloquearUser()">BANIR</button>
+            <b>⚙️ MASTER: <span id="targetUser"></span></b><br>
+            <button onclick="mudarCargo('ADM2')" style="background:var(--light-yellow);">ADM2</button>
+            <button onclick="mudarCargo('MOD')" style="background:var(--mod-blue);">MOD</button>
+            <button onclick="mudarCargo('USER')" style="background:#eee;">USER</button>
+            <button onclick="bloquearUser()" style="background:var(--red); color:white;">BANIR</button>
         </div>
         <hr>
+        <h4 id="anchorTrocas">Trocas Disponíveis</h4>
         <div id="perfilPosts"></div>
     </div>
 </div>
 
-<div id="telaEdit">
-    <div style="padding:20px;">
-        <h3>Editar Meu Perfil</h3>
-        <label>Foto de Capa:</label><input type="file" id="eCapa" accept="image/*" style="width:100%; margin:10px 0;">
-        <label>Foto de Perfil:</label><input type="file" id="eAvatar" accept="image/*" style="width:100%; margin:10px 0;">
-        <label>Bio (Sua história):</label><textarea id="eBio" style="width:100%; height:80px; margin:10px 0; border-radius:8px; border:1px solid #ddd;"></textarea>
-        <button onclick="salvarPerfil()" style="background:var(--blue); color:white; width:100%; padding:12px; border:none; border-radius:8px; font-weight:bold;">SALVAR ALTERAÇÕES</button>
-        <button onclick="document.getElementById('telaEdit').style.display='none'" style="width:100%; margin-top:10px; background:none; border:none; color:red;">Cancelar</button>
+<div id="modalOferta" style="display:none; flex-direction:column;">
+    <div style="background:white; padding:20px; border-radius:20px; width:90%; max-width:400px;">
+        <h3>Enviar Proposta</h3>
+        <input type="file" id="fOferta" accept="image/*" style="width:100%; margin-bottom:15px;">
+        <button onclick="enviarOferta()" style="background:var(--sea); color:white; width:100%; padding:12px; border:none; border-radius:8px; font-weight:bold;">CONFIRMAR TROCA</button>
+        <button onclick="document.getElementById('modalOferta').style.display='none'" style="width:100%; margin-top:10px; background:none; border:none; color:red;">Cancelar</button>
     </div>
 </div>
 
@@ -112,7 +112,7 @@
     const firebaseConfig = { apiKey: "AIzaSyDM5M1_O-wfcBDGYJIiYgiHVbqhiKC-0dw", databaseURL: "https://icek-9cdd7-default-rtdb.firebaseio.com", projectId: "icek-9cdd7" };
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
-    let userAlvo = "";
+    let postAlvoId = "", userAlvoNome = "";
     window.user = {};
 
     window.logar = () => {
@@ -131,10 +131,8 @@
     };
 
     function renderEstrela(cargo) {
-        if(cargo === "ADM1") return '<span class="badge star-gold"><i class="fas fa-star"></i> ADM1 MASTER</span>';
-        if(cargo === "ADM2") return '<span class="badge star-yellow"><i class="fas fa-star"></i> ADM2</span>';
-        if(cargo === "MOD") return '<span class="badge star-blue"><i class="fas fa-star"></i> MOD</span>';
-        return '<span class="badge" style="color:#aaa"><i class="far fa-star"></i> USER</span>';
+        let cor = cargo === "ADM1" ? "star-gold" : cargo === "ADM2" ? "star-yellow" : cargo === "MOD" ? "star-blue" : "";
+        return `<span class="badge ${cor}"><i class="fas fa-star"></i> ${cargo}</span>`;
     }
 
     onValue(ref(db, 'posts'), (snap) => {
@@ -143,58 +141,73 @@
             const p = c.val();
             const div = document.createElement('div');
             div.className = "card-timeline";
-            div.innerHTML = `<img src="${p.i1}" onclick="abrirPerfil('${p.u1}')">
-                <div class="card-info"><b>${p.u1}</b> ${renderEstrela(p.c1)}<p>${p.d1 || ''}</p></div>`;
+            div.innerHTML = `<img src="${p.i1}" onclick="abrirPerfil('${p.u1}', true)">
+                <div class="card-info"><b>${p.u1}</b> ${renderEstrela(p.c1)}<p>${p.d1 || ''}</p></div>
+                <div class="actions"><button class="btn-chat" onclick="alert('Iniciando chat com ${p.u1}...')">CHAT</button></div>`;
             f.prepend(div);
         });
     });
 
-    window.abrirPerfil = (nome) => {
-        userAlvo = nome;
+    window.abrirPerfil = (nome, rolar = false) => {
+        userAlvoNome = nome;
         onValue(ref(db, 'usuarios/' + nome), (snap) => {
             const d = snap.val();
             document.getElementById('perfNome').innerText = d.nome;
             document.getElementById('perfBadge').innerHTML = renderEstrela(d.cargo);
-            document.getElementById('perfBio').innerText = d.bio || "Sem bio definida.";
+            document.getElementById('perfBio').innerText = d.bio || "Sem bio.";
             document.getElementById('pCapa').style.backgroundImage = `url(${d.capa || ''})`;
             document.getElementById('pAvatar').style.backgroundImage = `url(${d.avatar || ''})`;
             document.getElementById('btnEdit').style.display = (nome === window.user.nome) ? 'block' : 'none';
-            document.getElementById('targetUser').innerText = d.nome;
             document.getElementById('masterControl').style.display = (window.user.cargo === 'ADM1' && nome !== window.user.nome) ? 'block' : 'none';
+            
+            const pBox = document.getElementById('perfilPosts'); pBox.innerHTML = "";
+            onValue(ref(db, 'posts'), (postSnap) => {
+                postSnap.forEach(c => {
+                    const p = c.val();
+                    if(p.u1 === nome){
+                        const dDiv = document.createElement('div');
+                        dDiv.className = "dupla-box";
+                        dDiv.innerHTML = `<div class="lado"><img src="${p.i1}"></div>
+                            <div class="vs-circle">VS</div>
+                            <div class="lado" onclick="abrirOferta('${c.key}')">
+                                ${p.i2 ? `<img src="${p.i2}">` : `<div style="padding-top:50px; color:var(--blue); font-size:12px;">OFERTAR</div>`}
+                            </div>`;
+                        pBox.prepend(dDiv);
+                    }
+                });
+            }, { onlyOnce: true });
+
             document.getElementById('telaPerfil').style.display = 'block';
+            if(rolar) document.getElementById('anchorTrocas').scrollIntoView();
         });
     };
 
-    window.abrirEditor = () => {
-        document.getElementById('eBio').value = window.user.bio || "";
-        document.getElementById('telaEdit').style.display = 'block';
-    };
+    window.abrirOferta = (id) => { postAlvoId = id; document.getElementById('modalOferta').style.display = 'flex'; };
 
-    window.salvarPerfil = () => {
-        const bio = document.getElementById('eBio').value;
-        const fCapa = document.getElementById('eCapa').files[0];
-        const fAvat = document.getElementById('eAvatar').files[0];
-
-        let updates = { bio: bio };
-        const processar = (file, key, callback) => {
-            if(!file) return callback();
-            const r = new FileReader();
-            r.onload = (e) => { updates[key] = e.target.result; callback(); };
-            r.readAsDataURL(file);
+    window.enviarOferta = () => {
+        const r = new FileReader();
+        r.onload = (e) => {
+            update(ref(db, `posts/${postAlvoId}`), { u2: window.user.nome, i2: e.target.result });
+            document.getElementById('modalOferta').style.display = 'none';
+            alert("Proposta enviada!");
         };
-
-        processar(fCapa, 'capa', () => {
-            processar(fAvat, 'avatar', () => {
-                update(ref(db, `usuarios/${window.user.nome}`), updates);
-                alert("Perfil Atualizado!");
-                document.getElementById('telaEdit').style.display = 'none';
-            });
-        });
+        r.readAsDataURL(document.getElementById('fOferta').files[0]);
     };
 
-    window.mudarCargo = (c) => { update(ref(db, `usuarios/${userAlvo}`), { cargo: c }); alert("Cargo Alterado!"); };
-    window.bloquearUser = () => { if(confirm("Banir?")) update(ref(db, `usuarios/${userAlvo}`), { bloqueado: true }); };
     window.fecharPerfil = () => document.getElementById('telaPerfil').style.display = 'none';
+    window.preview = (i) => {
+        const r = new FileReader();
+        r.onload = (e) => {
+            document.getElementById('preView').innerHTML = `<img src="${e.target.result}" style="width:100%; border-radius:10px;">`;
+            document.getElementById('preView').style.display = 'block';
+            window.tempMidia = e.target.result;
+        };
+        r.readAsDataURL(i.files[0]);
+    };
+    window.subirPost = () => {
+        push(ref(db, 'posts'), { u1: window.user.nome, d1: document.getElementById('txtDesc').value, i1: window.tempMidia, c1: window.user.cargo });
+        document.getElementById('preView').style.display="none";
+    };
 </script>
 </body>
 </html>
