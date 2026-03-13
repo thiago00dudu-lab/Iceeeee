@@ -3,162 +3,162 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ICE - Comando de Trocas</title>
+<title>ICE - Comando e Promoção</title>
 <style>
-:root { --bg: #dff6ff; --sea: #0f3452; --gold: #ffd700; --blue: #007bff; --white: #ffffff; }
+:root { --bg: #dff6ff; --sea: #0f3452; --gold: #ffd700; --yellow: #ffff00; --blue: #007bff; --red: #ff4d4d; --green: #23c79c; }
 body { margin: 0; font-family: sans-serif; background: var(--bg); color: var(--sea); }
-.header { padding: 15px; background: rgba(255,255,255,0.7); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #7ec8e6; }
-.badge { font-weight: bold; font-size: 13px; margin-bottom: 3px; }
-.admin-star { color: var(--gold); }
-.mod-star { color: var(--blue); }
+.header { padding: 15px; background: rgba(255,255,255,0.8); display: flex; justify-content: space-between; border-bottom: 1px solid #7ec8e6; position: sticky; top: 0; z-index: 100; }
 
-/* TELAS */
+/* Estrelas */
+.star-adm1 { color: var(--gold); font-weight: bold; text-shadow: 0 0 3px rgba(0,0,0,0.2); }
+.star-adm2 { color: var(--yellow); font-weight: bold; }
+.star-mod { color: var(--blue); font-weight: bold; }
+
 .screen { display: none; padding: 15px; }
 .active { display: block; }
+.card { background: white; border-radius: 15px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); position: relative; }
+input, textarea { padding: 12px; border-radius: 10px; border: 1px solid #ccc; width: 100%; margin-bottom: 10px; box-sizing: border-box; }
 
-/* LOGIN */
-.login-screen { position: fixed; inset: 0; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000; }
-.card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); width: 85%; max-width: 320px; text-align: center; }
-input, textarea { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; }
-button { width: 100%; padding: 12px; background: #1d5277; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 5px; }
+/* Botões de Comando */
+.btn-cmd { padding: 5px 8px; font-size: 9px; color: white; border: none; border-radius: 4px; margin-right: 4px; cursor: pointer; font-weight: bold; }
+.btn-chat { background: var(--green); color: white; width: 100%; padding: 10px; border: none; border-radius: 8px; margin-top: 10px; font-weight: bold; }
 
-/* TELA DUPLA DE TROCAS */
-.trade-container { display: flex; gap: 10px; margin-top: 15px; }
-.trade-side { flex: 1; background: var(--white); padding: 10px; border-radius: 10px; border: 2px dashed #7ec8e6; text-align: center; }
-.trade-side h4 { margin: 0 0 10px 0; font-size: 14px; color: #1d5277; }
-.preview-img { width: 100%; height: 80px; background: #eee; border-radius: 5px; margin-bottom: 5px; object-fit: cover; display: none; }
-
-/* FEED */
-.feed-item { background: white; padding: 12px; border-radius: 12px; margin-bottom: 15px; border-left: 5px solid #1d5277; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-.trade-display { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 10px; background: #f0faff; padding: 10px; border-radius: 8px; }
-.trade-box { flex: 1; font-size: 12px; text-align: center; }
-.vs-badge { background: #1d5277; color: white; padding: 5px; border-radius: 50%; font-size: 10px; font-weight: bold; }
+/* Chat */
+#chatBox { position: fixed; inset: 0; background: white; z-index: 1000; display: none; flex-direction: column; }
+.chat-h { padding: 15px; background: var(--sea); color: white; display: flex; justify-content: space-between; }
+#chatMsgs { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+.m { padding: 8px 12px; border-radius: 12px; max-width: 70%; font-size: 14px; }
+.m.me { background: var(--sea); color: white; align-self: flex-end; }
+.m.ht { background: #eee; align-self: flex-start; }
 </style>
 </head>
 <body>
 
-<!-- 1. TELA DE LOGIN -->
-<div id="loginScreen" class="login-screen">
-    <div class="card">
-        <h2 style="margin-top:0">ICE LOGIN</h2>
-        <input type="text" id="userName" placeholder="Seu Nome">
-        <input type="password" id="userPass" placeholder="Senha (ADM: 1533)">
-        <button onclick="fazerLogin()">ACESSAR COMANDO</button>
-    </div>
+<!-- LOGIN -->
+<div id="loginScreen" class="active" style="position:fixed; inset:0; background:white; display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:2000;">
+    <h2 style="color:var(--sea)">ICE SISTEMA</h2>
+    <input type="text" id="loginNome" placeholder="Seu Nome" style="width:70%">
+    <input type="password" id="loginPass" placeholder="Senha (Só ADM 1)" style="width:70%">
+    <button onclick="entrar()" style="background:var(--sea); color:white; padding:15px 40px; border-radius:30px; border:none; font-weight:bold;">ENTRAR</button>
 </div>
 
-<!-- 2. TELA PRINCIPAL (FEED E TROCAS) -->
-<div id="appContent" class="screen">
+<!-- APP -->
+<div id="app" class="screen">
     <header class="header">
-        <div>
-            <div id="userBadge"></div>
-            <strong id="displayName"></strong>
-        </div>
-        <button onclick="location.reload()" style="width:auto; background:none; color:red; font-size:12px;">SAIR</button>
+        <div id="meuStatus"></div>
+        <button onclick="location.reload()" style="background:none; border:none; color:red; font-size:12px;">SAIR</button>
     </header>
 
-    <div style="text-align: center; margin: 15px 0;">
-        <button onclick="abrirModalTroca()" style="background: #23c79c; width: 90%;">+ NOVO ANÚNCIO DE TROCA</button>
+    <div class="card" style="margin-top:15px">
+        <textarea id="postTxt" placeholder="O que deseja postar ou trocar?"></textarea>
+        <button onclick="novoPost()" style="background:var(--sea); color:white; width:100%; padding:10px; border:none; border-radius:8px; font-weight:bold;">POSTAR AGORA</button>
     </div>
 
-    <div id="feed">
-        <p style="text-align:center; opacity:0.5;">Nenhuma troca ativa no momento...</p>
-    </div>
+    <div id="timeline"></div>
 </div>
 
-<!-- 3. TELA DE CRIAÇÃO DE TROCA (TELA DUPLA) -->
-<div id="tradeModal" class="screen" style="background: var(--bg); position: fixed; inset:0; z-index:500;">
-    <div style="padding:20px;">
-        <button onclick="fecharModal()" style="background:none; color:#1d5277; text-align:left; padding:0; margin-bottom:15px;">← Voltar</button>
-        <h3>Configurar Troca Dupla</h3>
-        
-        <div class="trade-container">
-            <!-- Lado Esquerdo: O que eu tenho -->
-            <div class="trade-side">
-                <h4>O QUE EU TENHO</h4>
-                <input type="text" id="img1" placeholder="Link da Foto/Vídeo">
-                <textarea id="desc1" placeholder="Descrição do item..."></textarea>
-            </div>
-
-            <!-- Lado Direito: O que eu quero -->
-            <div class="trade-side">
-                <h4>O QUE EU QUERO</h4>
-                <input type="text" id="img2" placeholder="Link da Foto/Vídeo">
-                <textarea id="desc2" placeholder="O que aceito trocar..."></textarea>
-            </div>
-        </div>
-
-        <button onclick="publicarTroca()" style="background:#1d5277; margin-top:20px; height:50px;">PUBLICAR TROCA NO FEED</button>
+<!-- CHAT -->
+<div id="chatBox">
+    <div class="chat-h"><span id="comQuem">Chat</span> <button onclick="fecharChat()" style="background:none; border:none; color:white; font-weight:bold;">X</button></div>
+    <div id="chatMsgs"></div>
+    <div style="padding:10px; display:flex; gap:5px; border-top:1px solid #ddd;">
+        <input type="text" id="msgIn" placeholder="Mensagem..." style="margin:0">
+        <button onclick="enviarMsg()" style="background:var(--green); color:white; border:none; padding:10px; border-radius:8px;">ENVIAR</button>
     </div>
 </div>
 
 <script>
-let currentUser = { nome: "", cargo: "" };
+let meuUser = { nome: "", cargo: "COMUM" };
 
-function fazerLogin() {
-    const nome = document.getElementById('userName').value;
-    const pass = document.getElementById('userPass').value;
-    if(!nome) return alert("Digite seu nome!");
+function entrar() {
+    const n = document.getElementById('loginNome').value;
+    const p = document.getElementById('loginPass').value;
+    if(!n) return alert("Digite seu nome");
 
-    currentUser = { nome: nome, cargo: (pass === "1533") ? "ADM" : "MODERADOR" };
-    
+    if(p === "1533") {
+        meuUser = { nome: n, cargo: "ADM1" };
+    } else {
+        meuUser = { nome: n, cargo: "COMUM" };
+    }
+
     document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('appContent').classList.add('active');
+    document.getElementById('app').classList.add('active');
+    atualizarPerfil();
+}
+
+function atualizarPerfil() {
+    const status = document.getElementById('meuStatus');
+    let e = "";
+    if(meuUser.cargo === "ADM1") e = '<span class="star-adm1">★ ADM SUPREMO</span>';
+    else if(meuUser.cargo === "ADM2") e = '<span class="star-adm2">★ ADM 2 CLASSE</span>';
+    else if(meuUser.cargo === "MOD") e = '<span class="star-mod">★ MODERADOR</span>';
+    else e = '<span>Usuário Comum</span>';
+    status.innerHTML = `${e}<br><strong>${meuUser.nome}</strong>`;
+}
+
+function novoPost() {
+    const t = document.getElementById('postTxt').value;
+    if(!t) return;
     
-    const badge = document.getElementById('userBadge');
-    const starClass = currentUser.cargo === "ADM" ? "admin-star" : "mod-star";
-    badge.innerHTML = `<span class="${starClass}">★ ${currentUser.cargo === "ADM" ? 'OURO' : 'AZUL'}</span>`;
-    document.getElementById('displayName').innerText = currentUser.nome;
-}
-
-function abrirModalTroca() {
-    document.getElementById('appContent').classList.remove('active');
-    document.getElementById('tradeModal').classList.add('active');
-}
-
-function fecharModal() {
-    document.getElementById('tradeModal').classList.remove('active');
-    document.getElementById('appContent').classList.add('active');
-}
-
-function publicarTroca() {
-    const d1 = document.getElementById('desc1').value;
-    const d2 = document.getElementById('desc2').value;
-    const i1 = document.getElementById('img1').value || 'https://via.placeholder.com';
-    const i2 = document.getElementById('img2').value || 'https://via.placeholder.com';
-
-    if(!d1 || !d2) return alert("Preencha as descrições dos dois lados!");
-
-    const feed = document.getElementById('feed');
-    if(feed.innerHTML.includes('Nenhuma troca')) feed.innerHTML = '';
-
-    const item = document.createElement('div');
-    item.className = 'feed-item';
+    const feed = document.getElementById('timeline');
+    const card = document.createElement('div');
+    card.className = 'card';
     
-    const star = currentUser.cargo === "ADM" ? '<span class="admin-star">★</span>' : '<span class="mod-star">★</span>';
+    let estrelaPost = "";
+    if(meuUser.cargo === "ADM1") estrelaPost = "star-adm1";
+    else if(meuUser.cargo === "ADM2") estrelaPost = "star-adm2";
+    else if(meuUser.cargo === "MOD") estrelaPost = "star-mod";
 
-    item.innerHTML = `
-        <div style="font-size:12px;">${star} <strong>${currentUser.nome}</strong> postou uma troca:</div>
-        <div class="trade-display">
-            <div class="trade-box">
-                <img src="${i1}" style="width:100%; border-radius:5px;">
-                <p><strong>TEM:</strong><br>${d1}</p>
-            </div>
-            <div class="vs-badge">X</div>
-            <div class="trade-box">
-                <img src="${i2}" style="width:100%; border-radius:5px;">
-                <p><strong>QUER:</strong><br>${d2}</p>
-            </div>
-        </div>
-        ${currentUser.cargo === "ADM" ? '<button style="background:#ff6b7a; font-size:10px; padding:5px; margin-top:5px;" onclick="this.parentElement.remove()">REMOVER TROCA (ADM)</button>' : ''}
+    let botoes = "";
+    // Lógica de Comando Dinâmico
+    if(meuUser.cargo === "ADM1") {
+        botoes += `<button class="btn-cmd" style="background:var(--red)" onclick="this.closest('.card').remove()">BANIR</button>`;
+        botoes += `<button class="btn-cmd" style="background:var(--yellow); color:#333" onclick="alert('Promovido a ADM 2')">UP ADM 2</button>`;
+        botoes += `<button class="btn-cmd" style="background:var(--blue)" onclick="alert('Promovido a MOD')">UP MOD</button>`;
+    } else if(meuUser.cargo === "ADM2") {
+        botoes += `<button class="btn-cmd" style="background:#666" onclick="this.closest('.card').style.opacity='0.3'">BLOCK</button>`;
+        botoes += `<button class="btn-cmd" style="background:var(--yellow); color:#333" onclick="alert('Promovido a ADM 2')">UP ADM 2</button>`;
+        botoes += `<button class="btn-cmd" style="background:var(--blue)" onclick="alert('Promovido a MOD')">UP MOD</button>`;
+    } else if(meuUser.cargo === "MOD") {
+        botoes += `<button class="btn-cmd" style="background:#666" onclick="this.closest('.card').style.opacity='0.3'">BLOCK</button>`;
+        botoes += `<button class="btn-cmd" style="background:var(--blue)" onclick="alert('Promovido a MOD')">UP MOD</button>`;
+    }
+
+    card.innerHTML = `
+        <div style="font-size:12px"><span class="${estrelaPost}">★</span> <strong>${meuUser.nome}</strong></div>
+        <p>${t}</p>
+        <div>${botoes}</div>
+        <button class="btn-chat" onclick="abrirChat('${meuUser.nome}')">CHAMAR NO CHAT</button>
     `;
-    
-    feed.prepend(item);
-    fecharModal();
-    // Limpar campos
-    document.getElementById('desc1').value = ""; document.getElementById('desc2').value = "";
+    feed.prepend(card);
+    document.getElementById('postTxt').value = "";
+}
+
+function abrirChat(n) {
+    document.getElementById('comQuem').innerText = "Chat com: " + n;
+    document.getElementById('chatBox').style.display = 'flex';
+}
+function fecharChat() { document.getElementById('chatBox').style.display = 'none'; }
+function enviarMsg() {
+    const i = document.getElementById('msgIn');
+    if(!i.value) return;
+    const m = document.createElement('div');
+    m.className = 'm me';
+    m.innerText = i.value;
+    document.getElementById('chatMsgs').appendChild(m);
+    i.value = "";
 }
 </script>
 
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com";
+    const firebaseConfig = {
+      apiKey: "AIzaSyDM5M1_O-wfcBDGYJIiYgiHVbqhiKC-0dw",
+      authDomain: "icek-9cdd7.firebaseapp.com",
+      projectId: "icek-9cdd7",
+      appId: "1:929781654380:web:ddda1fdf6689ebd7cc8949"
+    };
+    initializeApp(firebaseConfig);
+</script>
 </body>
 </html>
