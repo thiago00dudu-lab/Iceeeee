@@ -3,7 +3,7 @@ export default async function handler(req, res) {
 
     if (req.method === 'POST') {
         const { valor, usuario } = req.body;
-        
+
         try {
             const response = await fetch('https://api.mercadopago.com/v1/payments', {
                 method: 'POST',
@@ -15,18 +15,24 @@ export default async function handler(req, res) {
                 body: JSON.stringify({
                     transaction_amount: parseFloat(valor),
                     description: `Deposito ICE - ${usuario}`,
-                    payment_method_id: "pix",
-                    payer: { email: "pagamento@ice.com" }
+                    payment_method_id: 'pix',
+                    payer: { email: `${usuario}@ice.com` }
                 })
             });
 
             const data = await response.json();
             
-            // CRITICAL: Retorna apenas o JSON limpo para o navegador
-            return res.status(200).json(data);
+            // ESSA LINHA ABAIXO É A QUE RESOLVE O ERRO DO BANCO:
+            if (data.point_of_interaction) {
+                return res.status(200).json({ 
+                    qr_code: data.point_of_interaction.transaction_data.qr_code 
+                });
+            } else {
+                return res.status(400).json({ error: 'Erro ao gerar o código Pix' });
+            }
+            
         } catch (error) {
-            return res.status(500).json({ error: 'Erro ao processar' });
+            return res.status(500).json({ error: 'Erro no servidor' });
         }
     }
 }
-
