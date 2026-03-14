@@ -11,6 +11,10 @@
         header { padding:15px; background: var(--white); display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:100; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .wrap { max-width: 500px; margin: auto; padding: 15px; }
         
+        /* Telas de Login */
+        #telaLogin { position: fixed; inset: 0; background: var(--sea); z-index: 5000; display: flex; align-items: center; justify-content: center; color: white; text-align: center; }
+        .login-box { background: white; padding: 30px; border-radius: 20px; width: 80%; max-width: 350px; color: #333; }
+
         .card-timeline { background: var(--white); border-radius: 15px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; }
         .card-timeline img { width: 100%; height: 320px; object-fit: cover; cursor: pointer; }
 
@@ -26,16 +30,27 @@
         .btn-adm { background: var(--sea); color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 10px; }
         .btn-whats { background: var(--green); color: white; text-decoration: none; display: block; padding: 12px; border-radius: 8px; font-weight: bold; text-align: center; margin-top: 10px; }
         
-        /* Estilo da Carteira */
         .wallet-card { background: linear-gradient(135deg, var(--sea), var(--blue)); color: white; padding: 25px; border-radius: 20px; text-align: center; margin-bottom: 20px; }
-        .wallet-card h1 { font-size: 32px; margin: 10px 0; }
-        .adm-tools { display: flex; justify-content: space-around; padding: 10px; background: #eee; border-top: 1px solid #ddd; }
-        .adm-tools i { cursor: pointer; padding: 5px; }
+        .perfil-header { text-align: center; padding: 30px 15px; background: white; border-bottom: 1px solid #eee; }
+        .avatar-largo { width: 100px; height: 100px; border-radius: 50%; background: #ddd; margin-bottom: 10px; border: 3px solid var(--blue); }
+        .painel-gestao { background: #fff; margin-top: 20px; padding: 15px; border-radius: 15px; border: 1px solid #ddd; }
+        .row-adm { display: flex; justify-content: space-around; margin-top: 15px; }
+        .row-adm button { flex: 1; margin: 5px; padding: 10px; border-radius: 8px; border: none; color: white; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
 
-<div id="app">
+<div id="telaLogin">
+    <div class="login-box">
+        <h2 style="margin-top:0;">ICE TROCAS</h2>
+        <p>Acesse sua conta com segurança</p>
+        <button class="btn-adm" style="background:#4285F4;" onclick="loginGoogle()"><i class="fab fa-google"></i> ENTRAR COM GOOGLE</button>
+        <div style="margin: 15px 0; color: #999;">ou</div>
+        <button class="btn-adm" onclick="loginAdmin()">ENTRAR COMO ADM</button>
+    </div>
+</div>
+
+<div id="app" style="display:none;">
     <header>
         <div><b>ICE TROCAS</b><br><small id="btcValue" style="color:var(--blue); font-weight: bold;"></small></div>
         <button onclick="deslogar()" style="border:none; background:none; color:red; font-weight:bold;">SAIR</button>
@@ -47,71 +62,52 @@
         <i class="fas fa-home" onclick="fecharTelas()"></i>
         <i class="fas fa-plus-circle" onclick="abrirPostar()" style="font-size: 28px; color: var(--blue);"></i>
         <i class="fas fa-university" onclick="abrirFin()"></i>
-        <i class="fas fa-wallet" onclick="abrirCarteira()" style="color: #00d4ff;"></i>
-        <i class="fas fa-user-circle" onclick="abrirPerfil()"></i>
+        <i class="fas fa-wallet" onclick="abrirMinhaCarteira()" style="color: #00d4ff;"></i>
+        <i class="fas fa-user-circle" onclick="abrirMeuPerfil()"></i>
     </div>
 </div>
 
-<div id="telaPostar">
-    <div class="wrap">
-        <h2 style="color:var(--sea);">O que você quer trocar?</h2>
-        <div style="background:white; padding:20px; border-radius:15px;">
-            <input type="file" id="filePost" accept="image/*" style="margin-bottom:15px;">
-            <input type="text" id="descPost" placeholder="Título ou Descrição" style="width:100%; padding:10px; margin-bottom:10px; border-radius:5px; border:1px solid #ccc;">
-            <button class="btn-adm" onclick="enviarPost()">POSTAR AGORA</button>
-            <button onclick="fecharTelas()" style="width:100%; border:none; background:none; color:red; margin-top:10px;">Cancelar</button>
-        </div>
+<div id="telaPostar"><div class="wrap">
+    <h2 style="color:var(--sea);">O que você quer trocar?</h2>
+    <div style="background:white; padding:20px; border-radius:15px;">
+        <input type="file" id="filePost" accept="image/*" style="margin-bottom:15px;">
+        <input type="text" id="descPost" placeholder="Título ou Descrição" style="width:100%; padding:10px; margin-bottom:10px; border-radius:5px; border:1px solid #ccc;">
+        <button class="btn-adm" onclick="enviarPost()">POSTAR AGORA</button>
+        <button onclick="fecharTelas()" style="width:100%; border:none; background:none; color:red; margin-top:10px;">Cancelar</button>
     </div>
-</div>
+</div></div>
 
-<div id="telaTroca">
-    <div class="wrap">
-        <h3 style="text-align:center;">Propor Troca</h3>
-        <div class="dupla-box">
-            <div class="lado">
-                <small>Dono</small>
-                <img id="imgDono" src="">
-            </div>
-            <div class="vs-circle">VS</div>
-            <div class="lado">
-                <small>Você</small>
-                <label>
-                    <img id="imgMinha" src="https://via.placeholder.com/150?text=Escolher+Foto">
-                    <input type="file" id="fileMinha" accept="image/*" style="display:none;" onchange="previewTroca(this)">
-                </label>
-            </div>
-        </div>
-        <button class="btn-adm" style="background:var(--green);" onclick="confirmarTroca()">ENVIAR PROPOSTA NO CHAT</button>
-        <button onclick="fecharTelas()" style="width:100%; border:none; background:none; color:red; margin-top:10px;">Voltar</button>
+<div id="telaTroca"><div class="wrap">
+    <h3 style="text-align:center;">Propor Troca</h3>
+    <div class="dupla-box">
+        <div class="lado"><small>Dono</small><img id="imgDono" src=""></div>
+        <div class="vs-circle">VS</div>
+        <div class="lado"><small>Você</small><label><img id="imgMinha" src="https://via.placeholder.com/150?text=Escolher+Foto"><input type="file" id="fileMinha" accept="image/*" style="display:none;" onchange="previewTroca(this)"></label></div>
     </div>
-</div>
+    <button class="btn-adm" style="background:var(--green);" onclick="confirmarTroca()">ENVIAR PROPOSTA NO CHAT</button>
+    <button onclick="fecharTelas()" style="width:100%; border:none; background:none; color:red; margin-top:10px;">Voltar</button>
+</div></div>
 
-<div id="telaFinanceiro">
-    <div class="wrap">
-        <h2 style="text-align:center;">Loja & Suporte</h2>
-        <div class="card-financeiro">
-            <h3>MODERADOR</h3><p>R$ 20,00</p>
-            <button class="btn-adm" onclick="comprarCargo(0.0050)">COPIAR PIX R$ 20</button>
-        </div>
-        <a href="https://wa.me/5511983602504" class="btn-whats">WHATSAPP SUPORTE</a>
-        <button onclick="fecharTelas()" style="width:100%; border:none; background:none; color:red; margin-top:10px;">Voltar</button>
+<div id="telaFinanceiro"><div class="wrap">
+    <h2 style="text-align:center;">Loja & Suporte</h2>
+    <div class="card-financeiro" style="background:white; padding:20px; border-radius:15px; text-align:center;">
+        <h3>MODERADOR</h3><p>R$ 20,00</p>
+        <button class="btn-adm" onclick="comprarCargo()">COPIAR PIX R$ 20</button>
     </div>
-</div>
+    <a href="https://wa.me/5511983602504" class="btn-whats">WHATSAPP SUPORTE</a>
+    <button onclick="fecharTelas()" style="width:100%; border:none; background:none; color:red; margin-top:10px;">Voltar</button>
+</div></div>
 
-<div id="telaCarteira">
-    <div class="wrap">
-        <h2 style="text-align:center;">Minha Carteira</h2>
-        <div class="wallet-card">
-            <p>Saldo Blue</p>
-            <h1 id="saldoBlue">0</h1>
-            <small>ID: <span id="userIdDisplay">---</span></small>
-        </div>
-        <p style="text-align:center; color:#666;">Moedas ganhas através de trocas e eventos do ADM.</p>
-        <button onclick="fecharTelas()" class="btn-adm">VOLTAR AO FEED</button>
+<div id="telaCarteira"><div class="wrap">
+    <h2 style="text-align:center;">Minha Carteira</h2>
+    <div class="wallet-card">
+        <p>Saldo Blue</p><h1 id="saldoBlue">0</h1>
+        <small>ID: <span id="userIdDisplay">---</span></small>
     </div>
-</div>
+    <button onclick="fecharTelas()" class="btn-adm">VOLTAR AO FEED</button>
+</div></div>
 
-<div id="telaPerfil"><div class="wrap" id="perfConteudo"></div></div>
+<div id="telaPerfil"><div id="perfConteudo"></div></div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -126,132 +122,154 @@
 
     window.user = null;
 
-    // LOGIN GOOGLE OU ADM 1533
+    // --- SISTEMA DE LOGIN ---
+    window.loginGoogle = () => {
+        signInWithPopup(auth, provider).catch(err => alert("Erro ao entrar com Google."));
+    };
+
+    window.loginAdmin = () => {
+        const pass = prompt("Digite a senha ADM:");
+        if(pass === "1533") {
+            window.user = { nome: "ADM MASTER", cargo: "ADM1", uid: "master", moedasBlue: 999999, bloqueado: false };
+            entrarNoApp();
+        } else {
+            alert("Senha incorreta!");
+        }
+    };
+
     onAuthStateChanged(auth, async (u) => {
         if (u) {
             const snap = await get(ref(db, `usuarios/${u.uid}`));
-            let dados = snap.val() || { nome: u.displayName, cargo: 'user', moedasBlue: 0, uid: u.uid };
+            if(snap.val()?.bloqueado) { alert("Conta Bloqueada!"); signOut(auth); return; }
+            
+            let dados = snap.val() || { nome: u.displayName, cargo: 'user', moedasBlue: 0, uid: u.uid, bloqueado: false };
             if(!snap.val()) set(ref(db, `usuarios/${u.uid}`), dados);
+            
             window.user = dados;
-            carregarDadosUsuario();
-        } else {
-            const pass = prompt("Login Google (OK) ou Senha ADM:");
-            if(pass === "1533") {
-                window.user = { nome: "ADM MASTER", cargo: "ADM1", uid: "master", moedasBlue: 999999 };
-                carregarDadosUsuario();
-            } else {
-                signInWithPopup(auth, provider).catch(()=> location.reload());
-            }
+            entrarNoApp();
         }
     });
 
-    function carregarDadosUsuario() {
-        if(window.user.uid !== "master") {
-            onValue(ref(db, `usuarios/${window.user.uid}`), (s) => {
-                if(s.exists()) {
-                    window.user = s.val();
-                    document.getElementById('saldoBlue').innerText = window.user.moedasBlue || 0;
-                }
-            });
-        }
+    function entrarNoApp() {
+        document.getElementById('telaLogin').style.display = 'none';
+        document.getElementById('app').style.display = 'block';
+        document.getElementById('saldoBlue').innerText = window.user.moedasBlue || 0;
         document.getElementById('userIdDisplay').innerText = window.user.uid.substring(0,8);
     }
 
     window.deslogar = () => { signOut(auth); localStorage.clear(); location.reload(); };
 
-    // ECONOMIA
+    // --- ECONOMIA ---
     onValue(ref(db, 'economia/valor_ice'), (s) => {
         document.getElementById('btcValue').innerText = "ICE: $" + (s.val() || 0.7099).toFixed(4);
     });
 
-    // FEED COM GESTÃO DE CARGOS
+    // --- FEED ---
     onValue(ref(db, 'posts'), (snap) => {
         const f = document.getElementById('feed'); f.innerHTML = "";
         snap.forEach(c => {
             const p = c.val();
-            const postId = c.key;
-            
-            let ferramentasAdm = "";
-            if(window.user && ["MOD", "ADM2", "ADM1"].includes(window.user.cargo)) {
-                ferramentasAdm = `
-                    <div class="adm-tools">
-                        <i class="fas fa-chevron-up" style="color:green" onclick="mudarCargo('${p.uid}', 1)"></i>
-                        <i class="fas fa-chevron-down" style="color:red" onclick="mudarCargo('${p.uid}', -1)"></i>
-                        ${window.user.cargo === 'ADM1' ? `<i class="fas fa-donate" style="color:var(--blue)" onclick="addMoeda('${p.uid}')"></i>` : ''}
-                    </div>
-                `;
-            }
-
             const div = document.createElement('div');
             div.className = "card-timeline";
             div.innerHTML = `
-                <img src="${p.i1}" onclick="abrirTroca('${p.i1}', '${p.u1}', '${p.uid}')">
-                <div style="padding:15px;"><b>${p.u1}</b> <small style="color:var(--blue)">[${p.cargoUser || 'user'}]</small><br><small>${p.d1 || ''}</small></div>
-                ${ferramentasAdm}
-            `;
+                <img src="${p.i1}" onclick="abrirPerfilPublico('${p.uid}')">
+                <div style="padding:15px; display:flex; justify-content:space-between; align-items:center;">
+                    <div><b>${p.u1}</b> <small style="color:var(--blue)">[${p.cargoUser || 'user'}]</small><br><small>${p.d1 || ''}</small></div>
+                    <button onclick="abrirTroca('${p.i1}', '${p.u1}', '${p.uid}')" style="border:none; background:var(--sea); color:white; padding:8px 15px; border-radius:5px; font-weight:bold;">TROCAR</button>
+                </div>`;
             f.prepend(div);
         });
     });
 
-    // FUNÇÕES DE ADMIN
+    // --- PERFIL E GESTÃO ---
+    window.abrirPerfilPublico = async (targetUid) => {
+        const snap = await get(ref(db, `usuarios/${targetUid}`));
+        const u = snap.val() || (targetUid === 'master' ? {nome:"ADM MASTER", cargo:"ADM1", moedasBlue:9999} : null);
+        if(!u) return;
+
+        fecharTelas();
+        document.getElementById('telaPerfil').style.display = 'block';
+        
+        let painelAdm = "";
+        if(window.user && ["MOD", "ADM2", "ADM1"].includes(window.user.cargo) && targetUid !== "master") {
+            painelAdm = `
+                <div class="painel-gestao">
+                    <h4 style="margin:0; text-align:center;">CONTROLE DE FUNCIONÁRIO</h4>
+                    <div class="row-adm">
+                        <button style="background:green" onclick="mudarCargo('${targetUid}', 1)">SUBIR</button>
+                        <button style="background:orange" onclick="mudarCargo('${targetUid}', -1)">BAIXAR</button>
+                    </div>
+                    <div class="row-adm">
+                        <button style="background:red" onclick="toggleBloqueio('${targetUid}')">BLOQUEAR</button>
+                        ${window.user.cargo === 'ADM1' ? `<button style="background:var(--blue)" onclick="addMoeda('${targetUid}')">DAR BLUE</button>` : ''}
+                    </div>
+                </div>`;
+        }
+
+        document.getElementById('perfConteudo').innerHTML = `
+            <div class="perfil-header">
+                <div class="avatar-largo" style="margin:auto;"></div>
+                <h2>${u.nome}</h2>
+                <span style="background:var(--sea); color:white; padding:5px 15px; border-radius:20px;">${u.cargo}</span>
+                <p>Saldo Blue: <b>${u.moedasBlue || 0}</b></p>
+                <button onclick="fecharTelas()" class="btn-adm" style="width:auto; padding:10px 30px;">FECHAR</button>
+                ${painelAdm}
+            </div>`;
+    };
+
     window.mudarCargo = async (uid, dir) => {
-        if(!uid || uid === "master") return;
         const cargos = ["user", "MOD", "ADM2", "ADM1"];
         const snap = await get(ref(db, `usuarios/${uid}`));
         const atual = snap.val()?.cargo || "user";
         let idx = cargos.indexOf(atual) + dir;
         if(idx >= 0 && idx < cargos.length) {
-            update(ref(db, `usuarios/${uid}`), { cargo: cargos[idx] });
-            alert("Cargo do usuário atualizado!");
+            await update(ref(db, `usuarios/${uid}`), { cargo: cargos[idx] });
+            alert("Cargo alterado!"); abrirPerfilPublico(uid);
         }
     };
 
-    window.addMoeda = (uid) => {
-        const q = prompt("Quantidade de moedas BLUE:");
-        if(q) runTransaction(ref(db, `usuarios/${uid}/moedasBlue`), v => (v || 0) + parseInt(q));
+    window.toggleBloqueio = async (uid) => {
+        const snap = await get(ref(db, `usuarios/${uid}`));
+        const status = snap.val()?.bloqueado || false;
+        await update(ref(db, `usuarios/${uid}`), { bloqueado: !status });
+        alert(status ? "Desbloqueado!" : "Usuário Bloqueado!");
+        abrirPerfilPublico(uid);
     };
 
-    // POSTAGEM
+    window.addMoeda = (uid) => {
+        const q = prompt("Quantas moedas Blue?");
+        if(q) {
+            runTransaction(ref(db, `usuarios/${uid}/moedasBlue`), v => (v || 0) + parseInt(q));
+            alert("Saldo atualizado!"); abrirPerfilPublico(uid);
+        }
+    };
+
+    // --- POSTAGEM E NAVEGAÇÃO ---
     window.enviarPost = () => {
         const file = document.getElementById('filePost').files[0];
         const desc = document.getElementById('descPost').value;
-        if(!file || !window.user) return alert("Erro ao postar");
+        if(!file) return alert("Selecione uma foto!");
         const r = new FileReader();
         r.onload = (e) => {
-            push(ref(db, 'posts'), { 
-                u1: window.user.nome, 
-                uid: window.user.uid, 
-                cargoUser: window.user.cargo,
-                i1: e.target.result, 
-                d1: desc 
-            });
+            push(ref(db, 'posts'), { u1: window.user.nome, uid: window.user.uid, cargoUser: window.user.cargo, i1: e.target.result, d1: desc });
             fecharTelas();
         };
         r.readAsDataURL(file);
     };
 
-    // NAVEGAÇÃO
-    window.abrirPostar = () => { document.getElementById('telaPostar').style.display = 'block'; };
+    window.abrirMeuPerfil = () => abrirPerfilPublico(window.user.uid);
+    window.abrirMinhaCarteira = () => { fecharTelas(); document.getElementById('telaCarteira').style.display = 'block'; };
+    window.abrirPostar = () => { fecharTelas(); document.getElementById('telaPostar').style.display = 'block'; };
     window.abrirFin = () => { fecharTelas(); document.getElementById('telaFinanceiro').style.display = 'block'; };
-    window.abrirCarteira = () => { fecharTelas(); document.getElementById('telaCarteira').style.display = 'block'; };
     window.fecharTelas = () => { document.querySelectorAll('#telaPostar,#telaTroca,#telaFinanceiro,#telaPerfil,#telaCarteira').forEach(t=>t.style.display='none'); };
-    window.abrirPerfil = () => { alert("Perfil: " + window.user.nome + "\nCargo: " + window.user.cargo); };
-
     window.abrirTroca = (img, dono, uid) => {
-        if(uid === window.user.uid) return;
+        if(uid === window.user.uid) return alert("Seu post");
         document.getElementById('imgDono').src = img;
         document.getElementById('telaTroca').style.display = 'block';
     };
-
-    window.previewTroca = (input) => {
-        const r = new FileReader();
-        r.onload = (e) => { document.getElementById('imgMinha').src = e.target.result; };
-        r.readAsDataURL(input.files[0]);
-    };
-
+    window.previewTroca = (i) => { const r = new FileReader(); r.onload = (e) => document.getElementById('imgMinha').src = e.target.result; r.readAsDataURL(i.files[0]); };
     window.confirmarTroca = () => { alert("Proposta enviada!"); fecharTelas(); };
-    window.comprarCargo = (p) => { navigator.clipboard.writeText("thiago00dudu@gmail.com"); alert("Pix Copiado!"); };
-    window.compartilharApp = () => { navigator.clipboard.writeText(window.location.origin); alert("Link Copiado!"); };
+    window.comprarCargo = () => { navigator.clipboard.writeText("thiago00dudu@gmail.com"); alert("Pix Copiado!"); };
 </script>
 </body>
 </html>
