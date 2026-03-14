@@ -7,110 +7,92 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <style>
         :root { --bg: #f4f7f9; --sea: #0f3452; --blue: #1877f2; --gold: #FFD700; --white: #fff; --green: #25d366; --red: #ff4d4d; }
-        body { margin:0; font-family: sans-serif; background: var(--bg); padding-bottom: 90px; }
+        body { margin:0; font-family: sans-serif; background: var(--bg); padding-bottom: 100px; }
+        
+        /* HEADER IGUAL AO PRIMEIRO */
         header { padding:15px; background: var(--white); display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:100; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .wrap { max-width: 500px; margin: auto; padding: 15px; }
-        
-        #telaLogin { position: fixed; inset: 0; background: var(--sea); z-index: 5000; display: flex; align-items: center; justify-content: center; color: white; text-align: center; }
-        .login-box { background: white; padding: 30px; border-radius: 20px; width: 80%; max-width: 350px; color: #333; }
-        .input-login { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
 
-        .card-timeline { background: var(--white); border-radius: 15px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; }
+        /* DESIGN DOS CARDS ORIGINAL */
+        .card-timeline { background: var(--white); border-radius: 15px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; border: 1px solid #eee; }
         .card-timeline img { width: 100%; height: 320px; object-fit: cover; cursor: pointer; }
 
-        .dupla-box { display: flex; gap: 10px; margin-top: 15px; position: relative; background: #f9f9f9; padding: 10px; border-radius: 12px; border: 1px solid #ddd; }
-        .lado { flex: 1; text-align: center; overflow: hidden; }
-        .lado img { width: 100%; height: 150px; object-fit: cover; border-radius: 8px; background: #eee; }
-        .vs-circle { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: var(--sea); color: white; border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; font-size: 12px; border: 3px solid white; z-index: 5; font-weight: bold; }
-
-        .nav { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background: var(--sea); display: flex; gap: 20px; padding: 12px 25px; border-radius: 40px; z-index: 3000; box-shadow: 0 10px 20px rgba(0,0,0,0.2); align-items: center; }
-        .nav i { color: white; font-size: 20px; cursor: pointer; }
-
-        #telaPerfil, #telaFinanceiro, #telaPostar, #telaTroca, #telaCarteira { display: none; position: fixed; inset: 0; background: var(--bg); z-index: 2000; overflow-y: auto; }
-        .btn-adm { background: var(--sea); color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .btn-whats { background: var(--green); color: white; text-decoration: none; display: block; padding: 12px; border-radius: 8px; font-weight: bold; text-align: center; margin-top: 10px; }
+        /* LOGIN E FACIAL */
+        #telaLogin { position: fixed; inset: 0; background: var(--sea); z-index: 5000; display: flex; align-items: center; justify-content: center; }
+        .login-box { background: white; padding: 25px; border-radius: 20px; width: 85%; max-width: 350px; text-align: center; }
+        #videoFace { width: 100%; height: 200px; background: #000; border-radius: 50%; object-fit: cover; display: none; margin: 10px 0; border: 3px solid var(--blue); }
         
-        .wallet-card { background: linear-gradient(135deg, var(--sea), var(--blue)); color: white; padding: 25px; border-radius: 20px; text-align: center; margin-bottom: 20px; }
-        .perfil-header { text-align: center; padding: 30px 15px; background: white; border-bottom: 1px solid #eee; }
-        .avatar-largo { width: 80px; height: 80px; border-radius: 50%; background: #ddd; margin: 0 auto 10px auto; border: 3px solid var(--blue); }
-        .painel-gestao { background: #fff; margin-top: 20px; padding: 15px; border-radius: 15px; border: 1px solid #ddd; }
-        .row-adm { display: flex; justify-content: space-around; margin-top: 15px; }
-        .row-adm button { flex: 1; margin: 5px; padding: 10px; border-radius: 8px; border: none; color: white; font-weight: bold; cursor: pointer; font-size: 12px; }
+        /* NAVEGAÇÃO COM ÍCONES MAIORES */
+        .nav { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background: var(--sea); display: flex; gap: 25px; padding: 15px 30px; border-radius: 50px; z-index: 3000; box-shadow: 0 10px 25px rgba(0,0,0,0.3); align-items: center; }
+        .nav i { color: white; font-size: 26px; cursor: pointer; transition: 0.2s; }
+        .nav i:active { transform: scale(1.2); }
+
+        /* TELAS */
+        #telaPerfil, #telaFinanceiro, #telaPostar, #telaTroca, #telaCarteira { display: none; position: fixed; inset: 0; background: var(--bg); z-index: 2000; overflow-y: auto; }
+        .btn-adm { background: var(--sea); color: white; border: none; padding: 14px; border-radius: 10px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        
+        .wallet-card { background: linear-gradient(135deg, var(--sea), var(--blue)); color: white; padding: 30px; border-radius: 20px; text-align: center; margin-bottom: 20px; box-shadow: 0 10px 20px rgba(24,119,242,0.3); }
+        
+        input { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box; }
+        
+        .painel-gestao { background: #fff; margin-top: 20px; padding: 15px; border-radius: 15px; border: 1px solid #ddd; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
     </style>
 </head>
 <body>
 
 <div id="telaLogin">
-    <div class="login-box">
-        <h2 style="margin-top:0; color: var(--sea);">ICE TROCAS</h2>
-        <p style="font-size: 14px; margin-bottom: 20px;">Área Segura Anti-Golpe</p>
-        
-        <input type="email" id="emailLogin" class="input-login" placeholder="E-mail">
-        <input type="password" id="passLogin" class="input-login" placeholder="Senha">
-        
-        <button class="btn-adm" onclick="loginComum()">ENTRAR</button>
-        <button class="btn-adm" style="background: #666;" onclick="cadastrarComum()">CADASTRAR NOVA CONTA</button>
-        
-        <div style="margin: 15px 0; color: #999;">ou</div>
-        <button class="btn-adm" style="background: #ddd; color: #333;" onclick="loginAdmin()">ACESSO ADM</button>
+    <div class="login-box" id="boxCampos">
+        <h2 style="color:var(--sea)">ICE TROCAS</h2>
+        <div id="etapa1">
+            <input type="email" id="emailLog" placeholder="Seu E-mail">
+            <input type="password" id="passLog" placeholder="Sua Senha">
+            <button class="btn-adm" onclick="iniciarLogin()">ENTRAR / CADASTRAR</button>
+            <p onclick="loginAdminMaster()" style="font-size: 12px; color: #666; cursor: pointer; margin-top: 15px;">Acesso Administrativo</p>
+        </div>
+        <div id="etapaFace" style="display:none;">
+            <p>Escaneamento Facial de Segurança</p>
+            <video id="videoFace" autoplay muted playsinline></video>
+            <div id="scanBar" style="width:0%; height:4px; background:var(--blue); transition: 2s linear;"></div>
+            <p id="statusFace">Posicione seu rosto...</p>
+        </div>
     </div>
 </div>
 
 <div id="app" style="display:none;">
     <header>
         <div><b>ICE TROCAS</b><br><small id="btcValue" style="color:var(--blue); font-weight: bold;"></small></div>
-        <button onclick="deslogar()" style="border:none; background:none; color:red; font-weight:bold;">SAIR</button>
+        <button onclick="deslogar()" style="border:none; background:none; color:red; font-weight:bold; font-size:14px;">SAIR</button>
     </header>
     
     <div class="wrap" id="feed"></div>
     
     <div class="nav">
         <i class="fas fa-home" onclick="fecharTelas()"></i>
-        <i class="fas fa-plus-circle" onclick="abrirPostar()" style="font-size: 28px; color: var(--blue);"></i>
+        <i class="fas fa-plus-circle" onclick="abrirPostar()" style="font-size: 35px; color: var(--blue);"></i>
         <i class="fas fa-university" onclick="abrirFin()"></i>
-        <i class="fas fa-wallet" onclick="abrirMinhaCarteira()" style="color: #00d4ff;"></i>
+        <i class="fas fa-wallet" onclick="abrirMinhaCarteira()" style="color: var(--gold);"></i>
         <i class="fas fa-user-circle" onclick="abrirMeuPerfil()"></i>
     </div>
 </div>
 
 <div id="telaPostar"><div class="wrap">
-    <h2 style="color:var(--sea);">O que você quer trocar?</h2>
-    <div style="background:white; padding:20px; border-radius:15px;">
-        <input type="file" id="filePost" accept="image/*" style="margin-bottom:15px;">
-        <input type="text" id="descPost" placeholder="Título ou Descrição" style="width:100%; padding:10px; margin-bottom:10px; border-radius:5px; border:1px solid #ccc;">
+    <h2 style="color:var(--sea);">O que trocar?</h2>
+    <div style="background:white; padding:20px; border-radius:15px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
+        <input type="file" id="filePost" accept="image/*">
+        <input type="text" id="descPost" placeholder="Título ou Descrição">
         <button class="btn-adm" onclick="enviarPost()">POSTAR AGORA</button>
-        <button onclick="fecharTelas()" style="width:100%; border:none; background:none; color:red; margin-top:10px;">Cancelar</button>
+        <button onclick="fecharTelas()" style="width:100%; border:none; background:none; color:red; margin-top:15px;">Cancelar</button>
     </div>
-</div></div>
-
-<div id="telaTroca"><div class="wrap">
-    <h3 style="text-align:center;">Propor Troca</h3>
-    <div class="dupla-box">
-        <div class="lado"><small>Dono</small><img id="imgDono" src=""></div>
-        <div class="vs-circle">VS</div>
-        <div class="lado"><small>Você</small><label><img id="imgMinha" src="https://via.placeholder.com/150?text=Escolher+Foto"><input type="file" id="fileMinha" accept="image/*" style="display:none;" onchange="previewTroca(this)"></label></div>
-    </div>
-    <button class="btn-adm" style="background:var(--green);" onclick="confirmarTroca()">ENVIAR PROPOSTA NO CHAT</button>
-    <button onclick="fecharTelas()" style="width:100%; border:none; background:none; color:red; margin-top:10px;">Voltar</button>
-</div></div>
-
-<div id="telaFinanceiro"><div class="wrap">
-    <h2 style="text-align:center;">Loja & Suporte</h2>
-    <div class="card-financeiro" style="background:white; padding:20px; border-radius:15px; text-align:center;">
-        <h3>MODERADOR</h3><p>R$ 20,00</p>
-        <button class="btn-adm" onclick="comprarCargo()">COPIAR PIX R$ 20</button>
-    </div>
-    <a href="https://wa.me/5511983602504" class="btn-whats">WHATSAPP SUPORTE</a>
-    <button onclick="fecharTelas()" style="width:100%; border:none; background:none; color:red; margin-top:10px;">Voltar</button>
 </div></div>
 
 <div id="telaCarteira"><div class="wrap">
-    <h2 style="text-align:center;">Minha Carteira</h2>
+    <h2 style="text-align:center; color:var(--sea)">Minha Carteira</h2>
     <div class="wallet-card">
-        <p>Saldo Blue</p><h1 id="meuSaldoRealtime">0</h1>
-        <small>ID: <span id="userIdDisplay">---</span></small>
+        <p style="margin:0; opacity:0.8;">Saldo Blue</p>
+        <h1 id="saldoRealtime" style="font-size:42px; margin:10px 0;">0</h1>
+        <small id="userUidLabel"></small>
     </div>
-    <button onclick="fecharTelas()" class="btn-adm">VOLTAR AO FEED</button>
+    <button onclick="fecharTelas()" class="btn-adm">VOLTAR</button>
 </div></div>
 
 <div id="telaPerfil"><div id="perfConteudo"></div></div>
@@ -127,69 +109,64 @@
 
     window.user = null;
 
-    // --- NOVO SISTEMA DE LOGIN E CADASTRO (ANTI-GOLPE) ---
-    window.loginComum = () => {
-        const email = document.getElementById('emailLogin').value;
-        const pass = document.getElementById('passLogin').value;
-        if(!email || !pass) return alert("Preencha todos os campos!");
+    // --- LOGIN COM RECONHECIMENTO SIMULADO ---
+    window.iniciarLogin = async () => {
+        const email = document.getElementById('emailLog').value;
+        const pass = document.getElementById('passLog').value;
+        if(!email || pass.length < 6) return alert("Email e senha (min 6 digitos) obrigatorios");
 
-        signInWithEmailAndPassword(auth, email, pass)
-            .catch(error => alert("Erro ao entrar: Verifique e-mail e senha."));
-    };
+        document.getElementById('etapa1').style.display = 'none';
+        document.getElementById('etapaFace').style.display = 'block';
+        const video = document.getElementById('videoFace');
+        video.style.display = 'block';
 
-    window.cadastrarComum = () => {
-        const email = document.getElementById('emailLogin').value;
-        const pass = document.getElementById('passLogin').value;
-        const nome = prompt("Digite seu Nome Completo (Para segurança):");
-        
-        if(!email || pass.length < 6 || !nome) return alert("E-mail e Senha (mín. 6 dígitos) e Nome são obrigatórios!");
-
-        createUserWithEmailAndPassword(auth, email, pass)
-            .then((res) => {
-                const userRef = ref(db, `usuarios/${res.user.uid}`);
-                set(userRef, { nome: nome, cargo: 'user', moedasBlue: 0, uid: res.user.uid, bloqueado: false });
-                alert("Conta criada com sucesso!");
-            })
-            .catch(error => alert("Erro ao cadastrar: " + error.message));
-    };
-
-    // --- LOGIN ADM (MANTIDO) ---
-    window.loginAdmin = () => {
-        const pass = prompt("Senha ADM:");
-        if(pass === "1533") {
-            window.user = { nome: "ADM MASTER", cargo: "ADM1", uid: "master", moedasBlue: 999999 };
-            entrarNoApp();
-        } else { alert("Senha incorreta!"); }
-    };
-
-    onAuthStateChanged(auth, async (u) => {
-        if (u) {
-            const userRef = ref(db, `usuarios/${u.uid}`);
-            onValue(userRef, (snap) => {
-                const dados = snap.val();
-                if(dados?.bloqueado) { alert("Sua conta está bloqueada por violação!"); signOut(auth); return; }
-                
-                if(dados) {
-                    window.user = dados;
-                    if(document.getElementById('meuSaldoRealtime')) {
-                        document.getElementById('meuSaldoRealtime').innerText = window.user.moedasBlue || 0;
-                    }
-                    entrarNoApp();
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            video.srcObject = stream;
+            document.getElementById('scanBar').style.width = '100%';
+            
+            setTimeout(async () => {
+                stream.getTracks().forEach(t => t.stop());
+                try {
+                    await signInWithEmailAndPassword(auth, email, pass);
+                } catch (e) {
+                    await createUserWithEmailAndPassword(auth, email, pass);
                 }
+            }, 2500);
+        } catch (err) {
+            alert("Câmera necessária para reconhecimento facial de segurança.");
+            location.reload();
+        }
+    };
+
+    window.loginAdminMaster = () => {
+        const p = prompt("Senha ADM Master:");
+        if(p === "1533") {
+            window.user = { nome: "ADM MASTER", cargo: "ADM1", uid: "master", moedasBlue: 999999 };
+            document.getElementById('telaLogin').style.display = 'none';
+            document.getElementById('app').style.display = 'block';
+        }
+    };
+
+    onAuthStateChanged(auth, u => {
+        if(u) {
+            const r = ref(db, `usuarios/${u.uid}`);
+            onValue(r, s => {
+                if(s.val()?.bloqueado) { alert("Sua conta foi bloqueada."); signOut(auth); return; }
+                window.user = s.val() || { nome: u.email.split('@')[0], cargo: 'user', moedasBlue: 0, uid: u.uid };
+                if(!s.val()) set(r, window.user);
+                document.getElementById('telaLogin').style.display = 'none';
+                document.getElementById('app').style.display = 'block';
+                document.getElementById('saldoRealtime').innerText = window.user.moedasBlue;
+                document.getElementById('userUidLabel').innerText = "ID: " + u.uid.substring(0,8);
             });
         }
     });
 
-    function entrarNoApp() {
-        document.getElementById('telaLogin').style.display = 'none';
-        document.getElementById('app').style.display = 'block';
-        document.getElementById('userIdDisplay').innerText = window.user.uid.substring(0,8);
-    }
-
     window.deslogar = () => { signOut(auth); location.reload(); };
 
-    // --- FEED (MANTIDO) ---
-    onValue(ref(db, 'posts'), (snap) => {
+    // --- FEED ---
+    onValue(ref(db, 'posts'), snap => {
         const f = document.getElementById('feed'); f.innerHTML = "";
         snap.forEach(c => {
             const p = c.val();
@@ -197,89 +174,63 @@
             div.className = "card-timeline";
             div.innerHTML = `
                 <img src="${p.i1}" onclick="abrirPerfilPublico('${p.uid}')">
-                <div style="padding:15px; display:flex; justify-content:space-between; align-items:center;">
-                    <div><b>${p.u1}</b> <small style="color:var(--blue)">[${p.cargoUser || 'user'}]</small><br><small>${p.d1 || ''}</small></div>
-                    <button onclick="abrirTroca('${p.i1}', '${p.u1}', '${p.uid}')" style="border:none; background:var(--sea); color:white; padding:8px 15px; border-radius:5px; font-weight:bold;">TROCAR</button>
+                <div style="padding:15px;">
+                    <b>${p.u1}</b> <span style="color:var(--blue); font-size:12px;">[${p.cargoUser}]</span><br>
+                    <small>${p.d1 || ''}</small>
                 </div>`;
             f.prepend(div);
         });
     });
 
-    // --- PERFIL E GESTÃO (MANTIDO) ---
-    window.abrirPerfilPublico = (targetUid) => {
-        const userRef = ref(db, `usuarios/${targetUid}`);
-        onValue(userRef, (snap) => {
-            const u = snap.val() || (targetUid === 'master' ? {nome:"ADM MASTER", cargo:"ADM1", moedasBlue:9999} : null);
-            if(!u) return;
-
+    // --- GESTÃO DE PERFIL (AUMENTAR/DIMINUIR MOEDAS) ---
+    window.abrirPerfilPublico = (uid) => {
+        onValue(ref(db, `usuarios/${uid}`), s => {
+            const u = s.val(); if(!u) return;
             fecharTelas();
             document.getElementById('telaPerfil').style.display = 'block';
             
-            let painelAdm = "";
-            if(window.user && ["MOD", "ADM2", "ADM1"].includes(window.user.cargo) && targetUid !== "master") {
-                painelAdm = `
-                    <div class="painel-gestao">
-                        <h4 style="margin:0; text-align:center;">GESTÃO</h4>
-                        <div class="row-adm">
-                            <button style="background:green" onclick="mudarCargo('${targetUid}', 1)">SUBIR</button>
-                            <button style="background:orange" onclick="mudarCargo('${targetUid}', -1)">BAIXAR</button>
-                        </div>
-                        <div class="row-adm">
-                            <button style="background:red" onclick="toggleBloqueio('${targetUid}')">BLOQUEAR</button>
-                            ${window.user.cargo === 'ADM1' ? `<button style="background:var(--blue)" onclick="addMoeda('${targetUid}')">DAR BLUE</button>` : ''}
-                        </div>
-                    </div>`;
+            let admBtns = "";
+            if(window.user && ["MOD", "ADM2", "ADM1"].includes(window.user.cargo) && uid !== 'master') {
+                admBtns = `
+                <div class="painel-gestao">
+                    <p><b>Controle de Funcionário</b></p>
+                    <div style="display:flex; gap:10px;">
+                        <button onclick="ajustarMoeda('${uid}', 10)" style="flex:1; background:var(--green); color:white; border:none; padding:10px; border-radius:5px;">+10 BLUE</button>
+                        <button onclick="ajustarMoeda('${uid}', -10)" style="flex:1; background:var(--red); color:white; border:none; padding:10px; border-radius:5px;">-10 BLUE</button>
+                    </div>
+                    <button class="btn-adm" style="background:orange" onclick="mudarCargo('${uid}')">Alterar Cargo</button>
+                    <button class="btn-adm" style="background:red" onclick="banir('${uid}')">Bloquear Usuário</button>
+                </div>`;
             }
 
             document.getElementById('perfConteudo').innerHTML = `
-                <div class="perfil-header">
+            <div class="wrap" style="text-align:center;">
+                <div style="background:white; padding:30px; border-radius:20px; border:1px solid #eee;">
                     <div class="avatar-largo"></div>
                     <h2>${u.nome}</h2>
-                    <span style="background:var(--sea); color:white; padding:5px 15px; border-radius:20px;">${u.cargo}</span>
-                    <p>Saldo Blue: <b id="saldoPerfilTarget">${u.moedasBlue || 0}</b></p>
-                    <button onclick="fecharTelas()" class="btn-adm" style="width:auto; padding:10px 30px;">VOLTAR</button>
-                    ${painelAdm}
-                </div>`;
+                    <p>Cargo: <b style="color:var(--blue)">${u.cargo}</b></p>
+                    <p>Saldo: <b style="font-size:20px;">${u.moedasBlue}</b></p>
+                    <button onclick="fecharTelas()" class="btn-adm">FECHAR</button>
+                    ${admBtns}
+                </div>
+            </div>`;
         });
     };
 
-    window.addMoeda = (uid) => {
-        const q = prompt("Quantas moedas Blue?");
-        if(q && !isNaN(q)) {
-            runTransaction(ref(db, `usuarios/${uid}/moedasBlue`), v => (v || 0) + parseInt(q));
-            alert("Moedas enviadas!");
-        }
+    window.ajustarMoeda = (uid, qtd) => {
+        runTransaction(ref(db, `usuarios/${uid}/moedasBlue`), v => (v || 0) + qtd);
     };
 
-    window.mudarCargo = async (uid, dir) => {
-        const cargos = ["user", "MOD", "ADM2", "ADM1"];
-        const snap = await get(ref(db, `usuarios/${uid}`));
-        const atual = snap.val()?.cargo || "user";
-        let idx = cargos.indexOf(atual) + dir;
-        if(idx >= 0 && idx < cargos.length) {
-            update(ref(db, `usuarios/${uid}`), { cargo: cargos[idx] });
-        }
+    window.mudarCargo = async (uid) => {
+        const c = prompt("Novo cargo (user, MOD, ADM2, ADM1):");
+        if(c) update(ref(db, `usuarios/${uid}`), { cargo: c });
     };
 
-    window.toggleBloqueio = async (uid) => {
-        const snap = await get(ref(db, `usuarios/${uid}`));
-        const status = snap.val()?.bloqueado || false;
-        update(ref(db, `usuarios/${uid}`), { bloqueado: !status });
+    window.banir = (uid) => {
+        if(confirm("Deseja bloquear este usuário?")) update(ref(db, `usuarios/${uid}`), { bloqueado: true });
     };
 
-    window.abrirTroca = (img, dono, uid) => {
-        if(uid === window.user.uid) return alert("Seu post");
-        document.getElementById('imgDono').src = img;
-        document.getElementById('telaTroca').style.display = 'block';
-    };
-
-    window.confirmarTroca = () => {
-        const wpp = "5511983602504";
-        const msg = encodeURIComponent(`Olá, vi seu item no ICE TROCAS e quero propor uma troca!`);
-        window.open(`https://wa.me/${wpp}?text=${msg}`, '_blank');
-        fecharTelas();
-    };
-
+    // --- AUXILIARES ---
     window.enviarPost = () => {
         const file = document.getElementById('filePost').files[0];
         const desc = document.getElementById('descPost').value;
@@ -292,17 +243,15 @@
         r.readAsDataURL(file);
     };
 
-    onValue(ref(db, 'economia/valor_ice'), (s) => {
+    onValue(ref(db, 'economia/valor_ice'), s => {
         document.getElementById('btcValue').innerText = "ICE: $" + (s.val() || 0.7099).toFixed(4);
     });
 
-    window.abrirMeuPerfil = () => abrirPerfilPublico(window.user.uid);
     window.abrirMinhaCarteira = () => { fecharTelas(); document.getElementById('telaCarteira').style.display = 'block'; };
+    window.abrirMeuPerfil = () => abrirPerfilPublico(window.user.uid);
     window.abrirPostar = () => { fecharTelas(); document.getElementById('telaPostar').style.display = 'block'; };
     window.abrirFin = () => { fecharTelas(); document.getElementById('telaFinanceiro').style.display = 'block'; };
-    window.fecharTelas = () => { document.querySelectorAll('#telaPostar,#telaTroca,#telaFinanceiro,#telaPerfil,#telaCarteira').forEach(t=>t.style.display='none'); };
-    window.previewTroca = (i) => { const r = new FileReader(); r.onload = (e) => document.getElementById('imgMinha').src = e.target.result; r.readAsDataURL(i.files[0]); };
-    window.comprarCargo = () => { navigator.clipboard.writeText("thiago00dudu@gmail.com"); alert("Pix Copiado!"); };
+    window.fecharTelas = () => { document.querySelectorAll('#telaPostar,#telaPerfil,#telaCarteira,#telaFinanceiro').forEach(t=>t.style.display='none'); };
 </script>
 </body>
 </html>
