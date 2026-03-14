@@ -13,6 +13,7 @@
         
         #telaLogin { position: fixed; inset: 0; background: var(--sea); z-index: 5000; display: flex; align-items: center; justify-content: center; color: white; text-align: center; }
         .login-box { background: white; padding: 30px; border-radius: 20px; width: 80%; max-width: 350px; color: #333; }
+        .input-login { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
 
         .card-timeline { background: var(--white); border-radius: 15px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; }
         .card-timeline img { width: 100%; height: 320px; object-fit: cover; cursor: pointer; }
@@ -41,11 +42,17 @@
 
 <div id="telaLogin">
     <div class="login-box">
-        <h2 style="margin-top:0;">ICE TROCAS</h2>
-        <p>Acesse sua conta com segurança</p>
-        <button class="btn-adm" style="background:#4285F4;" onclick="loginGoogle()"><i class="fab fa-google"></i> ENTRAR COM GOOGLE</button>
+        <h2 style="margin-top:0; color: var(--sea);">ICE TROCAS</h2>
+        <p style="font-size: 14px; margin-bottom: 20px;">Área Segura Anti-Golpe</p>
+        
+        <input type="email" id="emailLogin" class="input-login" placeholder="E-mail">
+        <input type="password" id="passLogin" class="input-login" placeholder="Senha">
+        
+        <button class="btn-adm" onclick="loginComum()">ENTRAR</button>
+        <button class="btn-adm" style="background: #666;" onclick="cadastrarComum()">CADASTRAR NOVA CONTA</button>
+        
         <div style="margin: 15px 0; color: #999;">ou</div>
-        <button class="btn-adm" onclick="loginAdmin()">ENTRAR COMO ADM</button>
+        <button class="btn-adm" style="background: #ddd; color: #333;" onclick="loginAdmin()">ACESSO ADM</button>
     </div>
 </div>
 
@@ -111,23 +118,42 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getDatabase, ref, onValue, update, set, push, runTransaction, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, signInWithRedirect, getRedirectResult } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
     const firebaseConfig = { apiKey: "AIzaSyDM5M1_O-wfcBDGYJIiYgiHVbqhiKC-0dw", databaseURL: "https://icek-9cdd7-default-rtdb.firebaseio.com", projectId: "icek-9cdd7" };
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
     const auth = getAuth(app);
-    const provider = new GoogleAuthProvider();
 
     window.user = null;
 
-    // --- CORREÇÃO LOGIN GOOGLE ---
-    window.loginGoogle = () => {
-        signInWithPopup(auth, provider).catch(() => {
-            signInWithRedirect(auth, provider);
-        });
+    // --- NOVO SISTEMA DE LOGIN E CADASTRO (ANTI-GOLPE) ---
+    window.loginComum = () => {
+        const email = document.getElementById('emailLogin').value;
+        const pass = document.getElementById('passLogin').value;
+        if(!email || !pass) return alert("Preencha todos os campos!");
+
+        signInWithEmailAndPassword(auth, email, pass)
+            .catch(error => alert("Erro ao entrar: Verifique e-mail e senha."));
     };
 
+    window.cadastrarComum = () => {
+        const email = document.getElementById('emailLogin').value;
+        const pass = document.getElementById('passLogin').value;
+        const nome = prompt("Digite seu Nome Completo (Para segurança):");
+        
+        if(!email || pass.length < 6 || !nome) return alert("E-mail e Senha (mín. 6 dígitos) e Nome são obrigatórios!");
+
+        createUserWithEmailAndPassword(auth, email, pass)
+            .then((res) => {
+                const userRef = ref(db, `usuarios/${res.user.uid}`);
+                set(userRef, { nome: nome, cargo: 'user', moedasBlue: 0, uid: res.user.uid, bloqueado: false });
+                alert("Conta criada com sucesso!");
+            })
+            .catch(error => alert("Erro ao cadastrar: " + error.message));
+    };
+
+    // --- LOGIN ADM (MANTIDO) ---
     window.loginAdmin = () => {
         const pass = prompt("Senha ADM:");
         if(pass === "1533") {
@@ -141,21 +167,15 @@
             const userRef = ref(db, `usuarios/${u.uid}`);
             onValue(userRef, (snap) => {
                 const dados = snap.val();
-                if(dados?.bloqueado) { alert("Bloqueado!"); signOut(auth); return; }
+                if(dados?.bloqueado) { alert("Sua conta está bloqueada por violação!"); signOut(auth); return; }
                 
-                if(!dados) {
-                    const novoUser = { nome: u.displayName, cargo: 'user', moedasBlue: 0, uid: u.uid, bloqueado: false };
-                    set(userRef, novoUser);
-                    window.user = novoUser;
-                } else {
+                if(dados) {
                     window.user = dados;
+                    if(document.getElementById('meuSaldoRealtime')) {
+                        document.getElementById('meuSaldoRealtime').innerText = window.user.moedasBlue || 0;
+                    }
+                    entrarNoApp();
                 }
-                
-                // ATUALIZAÇÃO SALDO EM TEMPO REAL
-                if(document.getElementById('meuSaldoRealtime')) {
-                    document.getElementById('meuSaldoRealtime').innerText = window.user.moedasBlue || 0;
-                }
-                entrarNoApp();
             });
         }
     });
@@ -168,7 +188,7 @@
 
     window.deslogar = () => { signOut(auth); location.reload(); };
 
-    // --- FEED ---
+    // --- FEED (MANTIDO) ---
     onValue(ref(db, 'posts'), (snap) => {
         const f = document.getElementById('feed'); f.innerHTML = "";
         snap.forEach(c => {
@@ -185,7 +205,7 @@
         });
     });
 
-    // --- PERFIL E GESTÃO ---
+    // --- PERFIL E GESTÃO (MANTIDO) ---
     window.abrirPerfilPublico = (targetUid) => {
         const userRef = ref(db, `usuarios/${targetUid}`);
         onValue(userRef, (snap) => {
@@ -223,7 +243,6 @@
         });
     };
 
-    // --- LÓGICA MOEDAS E CARGOS ---
     window.addMoeda = (uid) => {
         const q = prompt("Quantas moedas Blue?");
         if(q && !isNaN(q)) {
@@ -248,7 +267,6 @@
         update(ref(db, `usuarios/${uid}`), { bloqueado: !status });
     };
 
-    // --- CHAT E PROPOSTAS ---
     window.abrirTroca = (img, dono, uid) => {
         if(uid === window.user.uid) return alert("Seu post");
         document.getElementById('imgDono').src = img;
@@ -256,13 +274,12 @@
     };
 
     window.confirmarTroca = () => {
-        const wpp = "5511983602504"; // Seu número configurado
+        const wpp = "5511983602504";
         const msg = encodeURIComponent(`Olá, vi seu item no ICE TROCAS e quero propor uma troca!`);
         window.open(`https://wa.me/${wpp}?text=${msg}`, '_blank');
         fecharTelas();
     };
 
-    // --- OUTROS ---
     window.enviarPost = () => {
         const file = document.getElementById('filePost').files[0];
         const desc = document.getElementById('descPost').value;
