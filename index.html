@@ -6,118 +6,109 @@
     <title>ICE TROCAS - Oficial</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <style>
-        :root { --bg: #f4f7f9; --sea: #0f3452; --blue: #1877f2; --white: #fff; --gold: #FFD700; }
-        body { margin:0; font-family: sans-serif; background: var(--bg); padding-bottom: 120px; }
-        
-        /* HEADER E NAV */
+        :root { --bg: #f4f7f9; --sea: #0f3452; --blue: #1877f2; --gold: #FFD700; --white: #fff; --green: #25d366; --red: #ff4d4d; }
+        body { margin:0; font-family: sans-serif; background: var(--bg); padding-bottom: 110px; }
         header { padding:15px; background: var(--white); display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:100; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--sea); display: flex; justify-content: space-around; padding: 25px 0; z-index: 3000; border-radius: 25px 25px 0 0; }
-        .nav i { color: white; font-size: 40px; cursor: pointer; } 
-        .nav i.especial { font-size: 55px; color: var(--blue); margin-top: -10px; }
+        .wrap { max-width: 500px; margin: auto; padding: 15px; }
+        
+        /* CARD TIMELINE */
+        .card-timeline { background: var(--white); border-radius: 15px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .card-timeline img { width: 100%; height: 320px; object-fit: cover; cursor: pointer; }
 
-        /* CARDS DO FEED */
-        .card { background: white; border-radius: 15px; margin-bottom: 20px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .card img { width: 100%; height: 300px; object-fit: cover; cursor: pointer; }
+        /* NAV GIGANTE */
+        .nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--sea); display: flex; justify-content: space-around; padding: 25px 0; z-index: 3000; border-radius: 25px 25px 0 0; }
+        .nav i { color: white; font-size: 30px; cursor: pointer; }
+        .nav i.especial { font-size: 45px; color: var(--blue); margin-top: -10px; }
 
         /* TELAS */
+        .tela-full { display: none; position: fixed; inset: 0; background: var(--bg); z-index: 2000; overflow-y: auto; }
         #telaLogin { position: fixed; inset: 0; background: var(--sea); z-index: 5000; display: flex; align-items: center; justify-content: center; }
         .login-box { background: white; padding: 30px; border-radius: 25px; width: 85%; max-width: 350px; text-align: center; }
-        #videoFace { width: 150px; height: 150px; background: #000; border-radius: 50%; object-fit: cover; display: none; margin: 15px auto; border: 4px solid var(--blue); }
-        
-        .tela-full { display: none; position: fixed; inset: 0; background: var(--bg); z-index: 2000; overflow-y: auto; }
-        .wrap { max-width: 500px; margin: auto; padding: 15px; }
         
         input, .btn-adm { width: 100%; padding: 15px; margin-bottom: 12px; border-radius: 12px; border: 1px solid #ddd; box-sizing: border-box; font-size: 16px; font-weight: bold; }
         .btn-adm { background: var(--sea); color: white; border: none; cursor: pointer; }
 
-        /* CHAT */
         #chatBox { height: 200px; overflow-y: auto; background: #eee; border-radius: 10px; padding: 10px; margin: 10px 0; display: flex; flex-direction: column; }
-        .msg { padding: 8px 12px; margin: 4px; border-radius: 10px; max-width: 70%; font-size: 14px; }
+        .msg { padding: 8px; margin: 4px; border-radius: 8px; max-width: 80%; font-size: 13px; }
         .msg.me { align-self: flex-end; background: var(--blue); color: white; }
         .msg.them { align-self: flex-start; background: #ddd; }
 
-        /* JANELA FLUTUANTE */
-        .janela-f { display: none; position: fixed; bottom: 130px; right: 20px; width: 200px; background: white; border-radius: 20px; padding: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.3); z-index: 4000; }
+        .adm-tools { display: flex; justify-content: space-around; padding: 10px; background: #f0f0f0; border-top: 1px solid #ddd; }
+        #videoFace { width: 150px; height: 150px; background: #000; border-radius: 50%; object-fit: cover; display: none; margin: 15px auto; border: 4px solid var(--blue); }
     </style>
 </head>
 <body>
 
 <div id="telaLogin">
     <div class="login-box">
-        <h2>ICE TROCAS</h2>
+        <h2 style="color:var(--sea)">ICE TROCAS</h2>
         <div id="etapa1">
-            <input type="email" id="emailLog" placeholder="E-mail">
+            <input type="text" id="emailLog" placeholder="E-mail ou Login">
             <input type="password" id="passLog" placeholder="Senha">
             <button class="btn-adm" onclick="iniciarLogin()">ENTRAR</button>
         </div>
         <div id="etapaFace" style="display:none;">
+            <p>Validando Facial...</p>
             <video id="videoFace" autoplay muted playsinline></video>
-            <div id="scanBar" style="width:0%; height:4px; background:var(--blue); transition: 2.5s linear; margin-top:10px;"></div>
+            <div id="scanBar" style="width:0%; height:4px; background:var(--blue); transition: 2.5s linear; margin-top: 10px;"></div>
         </div>
     </div>
 </div>
 
 <div id="app" style="display:none;">
     <header>
-        <b>ICE TROCAS</b>
-        <i class="fas fa-sign-out-alt" onclick="location.reload()" style="color:red;"></i>
+        <div><b>ICE TROCAS</b><br><small id="btcValue" style="color:var(--blue); font-weight: bold;">ICE: $0.7099</small></div>
+        <i class="fas fa-sign-out-alt" onclick="location.reload()" style="color:red; font-size:20px;"></i>
     </header>
-
     <div class="wrap" id="feed"></div>
-
-    <div class="janela-f" id="janelaF">
-        <p><b>Opções</b></p>
-        <button class="btn-adm" style="background:#25d366;">Compartilhar</button>
-        <button class="btn-adm" style="background:gold; color:black;">Comprar VIP</button>
-    </div>
-
     <div class="nav">
         <i class="fas fa-home" onclick="fecharTelas()"></i>
         <i class="fas fa-plus-circle especial" onclick="abrirPostar()"></i>
+        <i class="fas fa-university" onclick="abrirFin()"></i>
         <i class="fas fa-wallet" onclick="abrirCarteira()" style="color:var(--gold);"></i>
         <i class="fas fa-user-circle" onclick="abrirMeuPerfil()"></i>
     </div>
 </div>
 
 <div id="telaPostar" class="tela-full"><div class="wrap">
-    <h3>Nova Troca</h3>
+    <h3>Nova Postagem</h3>
     <input type="file" id="filePost" accept="image/*">
-    <input type="text" id="descPost" placeholder="O que você está trocando?">
-    <button class="btn-adm" onclick="enviarPost()">PUBLICAR</button>
-    <button class="btn-adm" onclick="fecharTelas()" style="background:none; color:red;">Cancelar</button>
+    <input type="text" id="descPost" placeholder="Descrição">
+    <button class="btn-adm" onclick="enviarPost()">POSTAR</button>
+    <button onclick="fecharTelas()" class="btn-adm" style="background:red;">VOLTAR</button>
 </div></div>
 
 <div id="telaPerfil" class="tela-full"><div class="wrap">
     <div style="background:white; padding:20px; border-radius:20px; text-align:center;">
         <h2 id="nomePerf">Usuário</h2>
-        <p>Saldo Blue: <b id="saldoPerf">0</b></p>
-        <div id="areaAdm" style="display:none; background:#f0f4f8; padding:10px; border-radius:10px; margin-bottom:15px;">
-            <button onclick="mudarSaldo(5)" style="width:45%; background:green; color:white; border:none; padding:10px; border-radius:5px;">+5</button>
-            <button onclick="mudarSaldo(-5)" style="width:45%; background:red; color:white; border:none; padding:10px; border-radius:5px;">-5</button>
+        <p>Saldo: <b id="saldoPerf">0</b> BLUE</p>
+        <div id="areaAdm" style="display:none; padding:10px; background:#eef2f5; border-radius:10px; margin:10px 0;">
+            <button onclick="mudarSaldo(5)" style="background:green; color:white; border:none; padding:10px; border-radius:5px; width:45%;">+5</button>
+            <button onclick="mudarSaldo(-5)" style="background:red; color:white; border:none; padding:10px; border-radius:5px; width:45%;">-5</button>
         </div>
-        <hr>
         <div id="chatBox"></div>
         <div style="display:flex; gap:5px;">
-            <input type="text" id="msgInput" placeholder="Sua mensagem..." style="margin:0;">
+            <input type="text" id="msgInput" placeholder="Mensagem..." style="margin:0;">
             <button onclick="enviarMsg()" style="width:50px; background:var(--blue); color:white; border:none; border-radius:10px;"><i class="fas fa-paper-plane"></i></button>
         </div>
         <button onclick="fecharTelas()" class="btn-adm" style="margin-top:20px;">VOLTAR</button>
     </div>
 </div></div>
 
+<div id="telaCarteira" class="tela-full"><div class="wrap">
+    <div style="background:linear-gradient(135deg, var(--sea), var(--blue)); color:white; padding:30px; border-radius:20px; text-align:center;">
+        <p>Saldo Atual</p>
+        <h1 id="meuSaldo">0</h1>
+    </div>
+    <button onclick="fecharTelas()" class="btn-adm" style="margin-top:20px;">FECHAR</button>
+</div></div>
+
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, onValue, set, push, runTransaction, onChildAdded } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, onValue, set, push, runTransaction, onChildAdded, update, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyDM5M1_O-wfcBDGYJIiYgiHVbqhiKC-0dw",
-        authDomain: "icek-9cdd7.firebaseapp.com",
-        databaseURL: "https://icek-9cdd7-default-rtdb.firebaseio.com",
-        projectId: "icek-9cdd7",
-        appId: "1:929781654380:web:ddda1fdf6689ebd7cc8949"
-    };
-
+    const firebaseConfig = { apiKey: "AIzaSyDM5M1_O-wfcBDGYJIiYgiHVbqhiKC-0dw", databaseURL: "https://icek-9cdd7-default-rtdb.firebaseio.com", projectId: "icek-9cdd7" };
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
     const auth = getAuth(app);
@@ -125,46 +116,72 @@
     window.user = null;
     window.idVisto = "";
 
-    onAuthStateChanged(auth, u => {
-        if(u) {
-            onValue(ref(db, `usuarios/${u.uid}`), s => {
-                window.user = s.val() || { nome: u.email.split('@')[0], moedasBlue: 0, cargo: 'user', uid: u.uid };
-                if(!s.val()) set(ref(db, `usuarios/${u.uid}`), window.user);
-                document.getElementById('telaLogin').style.display = 'none';
-                document.getElementById('app').style.display = 'block';
-            });
-        }
-    });
-
-    onValue(ref(db, 'posts'), snap => {
-        const feed = document.getElementById('feed'); feed.innerHTML = "";
-        snap.forEach(c => {
-            const p = c.val();
-            const div = document.createElement('div');
-            div.className = "card";
-            div.innerHTML = `<img src="${p.img}" onclick="abrirPerfil('${p.uid}')"><div style="padding:10px;"><b>${p.autor}</b><br>${p.desc}</div>`;
-            feed.prepend(div);
-        });
-    });
-
+    // LÓGICA DE LOGIN COM ATALHO ADM
     window.iniciarLogin = async () => {
         const e = document.getElementById('emailLog').value;
         const p = document.getElementById('passLog').value;
+
+        // SE FOR LOGIN ADM MASTER
+        if(e.toUpperCase() === "ADM" && p === "1533") {
+            window.user = { nome: "ADM MASTER", cargo: "ADM1", moedasBlue: 999999, uid: "master" };
+            entrarNoApp();
+            return;
+        }
+
+        // LOGIN NORMAL PARA OUTROS USUÁRIOS
         document.getElementById('etapa1').style.display='none';
         document.getElementById('etapaFace').style.display='block';
         const v = document.getElementById('videoFace'); v.style.display='block';
         const stream = await navigator.mediaDevices.getUserMedia({video:true});
         v.srcObject = stream;
         document.getElementById('scanBar').style.width='100%';
+
         setTimeout(async () => {
             stream.getTracks().forEach(t=>t.stop());
-            try { await signInWithEmailAndPassword(auth, e, p); } catch { await createUserWithEmailAndPassword(auth, e, p); }
+            try { await signInWithEmailAndPassword(auth, e, p); }
+            catch { await createUserWithEmailAndPassword(auth, e, p); }
         }, 2500);
     };
 
+    function entrarNoApp() {
+        document.getElementById('telaLogin').style.display='none';
+        document.getElementById('app').style.display='block';
+        document.getElementById('meuSaldo').innerText = window.user.moedasBlue;
+    }
+
+    onAuthStateChanged(auth, u => {
+        if(u) {
+            onValue(ref(db, `usuarios/${u.uid}`), s => {
+                window.user = s.val() || { nome: u.email.split('@')[0], cargo: 'user', moedasBlue: 0, uid: u.uid };
+                if(!s.exists()) set(ref(db, `usuarios/${u.uid}`), window.user);
+                entrarNoApp();
+            });
+        }
+    });
+
+    // FEED
+    onValue(ref(db, 'posts'), snap => {
+        const f = document.getElementById('feed'); f.innerHTML = "";
+        snap.forEach(c => {
+            const p = c.val();
+            let bts = "";
+            if(window.user && ["ADM1", "ADM2", "MOD"].includes(window.user.cargo)) {
+                bts = `<div class="adm-tools">
+                    <i class="fas fa-arrow-up" style="color:green" onclick="mudarCargo('${p.uid}', 1)"></i>
+                    <i class="fas fa-donate" style="color:blue" onclick="mudarMoeda('${p.uid}')"></i>
+                    <i class="fas fa-arrow-down" style="color:red" onclick="mudarCargo('${p.uid}', -1)"></i>
+                </div>`;
+            }
+            const div = document.createElement('div');
+            div.className = "card-timeline";
+            div.innerHTML = `<img src="${p.img}" onclick="abrirPerfil('${p.uid}')">
+                <div style="padding:15px;"><b>${p.autor}</b> <small style="color:var(--blue)">[${p.cargoUser || 'user'}]</small><br>${p.desc}</div>${bts}`;
+            f.prepend(div);
+        });
+    });
+
     window.abrirPerfil = (uid) => {
-        window.idVisto = uid;
-        fecharTelas();
+        window.idVisto = uid; fecharTelas();
         onValue(ref(db, `usuarios/${uid}`), s => {
             const d = s.val();
             document.getElementById('nomePerf').innerText = d.nome;
@@ -173,14 +190,6 @@
             document.getElementById('telaPerfil').style.display = 'block';
             carregarChat(uid);
         });
-    };
-
-    window.enviarMsg = () => {
-        const t = document.getElementById('msgInput').value;
-        if(!t) return;
-        const cid = window.user.uid < window.idVisto ? window.user.uid+window.idVisto : window.idVisto+window.user.uid;
-        push(ref(db, `chats/${cid}`), { sender: window.user.uid, texto: t });
-        document.getElementById('msgInput').value = "";
     };
 
     function carregarChat(uid) {
@@ -196,22 +205,43 @@
         });
     }
 
-    window.enviarPost = () => {
-        const f = document.getElementById('filePost').files[0];
-        const d = document.getElementById('descPost').value;
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            push(ref(db, 'posts'), { autor: window.user.nome, uid: window.user.uid, img: e.target.result, desc: d });
-            fecharTelas();
-        };
-        reader.readAsDataURL(f);
+    window.enviarMsg = () => {
+        const t = document.getElementById('msgInput').value; if(!t) return;
+        const cid = window.user.uid < window.idVisto ? window.user.uid+window.idVisto : window.idVisto+window.user.uid;
+        push(ref(db, `chats/${cid}`), { sender: window.user.uid, texto: t });
+        document.getElementById('msgInput').value = "";
     };
 
     window.mudarSaldo = (q) => runTransaction(ref(db, `usuarios/${window.idVisto}/moedasBlue`), v => (v || 0) + q);
+
+    window.mudarMoeda = (uid) => {
+        const q = prompt("Quantas moedas BLUE?");
+        if(q) runTransaction(ref(db, `usuarios/${uid}/moedasBlue`), v => (v || 0) + parseInt(q));
+    };
+
+    window.mudarCargo = async (uid, dir) => {
+        const cargos = ["user", "MOD", "ADM2", "ADM1"];
+        const snap = await get(ref(db, `usuarios/${uid}`));
+        let idx = cargos.indexOf(snap.val().cargo) + dir;
+        if(idx >= 0 && idx < cargos.length) update(ref(db, `usuarios/${uid}`), {cargo: cargos[idx]});
+    };
+
+    window.enviarPost = () => {
+        const f = document.getElementById('filePost').files[0];
+        const d = document.getElementById('descPost').value;
+        const r = new FileReader();
+        r.onload = (e) => {
+            push(ref(db, 'posts'), { autor: window.user.nome, uid: window.user.uid, cargoUser: window.user.cargo, img: e.target.result, desc: d });
+            fecharTelas();
+        };
+        r.readAsDataURL(f);
+    };
+
+    window.fecharTelas = () => document.querySelectorAll('.tela-full').forEach(t=>t.style.display='none');
     window.abrirPostar = () => { fecharTelas(); document.getElementById('telaPostar').style.display='block'; };
+    window.abrirCarteira = () => { fecharTelas(); document.getElementById('telaCarteira').style.display='block'; };
     window.abrirMeuPerfil = () => abrirPerfil(window.user.uid);
-    window.fecharTelas = () => { document.querySelectorAll('.tela-full').forEach(t=>t.style.display='none'); };
-    window.abrirCarteira = () => { document.getElementById('janelaF').style.display = 'block'; };
+    window.abrirFin = () => alert("Link de suporte: wa.me/5511983602504");
 </script>
 </body>
 </html>
