@@ -11,7 +11,6 @@
         header { padding:15px; background: var(--white); display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:100; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         .wrap { max-width: 500px; margin: auto; padding: 15px; }
         
-        /* Telas de Login */
         #telaLogin { position: fixed; inset: 0; background: var(--sea); z-index: 5000; display: flex; align-items: center; justify-content: center; color: white; text-align: center; }
         .login-box { background: white; padding: 30px; border-radius: 20px; width: 80%; max-width: 350px; color: #333; }
 
@@ -32,10 +31,10 @@
         
         .wallet-card { background: linear-gradient(135deg, var(--sea), var(--blue)); color: white; padding: 25px; border-radius: 20px; text-align: center; margin-bottom: 20px; }
         .perfil-header { text-align: center; padding: 30px 15px; background: white; border-bottom: 1px solid #eee; }
-        .avatar-largo { width: 100px; height: 100px; border-radius: 50%; background: #ddd; margin-bottom: 10px; border: 3px solid var(--blue); }
+        .avatar-largo { width: 80px; height: 80px; border-radius: 50%; background: #ddd; margin: 0 auto 10px auto; border: 3px solid var(--blue); }
         .painel-gestao { background: #fff; margin-top: 20px; padding: 15px; border-radius: 15px; border: 1px solid #ddd; }
         .row-adm { display: flex; justify-content: space-around; margin-top: 15px; }
-        .row-adm button { flex: 1; margin: 5px; padding: 10px; border-radius: 8px; border: none; color: white; font-weight: bold; cursor: pointer; }
+        .row-adm button { flex: 1; margin: 5px; padding: 10px; border-radius: 8px; border: none; color: white; font-weight: bold; cursor: pointer; font-size: 12px; }
     </style>
 </head>
 <body>
@@ -101,7 +100,7 @@
 <div id="telaCarteira"><div class="wrap">
     <h2 style="text-align:center;">Minha Carteira</h2>
     <div class="wallet-card">
-        <p>Saldo Blue</p><h1 id="saldoBlue">0</h1>
+        <p>Saldo Blue</p><h1 id="meuSaldoRealtime">0</h1>
         <small>ID: <span id="userIdDisplay">---</span></small>
     </div>
     <button onclick="fecharTelas()" class="btn-adm">VOLTAR AO FEED</button>
@@ -112,7 +111,7 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getDatabase, ref, onValue, update, set, push, runTransaction, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, signInWithRedirect, getRedirectResult } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
     const firebaseConfig = { apiKey: "AIzaSyDM5M1_O-wfcBDGYJIiYgiHVbqhiKC-0dw", databaseURL: "https://icek-9cdd7-default-rtdb.firebaseio.com", projectId: "icek-9cdd7" };
     const app = initializeApp(firebaseConfig);
@@ -122,47 +121,52 @@
 
     window.user = null;
 
-    // --- SISTEMA DE LOGIN ---
+    // --- CORREÇÃO LOGIN GOOGLE ---
     window.loginGoogle = () => {
-        signInWithPopup(auth, provider).catch(err => alert("Erro ao entrar com Google."));
+        signInWithPopup(auth, provider).catch(() => {
+            signInWithRedirect(auth, provider);
+        });
     };
 
     window.loginAdmin = () => {
-        const pass = prompt("Digite a senha ADM:");
+        const pass = prompt("Senha ADM:");
         if(pass === "1533") {
-            window.user = { nome: "ADM MASTER", cargo: "ADM1", uid: "master", moedasBlue: 999999, bloqueado: false };
+            window.user = { nome: "ADM MASTER", cargo: "ADM1", uid: "master", moedasBlue: 999999 };
             entrarNoApp();
-        } else {
-            alert("Senha incorreta!");
-        }
+        } else { alert("Senha incorreta!"); }
     };
 
     onAuthStateChanged(auth, async (u) => {
         if (u) {
-            const snap = await get(ref(db, `usuarios/${u.uid}`));
-            if(snap.val()?.bloqueado) { alert("Conta Bloqueada!"); signOut(auth); return; }
-            
-            let dados = snap.val() || { nome: u.displayName, cargo: 'user', moedasBlue: 0, uid: u.uid, bloqueado: false };
-            if(!snap.val()) set(ref(db, `usuarios/${u.uid}`), dados);
-            
-            window.user = dados;
-            entrarNoApp();
+            const userRef = ref(db, `usuarios/${u.uid}`);
+            onValue(userRef, (snap) => {
+                const dados = snap.val();
+                if(dados?.bloqueado) { alert("Bloqueado!"); signOut(auth); return; }
+                
+                if(!dados) {
+                    const novoUser = { nome: u.displayName, cargo: 'user', moedasBlue: 0, uid: u.uid, bloqueado: false };
+                    set(userRef, novoUser);
+                    window.user = novoUser;
+                } else {
+                    window.user = dados;
+                }
+                
+                // ATUALIZAÇÃO SALDO EM TEMPO REAL
+                if(document.getElementById('meuSaldoRealtime')) {
+                    document.getElementById('meuSaldoRealtime').innerText = window.user.moedasBlue || 0;
+                }
+                entrarNoApp();
+            });
         }
     });
 
     function entrarNoApp() {
         document.getElementById('telaLogin').style.display = 'none';
         document.getElementById('app').style.display = 'block';
-        document.getElementById('saldoBlue').innerText = window.user.moedasBlue || 0;
         document.getElementById('userIdDisplay').innerText = window.user.uid.substring(0,8);
     }
 
-    window.deslogar = () => { signOut(auth); localStorage.clear(); location.reload(); };
-
-    // --- ECONOMIA ---
-    onValue(ref(db, 'economia/valor_ice'), (s) => {
-        document.getElementById('btcValue').innerText = "ICE: $" + (s.val() || 0.7099).toFixed(4);
-    });
+    window.deslogar = () => { signOut(auth); location.reload(); };
 
     // --- FEED ---
     onValue(ref(db, 'posts'), (snap) => {
@@ -182,39 +186,50 @@
     });
 
     // --- PERFIL E GESTÃO ---
-    window.abrirPerfilPublico = async (targetUid) => {
-        const snap = await get(ref(db, `usuarios/${targetUid}`));
-        const u = snap.val() || (targetUid === 'master' ? {nome:"ADM MASTER", cargo:"ADM1", moedasBlue:9999} : null);
-        if(!u) return;
+    window.abrirPerfilPublico = (targetUid) => {
+        const userRef = ref(db, `usuarios/${targetUid}`);
+        onValue(userRef, (snap) => {
+            const u = snap.val() || (targetUid === 'master' ? {nome:"ADM MASTER", cargo:"ADM1", moedasBlue:9999} : null);
+            if(!u) return;
 
-        fecharTelas();
-        document.getElementById('telaPerfil').style.display = 'block';
-        
-        let painelAdm = "";
-        if(window.user && ["MOD", "ADM2", "ADM1"].includes(window.user.cargo) && targetUid !== "master") {
-            painelAdm = `
-                <div class="painel-gestao">
-                    <h4 style="margin:0; text-align:center;">CONTROLE DE FUNCIONÁRIO</h4>
-                    <div class="row-adm">
-                        <button style="background:green" onclick="mudarCargo('${targetUid}', 1)">SUBIR</button>
-                        <button style="background:orange" onclick="mudarCargo('${targetUid}', -1)">BAIXAR</button>
-                    </div>
-                    <div class="row-adm">
-                        <button style="background:red" onclick="toggleBloqueio('${targetUid}')">BLOQUEAR</button>
-                        ${window.user.cargo === 'ADM1' ? `<button style="background:var(--blue)" onclick="addMoeda('${targetUid}')">DAR BLUE</button>` : ''}
-                    </div>
+            fecharTelas();
+            document.getElementById('telaPerfil').style.display = 'block';
+            
+            let painelAdm = "";
+            if(window.user && ["MOD", "ADM2", "ADM1"].includes(window.user.cargo) && targetUid !== "master") {
+                painelAdm = `
+                    <div class="painel-gestao">
+                        <h4 style="margin:0; text-align:center;">GESTÃO</h4>
+                        <div class="row-adm">
+                            <button style="background:green" onclick="mudarCargo('${targetUid}', 1)">SUBIR</button>
+                            <button style="background:orange" onclick="mudarCargo('${targetUid}', -1)">BAIXAR</button>
+                        </div>
+                        <div class="row-adm">
+                            <button style="background:red" onclick="toggleBloqueio('${targetUid}')">BLOQUEAR</button>
+                            ${window.user.cargo === 'ADM1' ? `<button style="background:var(--blue)" onclick="addMoeda('${targetUid}')">DAR BLUE</button>` : ''}
+                        </div>
+                    </div>`;
+            }
+
+            document.getElementById('perfConteudo').innerHTML = `
+                <div class="perfil-header">
+                    <div class="avatar-largo"></div>
+                    <h2>${u.nome}</h2>
+                    <span style="background:var(--sea); color:white; padding:5px 15px; border-radius:20px;">${u.cargo}</span>
+                    <p>Saldo Blue: <b id="saldoPerfilTarget">${u.moedasBlue || 0}</b></p>
+                    <button onclick="fecharTelas()" class="btn-adm" style="width:auto; padding:10px 30px;">VOLTAR</button>
+                    ${painelAdm}
                 </div>`;
-        }
+        });
+    };
 
-        document.getElementById('perfConteudo').innerHTML = `
-            <div class="perfil-header">
-                <div class="avatar-largo" style="margin:auto;"></div>
-                <h2>${u.nome}</h2>
-                <span style="background:var(--sea); color:white; padding:5px 15px; border-radius:20px;">${u.cargo}</span>
-                <p>Saldo Blue: <b>${u.moedasBlue || 0}</b></p>
-                <button onclick="fecharTelas()" class="btn-adm" style="width:auto; padding:10px 30px;">FECHAR</button>
-                ${painelAdm}
-            </div>`;
+    // --- LÓGICA MOEDAS E CARGOS ---
+    window.addMoeda = (uid) => {
+        const q = prompt("Quantas moedas Blue?");
+        if(q && !isNaN(q)) {
+            runTransaction(ref(db, `usuarios/${uid}/moedasBlue`), v => (v || 0) + parseInt(q));
+            alert("Moedas enviadas!");
+        }
     };
 
     window.mudarCargo = async (uid, dir) => {
@@ -223,32 +238,35 @@
         const atual = snap.val()?.cargo || "user";
         let idx = cargos.indexOf(atual) + dir;
         if(idx >= 0 && idx < cargos.length) {
-            await update(ref(db, `usuarios/${uid}`), { cargo: cargos[idx] });
-            alert("Cargo alterado!"); abrirPerfilPublico(uid);
+            update(ref(db, `usuarios/${uid}`), { cargo: cargos[idx] });
         }
     };
 
     window.toggleBloqueio = async (uid) => {
         const snap = await get(ref(db, `usuarios/${uid}`));
         const status = snap.val()?.bloqueado || false;
-        await update(ref(db, `usuarios/${uid}`), { bloqueado: !status });
-        alert(status ? "Desbloqueado!" : "Usuário Bloqueado!");
-        abrirPerfilPublico(uid);
+        update(ref(db, `usuarios/${uid}`), { bloqueado: !status });
     };
 
-    window.addMoeda = (uid) => {
-        const q = prompt("Quantas moedas Blue?");
-        if(q) {
-            runTransaction(ref(db, `usuarios/${uid}/moedasBlue`), v => (v || 0) + parseInt(q));
-            alert("Saldo atualizado!"); abrirPerfilPublico(uid);
-        }
+    // --- CHAT E PROPOSTAS ---
+    window.abrirTroca = (img, dono, uid) => {
+        if(uid === window.user.uid) return alert("Seu post");
+        document.getElementById('imgDono').src = img;
+        document.getElementById('telaTroca').style.display = 'block';
     };
 
-    // --- POSTAGEM E NAVEGAÇÃO ---
+    window.confirmarTroca = () => {
+        const wpp = "5511983602504"; // Seu número configurado
+        const msg = encodeURIComponent(`Olá, vi seu item no ICE TROCAS e quero propor uma troca!`);
+        window.open(`https://wa.me/${wpp}?text=${msg}`, '_blank');
+        fecharTelas();
+    };
+
+    // --- OUTROS ---
     window.enviarPost = () => {
         const file = document.getElementById('filePost').files[0];
         const desc = document.getElementById('descPost').value;
-        if(!file) return alert("Selecione uma foto!");
+        if(!file) return alert("Selecione foto");
         const r = new FileReader();
         r.onload = (e) => {
             push(ref(db, 'posts'), { u1: window.user.nome, uid: window.user.uid, cargoUser: window.user.cargo, i1: e.target.result, d1: desc });
@@ -257,19 +275,18 @@
         r.readAsDataURL(file);
     };
 
+    onValue(ref(db, 'economia/valor_ice'), (s) => {
+        document.getElementById('btcValue').innerText = "ICE: $" + (s.val() || 0.7099).toFixed(4);
+    });
+
     window.abrirMeuPerfil = () => abrirPerfilPublico(window.user.uid);
     window.abrirMinhaCarteira = () => { fecharTelas(); document.getElementById('telaCarteira').style.display = 'block'; };
     window.abrirPostar = () => { fecharTelas(); document.getElementById('telaPostar').style.display = 'block'; };
     window.abrirFin = () => { fecharTelas(); document.getElementById('telaFinanceiro').style.display = 'block'; };
     window.fecharTelas = () => { document.querySelectorAll('#telaPostar,#telaTroca,#telaFinanceiro,#telaPerfil,#telaCarteira').forEach(t=>t.style.display='none'); };
-    window.abrirTroca = (img, dono, uid) => {
-        if(uid === window.user.uid) return alert("Seu post");
-        document.getElementById('imgDono').src = img;
-        document.getElementById('telaTroca').style.display = 'block';
-    };
     window.previewTroca = (i) => { const r = new FileReader(); r.onload = (e) => document.getElementById('imgMinha').src = e.target.result; r.readAsDataURL(i.files[0]); };
-    window.confirmarTroca = () => { alert("Proposta enviada!"); fecharTelas(); };
     window.comprarCargo = () => { navigator.clipboard.writeText("thiago00dudu@gmail.com"); alert("Pix Copiado!"); };
 </script>
 </body>
-</html>
+    </html>
+            
