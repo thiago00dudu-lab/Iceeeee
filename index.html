@@ -6,36 +6,47 @@
     <title>ICE TROCAS - Oficial</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <style>
-        :root { --bg: #f4f7f9; --sea: #0f3452; --blue: #1877f2; --gold: #FFD700; --white: #fff; --green: #25d366; --red: #ff4d4d; }
-        body { margin:0; font-family: sans-serif; background: var(--bg); padding-bottom: 90px; }
+        :root { --bg: #0d1117; --sea: #0f3452; --blue: #1877f2; --gold: #FFD700; --white: #fff; --green: #25d366; --red: #ff4d4d; --mod-blue: #00BFFF; }
+        body { margin:0; font-family: sans-serif; background: var(--bg); color: white; padding-bottom: 90px; overflow-x: hidden; }
         
         /* TELA DE LOGIN */
         #telaLogin { position: fixed; inset: 0; background: var(--sea); z-index: 5000; display: flex; align-items: center; justify-content: center; }
-        .login-box { background: white; padding: 30px; border-radius: 20px; width: 85%; max-width: 350px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+        .login-box { background: white; padding: 30px; border-radius: 20px; width: 85%; max-width: 350px; text-align: center; color: black; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
         .login-box input { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #ddd; box-sizing: border-box; }
-        
-        header { padding:15px; background: var(--white); display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:100; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .wrap { max-width: 500px; margin: auto; padding: 15px; }
-        
-        .card-timeline { background: var(--white); border-radius: 15px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); position: relative; }
-        .card-timeline img { width: 100%; height: 320px; object-fit: cover; cursor: pointer; }
 
-        .dupla-box { display: flex; gap: 10px; margin-top: 15px; position: relative; background: #f9f9f9; padding: 10px; border-radius: 12px; border: 1px solid #ddd; }
-        .lado { flex: 1; text-align: center; overflow: hidden; }
-        .lado img { width: 100%; height: 150px; object-fit: cover; border-radius: 8px; background: #eee; }
-        .vs-circle { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: var(--sea); color: white; border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; font-size: 12px; border: 3px solid white; z-index: 5; font-weight: bold; }
+        /* BANNER DO URSO POLAR */
+        .hero-banner { width: 100%; height: 250px; background: url('https://img2.unifans.io/67b9308608886.jpg') center/cover; position: relative; border-bottom: 3px solid var(--blue); }
+        .hero-overlay { position: absolute; bottom: 0; background: linear-gradient(transparent, rgba(0,0,0,0.9)); width: 100%; padding: 15px; box-sizing: border-box; }
 
-        .nav { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background: var(--sea); display: flex; gap: 20px; padding: 12px 25px; border-radius: 40px; z-index: 3000; box-shadow: 0 10px 20px rgba(0,0,0,0.2); align-items: center; }
-        .nav i { color: white; font-size: 20px; cursor: pointer; }
-
-        #telaPerfil, #telaFinanceiro, #telaPostar, #telaTroca, #telaCarteira { display: none; position: fixed; inset: 0; background: var(--bg); z-index: 2000; overflow-y: auto; }
-        .btn-adm { background: var(--sea); color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .btn-whats { background: var(--green); color: white; text-decoration: none; display: block; padding: 12px; border-radius: 8px; font-weight: bold; text-align: center; margin-top: 10px; }
+        /* ANÚNCIOS FLUTUANTES (COMPRA DE CARGOS) */
+        .ads-side { position: fixed; right: 10px; top: 40%; transform: translateY(-50%); z-index: 4000; display: flex; flex-direction: column; gap: 12px; }
+        .ad-circle { width: 70px; height: 70px; border-radius: 50%; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 9px; font-weight: bold; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.5); cursor: pointer; border: 2px solid rgba(255,255,255,0.3); transition: 0.3s; }
+        .ad-circle:active { transform: scale(0.9); }
         
-        .wallet-card { background: linear-gradient(135deg, var(--sea), var(--blue)); color: white; padding: 25px; border-radius: 20px; text-align: center; margin-bottom: 20px; }
-        .wallet-card h1 { font-size: 32px; margin: 10px 0; }
-        .adm-tools { display: flex; justify-content: space-around; padding: 10px; background: #eee; border-top: 1px solid #ddd; }
-        .adm-tools i { cursor: pointer; padding: 5px; }
+        /* ESTRELAS E BADGES DE HIERARQUIA */
+        .badge { font-size: 12px; font-weight: bold; display: block; margin-bottom: 5px; text-transform: uppercase; }
+        .badge-gold { color: var(--gold); }
+        .badge-red { color: var(--red); }
+        .badge-blue { color: var(--mod-blue); }
+
+        /* HEADER E FEED */
+        header { padding:15px; background: #161b22; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:100; border-bottom: 1px solid #30363d; }
+        .wrap { max-width: 500px; margin: auto; }
+        .card-timeline { background: #161b22; border-radius: 15px; overflow: hidden; margin: 15px; border: 1px solid #30363d; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .card-timeline img { width: 100%; height: 320px; object-fit: cover; }
+        .btn-delete-post { position: absolute; top: 10px; right: 10px; background: rgba(255,0,0,0.8); color: white; border: none; padding: 8px; border-radius: 50%; cursor: pointer; z-index: 10; }
+
+        /* NAVEGAÇÃO INFERIOR */
+        .nav { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background: #161b22; border: 1px solid #30363d; display: flex; gap: 20px; padding: 12px 25px; border-radius: 40px; z-index: 3000; box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
+        .nav i { color: #8b949e; font-size: 22px; cursor: pointer; }
+        
+        /* BOTÕES DE ADM NO FEED */
+        .adm-tools { display: flex; justify-content: space-around; padding: 10px; background: #0d1117; border-top: 1px solid #30363d; gap: 5px; }
+        .adm-tools button { border: none; padding: 6px; border-radius: 4px; color: white; font-size: 10px; font-weight: bold; flex: 1; cursor: pointer; }
+        
+        /* TELAS FULLSCREEN */
+        .tela-full { display: none; position: fixed; inset: 0; background: var(--bg); z-index: 2000; overflow-y: auto; padding: 20px; box-sizing: border-box; }
+        .btn-action { background: var(--blue); color: white; border: none; padding: 15px; border-radius: 8px; width: 100%; font-weight: bold; margin-top: 10px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -43,87 +54,76 @@
 <div id="telaLogin">
     <div class="login-box">
         <h2 style="color:var(--sea); margin-top:0;">ICE LOGIN</h2>
-        <input type="text" id="userIn" placeholder="E-mail ou Usuário">
+        <input type="text" id="userIn" placeholder="Usuário ou ADM">
         <input type="password" id="passIn" placeholder="Senha">
-        <button class="btn-adm" onclick="fazerLogin()">ENTRAR</button>
-        <hr style="margin: 15px 0; border: 0; border-top: 1px solid #eee;">
-        <button class="btn-adm" style="background:#db4437;" onclick="loginGoogle()">GOOGLE AUTH</button>
+        <button class="btn-action" style="background:var(--sea);" onclick="fazerLogin()">ENTRAR</button>
+        <button class="btn-action" style="background:#db4437;" onclick="loginGoogle()">GOOGLE AUTH</button>
+    </div>
+</div>
+
+<div class="ads-side">
+    <div class="ad-circle" style="background: var(--mod-blue);" onclick="comprarCargo('MOD', 20)">
+        <i class="fas fa-star"></i> MOD<br>R$ 20 ou<br>20 BLUE
+    </div>
+    <div class="ad-circle" style="background: var(--red);" onclick="comprarCargo('ADM2', 1000)">
+        <i class="fas fa-star"></i> ADM 2<br>R$ 1k ou<br>1k BLUE
+    </div>
+    <div class="ad-circle" style="background: var(--gold); color: black;" onclick="comprarCargo('ADM1', 'ice')">
+        <i class="fas fa-crown"></i> DONO<br>VALOR<br>ICE $
     </div>
 </div>
 
 <div id="app" style="display:none;">
     <header>
         <div><b>ICE TROCAS</b><br><small id="btcValue" style="color:var(--blue); font-weight: bold;"></small></div>
-        <button onclick="deslogar()" style="border:none; background:none; color:red; font-weight:bold;">SAIR</button>
+        <button onclick="deslogar()" style="border:none; background:none; color:red; font-weight:bold; cursor:pointer;">SAIR</button>
     </header>
+
+    <div class="hero-banner">
+        <div class="hero-overlay">
+            <h2 style="margin:0; font-size: 18px;">O que vamos trocar hoje?</h2>
+            <small>Aceitamos Reais ou BLUE - Mesmo Valor!</small>
+        </div>
+    </div>
     
     <div class="wrap" id="feed"></div>
-    
+
     <div class="nav">
         <i class="fas fa-home" onclick="fecharTelas()"></i>
-        <i class="fas fa-plus-circle" onclick="abrirPostar()" style="font-size: 28px; color: var(--blue);"></i>
-        <i class="fas fa-university" onclick="abrirFin()"></i>
-        <i class="fas fa-wallet" onclick="abrirCarteira()" style="color: #00d4ff;"></i>
-        <i class="fas fa-user-circle" onclick="abrirPerfil()"></i>
+        <i class="fas fa-plus-circle" onclick="abrirPostar()" style="color: var(--blue);"></i>
+        <i class="fas fa-wallet" onclick="abrirCarteira()"></i>
+        <i class="fas fa-user-circle" onclick="alert('Usuário: ' + window.user.nome + '\nCargo: ' + window.user.cargo)"></i>
     </div>
 </div>
 
-<div id="telaPostar">
+<div id="telaPostar" class="tela-full">
     <div class="wrap">
-        <h2 style="color:var(--sea);">O que você quer trocar?</h2>
-        <div style="background:white; padding:20px; border-radius:15px;">
-            <input type="file" id="filePost" accept="image/*" style="margin-bottom:15px;">
-            <input type="text" id="descPost" placeholder="Título ou Descrição" style="width:100%; padding:10px; margin-bottom:10px; border-radius:5px; border:1px solid #ccc;">
-            <button class="btn-adm" onclick="enviarPost()">POSTAR AGORA</button>
-            <button onclick="fecharTelas()" style="width:100%; border:none; background:none; color:red; margin-top:10px;">Cancelar</button>
-        </div>
+        <h2>Nova Troca</h2>
+        <p>Selecione a foto do que quer trocar:</p>
+        <input type="file" id="filePost" accept="image/*" style="margin-bottom:15px; color:white;">
+        <input type="text" id="descPost" placeholder="Ex: Troco controle de PS5 por jogos..." style="width:100%; padding:15px; border-radius:8px; background:#161b22; color:white; border:1px solid #30363d; box-sizing: border-box;">
+        <button class="btn-action" onclick="enviarPost()">PUBLICAR AGORA</button>
+        <button onclick="fecharTelas()" style="width:100%; background:none; color:red; border:none; margin-top:20px; cursor:pointer;">CANCELAR</button>
     </div>
 </div>
 
-<div id="telaTroca">
-    <div class="wrap">
-        <h3 style="text-align:center;">Propor Troca</h3>
-        <div class="dupla-box">
-            <div class="lado"><small>Dono</small><img id="imgDono" src=""></div>
-            <div class="vs-circle">VS</div>
-            <div class="lado"><small>Você</small><label><img id="imgMinha" src="https://via.placeholder.com/150?text=Escolher+Foto"><input type="file" id="fileMinha" accept="image/*" style="display:none;" onchange="previewTroca(this)"></label></div>
+<div id="telaCarteira" class="tela-full">
+    <div class="wrap" style="text-align: center;">
+        <div style="background:linear-gradient(135deg, var(--sea), var(--blue)); padding:50px 20px; border-radius:25px; box-shadow: 0 10px 20px rgba(0,0,0,0.4);">
+            <p style="text-transform: uppercase; letter-spacing: 1px; opacity: 0.8;">Meu Saldo Blue</p>
+            <h1 id="saldoBlue" style="font-size: 55px; margin: 10px 0;">0</h1>
+            <small>1 BLUE vale R$ 1,00</small>
         </div>
-        <button class="btn-adm" style="background:var(--green);" onclick="confirmarTroca()">ENVIAR PROPOSTA NO CHAT</button>
-        <button onclick="fecharTelas()" style="width:100%; border:none; background:none; color:red; margin-top:10px;">Voltar</button>
+        <button class="btn-action" style="background:white; color:black; margin-top:30px;" onclick="fecharTelas()">VOLTAR PARA O FEED</button>
     </div>
 </div>
-
-<div id="telaFinanceiro">
-    <div class="wrap">
-        <h2 style="text-align:center;">Loja & Suporte</h2>
-        <div class="card-financeiro">
-            <h3>MODERADOR</h3><p>R$ 20,00</p>
-            <button class="btn-adm" onclick="comprarCargo(0.0050)">COPIAR PIX R$ 20</button>
-        </div>
-        <a href="https://wa.me/5511983602504" class="btn-whats">WHATSAPP SUPORTE</a>
-        <button onclick="fecharTelas()" style="width:100%; border:none; background:none; color:red; margin-top:10px;">Voltar</button>
-    </div>
-</div>
-
-<div id="telaCarteira">
-    <div class="wrap">
-        <h2 style="text-align:center;">Minha Carteira</h2>
-        <div class="wallet-card">
-            <p>Saldo Blue</p>
-            <h1 id="saldoBlue">0</h1>
-            <small>ID: <span id="userIdDisplay">---</span></small>
-        </div>
-        <button onclick="fecharTelas()" class="btn-adm">VOLTAR AO FEED</button>
-    </div>
-</div>
-
-<div id="telaPerfil"><div class="wrap" id="perfConteudo"></div></div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, onValue, update, set, push, runTransaction, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getDatabase, ref, onValue, update, set, push, runTransaction, get, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
+    // CONFIGURAÇÃO FIREBASE (DATABASE ATIVO)
     const firebaseConfig = { apiKey: "AIzaSyDM5M1_O-wfcBDGYJIiYgiHVbqhiKC-0dw", databaseURL: "https://icek-9cdd7-default-rtdb.firebaseio.com", projectId: "icek-9cdd7" };
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
@@ -131,139 +131,154 @@
     const provider = new GoogleAuthProvider();
 
     window.user = null;
+    let iceCotacao = 0.7099;
 
-    // LÓGICA DE LOGIN CORRIGIDA
-    window.fazerLogin = async () => {
+    // SISTEMA DE LOGIN MASTER (ADM/1533)
+    window.fazerLogin = () => {
         const u = document.getElementById('userIn').value;
         const p = document.getElementById('passIn').value;
-
         if(u.toUpperCase() === "ADM" && p === "1533") {
-            const masterData = { nome: "ADM MASTER", cargo: "ADM1", uid: "master", moedasBlue: 999999 };
-            localStorage.setItem('ice_master', JSON.stringify(masterData));
-            window.user = masterData;
-            mostrarApp();
+            const master = { nome: "ADM MASTER", cargo: "ADM1", uid: "master", moedasBlue: 999999 };
+            localStorage.setItem('ice_master', JSON.stringify(master));
+            location.reload();
         } else {
-            // Tenta login normal via Firebase se desejar, ou apenas Google
-            alert("Para usuários comuns, use GOOGLE AUTH.");
+            alert("Login mestre incorreto. Use Google ou verifique os dados.");
         }
     };
+    
+    window.loginGoogle = () => signInWithPopup(auth, provider);
 
-    window.loginGoogle = () => {
-        signInWithPopup(auth, provider).catch(e => console.log(e));
-    };
+    // PERSISTÊNCIA DE LOGIN E CARGOS
+    onAuthStateChanged(auth, async (u) => {
+        const local = localStorage.getItem('ice_master');
+        if (local) { window.user = JSON.parse(local); mostrarApp(); } 
+        else if (u) {
+            const snap = await get(ref(db, `usuarios/${u.uid}`));
+            let dados = snap.val() || { nome: u.displayName, cargo: 'user', moedasBlue: 0, uid: u.uid, status: 'ativo' };
+            if(dados.status === 'banido') { alert("Sua conta está banida!"); signOut(auth); return; }
+            if(!snap.val()) set(ref(db, `usuarios/${u.uid}`), dados);
+            window.user = dados; mostrarApp();
+        }
+    });
 
     function mostrarApp() {
         document.getElementById('telaLogin').style.display = 'none';
         document.getElementById('app').style.display = 'block';
-        carregarDadosUsuario();
-    }
-
-    onAuthStateChanged(auth, async (u) => {
-        const localMaster = localStorage.getItem('ice_master');
-        
-        if (localMaster) {
-            window.user = JSON.parse(localMaster);
-            mostrarApp();
-        } else if (u) {
-            const snap = await get(ref(db, `usuarios/${u.uid}`));
-            let dados = snap.val() || { nome: u.displayName, cargo: 'user', moedasBlue: 0, uid: u.uid };
-            if(!snap.val()) set(ref(db, `usuarios/${u.uid}`), dados);
-            window.user = dados;
-            mostrarApp();
-        } else {
-            document.getElementById('telaLogin').style.display = 'flex';
-            document.getElementById('app').style.display = 'none';
-        }
-    });
-
-    function carregarDadosUsuario() {
-        if(window.user.uid !== "master") {
-            onValue(ref(db, `usuarios/${window.user.uid}`), (s) => {
-                if(s.exists()) {
-                    window.user = s.val();
-                    document.getElementById('saldoBlue').innerText = window.user.moedasBlue || 0;
-                }
+        onValue(ref(db, 'posts'), carregarFeed);
+        // Atualiza Valor do ICE no Header
+        onValue(ref(db, 'economia/valor_ice'), s => {
+            iceCotacao = s.val() || 0.7099;
+            document.getElementById('btcValue').innerText = "ICE: $" + iceCotacao.toFixed(4);
+        });
+        // Atualiza Saldo Blue em tempo real
+        if(window.user.uid !== 'master') {
+            onValue(ref(db, `usuarios/${window.user.uid}`), s => { 
+                document.getElementById('saldoBlue').innerText = s.val()?.moedasBlue || 0; 
             });
-        } else {
-            document.getElementById('saldoBlue').innerText = "INFINITO";
-        }
-        document.getElementById('userIdDisplay').innerText = window.user.uid.substring(0,8);
+        } else { document.getElementById('saldoBlue').innerText = "∞"; }
     }
 
-    window.deslogar = () => { 
-        signOut(auth); 
-        localStorage.removeItem('ice_master'); 
-        location.reload(); 
-    };
-
-    // --- RESTANTE DAS FUNÇÕES DO FEED E POST (MANTIDAS IGUAIS) ---
-    onValue(ref(db, 'economia/valor_ice'), (s) => {
-        document.getElementById('btcValue').innerText = "ICE: $" + (s.val() || 0.7099).toFixed(4);
-    });
-
-    onValue(ref(db, 'posts'), (snap) => {
+    // FEED COM HIERARQUIA DE ESTRELAS
+    function carregarFeed(snap) {
         const f = document.getElementById('feed'); f.innerHTML = "";
         snap.forEach(c => {
             const p = c.val();
-            let ferramentasAdm = "";
-            if(window.user && ["MOD", "ADM2", "ADM1"].includes(window.user.cargo)) {
-                ferramentasAdm = `
-                    <div class="adm-tools">
-                        <i class="fas fa-chevron-up" style="color:green" onclick="mudarCargo('${p.uid}', 1)"></i>
-                        <i class="fas fa-chevron-down" style="color:red" onclick="mudarCargo('${p.uid}', -1)"></i>
-                        ${window.user.cargo === 'ADM1' ? `<i class="fas fa-donate" style="color:var(--blue)" onclick="addMoeda('${p.uid}')"></i>` : ''}
-                    </div>
-                `;
+            const pid = c.key;
+            
+            // Badge de Cargos com Estrelas Coloridas
+            let badge = "";
+            if(p.cargoUser === 'ADM1') badge = `<span class="badge badge-gold"><i class="fas fa-star"></i> ADM OURO</span>`;
+            else if(p.cargoUser === 'ADM2') badge = `<span class="badge badge-red"><i class="fas fa-star"></i> ADM 2</span>`;
+            else if(p.cargoUser === 'MOD') badge = `<span class="badge badge-blue"><i class="fas fa-star"></i> MODERADOR</span>`;
+
+            // Ferramentas Administrativas (Poderes)
+            let ferramentas = "";
+            if(window.user.cargo !== 'user') {
+                ferramentas = `<div class="adm-tools">
+                    <button style="background:var(--green)" onclick="mudarCargo('${p.uid}', 1)">SUBIR</button>
+                    <button style="background:orange" onclick="mudarCargo('${p.uid}', -1)">DESCER</button>
+                    ${window.user.cargo === 'ADM1' ? `<button style="background:var(--blue)" onclick="gerirMoeda('${p.uid}')">BLUE</button>` : ''}
+                    <button style="background:var(--red)" onclick="banirUsuario('${p.uid}')">BAN</button>
+                </div>`;
             }
+
             const div = document.createElement('div');
             div.className = "card-timeline";
             div.innerHTML = `
-                <img src="${p.i1}" onclick="abrirTroca('${p.i1}', '${p.u1}', '${p.uid}')">
-                <div style="padding:15px;"><b>${p.u1}</b> <small style="color:var(--blue)">[${p.cargoUser || 'user'}]</small><br><small>${p.d1 || ''}</small></div>
-                ${ferramentasAdm}
+                ${(window.user.cargo !== 'user') ? `<button class="btn-delete-post" onclick="apagarPost('${pid}')"><i class="fas fa-trash"></i></button>` : ''}
+                <img src="${p.i1}">
+                <div style="padding:15px;">
+                    ${badge}
+                    <b>${p.u1}</b> <br>
+                    <small style="color:#8b949e;">${p.d1}</small>
+                </div>
+                ${ferramentas}
             `;
             f.prepend(div);
         });
-    });
+    }
+
+    // AÇÕES DE MODERAÇÃO E MOEDAS
+    window.apagarPost = (id) => { if(confirm("Apagar postagem permanentemente?")) remove(ref(db, `posts/${id}`)); };
+    
+    window.banirUsuario = (uid) => { 
+        if(uid === 'master') return;
+        if(confirm("Deseja BANIR este usuário do sistema?")) update(ref(db, `usuarios/${uid}`), { status: 'banido' }); 
+    };
+
+    window.gerirMoeda = (uid) => { 
+        let v = prompt("Quantos BLUE (Moedas) deseja adicionar ou tirar?\nUse sinal de - para tirar (Ex: -50)"); 
+        if(v) runTransaction(ref(db, `usuarios/${uid}/moedasBlue`), val => (val || 0) + parseInt(v)); 
+    };
 
     window.mudarCargo = async (uid, dir) => {
-        if(!uid || uid === "master") return;
+        if(uid === 'master') return;
         const cargos = ["user", "MOD", "ADM2", "ADM1"];
-        const snap = await get(ref(db, `usuarios/${uid}`));
-        const atual = snap.val()?.cargo || "user";
-        let idx = cargos.indexOf(atual) + dir;
-        if(idx >= 0 && idx < cargos.length) {
-            update(ref(db, `usuarios/${uid}`), { cargo: cargos[idx] });
-            alert("Cargo do usuário atualizado!");
+        const s = await get(ref(db, `usuarios/${uid}`));
+        let nivAtual = cargos.indexOf(s.val().cargo);
+        let meuNiv = cargos.indexOf(window.user.cargo);
+        let novoNiv = nivAtual + dir;
+
+        if(novoNiv >= 0 && novoNiv < cargos.length) {
+            // Regra: Somente ADM1 sobe para ADM1. Outros só sobem até o seu nível.
+            if(window.user.cargo !== 'ADM1' && novoNiv >= meuNiv && dir > 0) return alert("Sem autoridade!");
+            update(ref(db, `usuarios/${uid}`), { cargo: cargos[novoNiv] });
         }
     };
 
-    window.addMoeda = (uid) => {
-        const q = prompt("Quantidade de moedas BLUE:");
-        if(q) runTransaction(ref(db, `usuarios/${uid}/moedasBlue`), v => (v || 0) + parseInt(q));
+    // COMPRA DE CARGOS PIX / WHATSAPP
+    window.comprarCargo = (cargo, preco) => {
+        let valorTexto = preco === 'ice' ? "Preço calculado pelo ICE $" + iceCotacao : "R$ " + preco + " ou " + preco + " BLUE";
+        navigator.clipboard.writeText("thiago00dudu@gmail.com");
+        alert("CHAVE PIX COPIADA: thiago00dudu@gmail.com\nCargo: " + cargo + "\nValor: " + valorTexto + "\n\nEnvie o comprovante no WhatsApp agora.");
+        window.open(`https://wa.me/5511983602504?text=Olá, paguei o cargo ${cargo}. Segue o comprovante.`);
     };
 
+    // FUNÇÕES DE NAVEGAÇÃO E POSTAGEM
     window.enviarPost = () => {
         const file = document.getElementById('filePost').files[0];
         const desc = document.getElementById('descPost').value;
-        if(!file || !window.user) return alert("Erro ao postar");
+        if(!file) return alert("Escolha uma imagem!");
+        
         const r = new FileReader();
         r.onload = (e) => {
-            push(ref(db, 'posts'), { u1: window.user.nome, uid: window.user.uid, cargoUser: window.user.cargo, i1: e.target.result, d1: desc });
+            push(ref(db, 'posts'), { 
+                u1: window.user.nome, 
+                uid: window.user.uid, 
+                cargoUser: window.user.cargo, 
+                i1: e.target.result, 
+                d1: desc 
+            });
             fecharTelas();
+            document.getElementById('descPost').value = "";
         };
         r.readAsDataURL(file);
     };
 
-    window.abrirPostar = () => { document.getElementById('telaPostar').style.display = 'block'; };
-    window.abrirFin = () => { fecharTelas(); document.getElementById('telaFinanceiro').style.display = 'block'; };
-    window.abrirCarteira = () => { fecharTelas(); document.getElementById('telaCarteira').style.display = 'block'; };
-    window.fecharTelas = () => { document.querySelectorAll('#telaPostar,#telaTroca,#telaFinanceiro,#telaPerfil,#telaCarteira').forEach(t=>t.style.display='none'); };
-    window.abrirPerfil = () => { alert("Perfil: " + window.user.nome + "\nCargo: " + window.user.cargo); };
-    window.abrirTroca = (img, dono, uid) => { if(uid === window.user.uid) return; document.getElementById('imgDono').src = img; document.getElementById('telaTroca').style.display = 'block'; };
-    window.previewTroca = (input) => { const r = new FileReader(); r.onload = (e) => { document.getElementById('imgMinha').src = e.target.result; }; r.readAsDataURL(input.files[0]); };
-    window.confirmarTroca = () => { alert("Proposta enviada!"); fecharTelas(); };
-    window.comprarCargo = (p) => { navigator.clipboard.writeText("thiago00dudu@gmail.com"); alert("Pix Copiado!"); };
+    window.deslogar = () => { localStorage.clear(); signOut(auth); location.reload(); };
+    window.fecharTelas = () => { document.querySelectorAll('.tela-full').forEach(t=>t.style.display='none'); };
+    window.abrirPostar = () => { document.getElementById('telaPostar').style.display='block'; };
+    window.abrirCarteira = () => { document.getElementById('telaCarteira').style.display='block'; };
 </script>
 </body>
 </html>
