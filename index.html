@@ -15,15 +15,12 @@
         .login-box input { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #ddd; box-sizing: border-box; }
 
         /* ESTRELAS */
-        .star-mod { color: var(--mod-blue); margin-left: 5px; }
-        .star-adm2 { color: var(--red); margin-left: 5px; }
-        .star-adm1 { color: var(--gold); margin-left: 5px; }
+        .star-mod { color: var(--mod-blue); }
+        .star-adm2 { color: var(--red); }
+        .star-adm1 { color: var(--gold); }
 
         /* LAYOUT */
         header { padding:15px; background: #161b22; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:100; border-bottom: 1px solid #30363d; }
-        .hero-banner { width: 100%; height: 200px; background: url('https://img2.unifans.io/67b9308608886.jpg') center/cover; position: relative; }
-        .hero-overlay { position: absolute; bottom: 0; background: linear-gradient(transparent, rgba(0,0,0,0.9)); width: 100%; padding: 15px; box-sizing: border-box; }
-
         .card-timeline { background: #161b22; border-radius: 15px; overflow: hidden; margin: 15px; border: 1px solid #30363d; }
         .card-timeline img { width: 100%; height: 300px; object-fit: cover; }
 
@@ -35,16 +32,12 @@
         .btn-action { background: var(--blue); color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; font-weight: bold; margin-top: 10px; cursor: pointer; }
         
         /* PAINEL ADM */
-        .painel-adm { background: #1c2128; border: 1px solid var(--gold); padding: 15px; border-radius: 12px; margin-top: 15px; text-align: left; }
-        .painel-adm h4 { margin: 0 0 10px 0; color: var(--gold); font-size: 14px; text-transform: uppercase; }
+        .painel-adm { background: #1c2128; border: 1px solid var(--gold); padding: 15px; border-radius: 12px; margin-top: 15px; }
         .btn-adm-tool { padding: 8px; font-size: 11px; margin: 2px; border-radius: 5px; border: none; cursor: pointer; font-weight: bold; }
 
-        /* CHAT */
-        #chatBox { height: 350px; overflow-y: auto; background: #0d1117; padding: 10px; display: flex; flex-direction: column; }
-        .msg { margin-bottom: 10px; padding: 10px; border-radius: 10px; max-width: 80%; }
-        .msg-me { background: var(--blue); align-self: flex-end; }
-        .msg-them { background: var(--gray); align-self: flex-start; }
-        .msg img { max-width: 100%; border-radius: 5px; margin-top: 5px; }
+        /* GALERIA PERFIL */
+        .grid-postagens { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; margin-top: 15px; }
+        .grid-postagens img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 5px; background: #30363d; }
     </style>
 </head>
 <body>
@@ -55,7 +48,6 @@
         <input type="text" id="userIn" placeholder="E-mail">
         <input type="password" id="passIn" placeholder="Senha">
         <button class="btn-action" onclick="fazerLogin()">ENTRAR</button>
-        <button class="btn-action" style="background:#db4437;" onclick="loginGoogle()">GOOGLE</button>
     </div>
 </div>
 
@@ -64,13 +56,7 @@
         <b>ICE TROCAS</b>
         <div onclick="abrirMeuPerfil()"><i class="fas fa-user-circle" style="font-size:24px;"></i></div>
     </header>
-
-    <div class="hero-banner">
-        <div class="hero-overlay"><h2>Feed de Trocas</h2></div>
-    </div>
-
     <div id="feed"></div>
-
     <div class="nav">
         <i class="fas fa-home active" onclick="fecharTelas()"></i>
         <i class="fas fa-plus-circle" onclick="abrirPostar()" style="color:var(--blue)"></i>
@@ -80,19 +66,30 @@
 
 <div id="telaPerfil" class="tela-full">
     <div id="perfilConteudo"></div>
+    
     <div id="painelAdmControle" style="display:none;" class="painel-adm">
-        <h4><i class="fas fa-crown"></i> Painel de Gestão ADM1</h4>
-        <div style="display: flex; flex-wrap: wrap; gap: 5px;">
-            <button class="btn-adm-tool" style="background:var(--mod-blue);" onclick="admAlterarCargo('MOD')">DAR MOD</button>
-            <button class="btn-adm-tool" style="background:var(--red);" onclick="admAlterarCargo('ADM2')">DAR ADM2</button>
-            <button class="btn-adm-tool" style="background:var(--gray);" onclick="admAlterarCargo('user')">REBAIXAR</button>
-            <button class="btn-adm-tool" style="background:var(--gold); color:black;" onclick="admAlterarSaldo()">ADD/TIRAR BLUE</button>
-            <button class="btn-adm-tool" style="background:black; color:white;" onclick="admAlterarStatus('banido')">BANIR USUÁRIO</button>
-            <button class="btn-adm-tool" style="background:var(--green); color:white;" onclick="admAlterarStatus('ativo')">DESBANIR</button>
-        </div>
+        <h4 style="color:var(--gold); margin:0 0 10px 0;">GESTÃO ADM1</h4>
+        <button class="btn-adm-tool" style="background:var(--mod-blue);" onclick="admAlterarCargo('MOD')">DAR MOD</button>
+        <button class="btn-adm-tool" style="background:var(--red);" onclick="admAlterarCargo('ADM2')">DAR ADM2</button>
+        <button class="btn-adm-tool" style="background:var(--gray); color:white;" onclick="admAlterarCargo('user')">REBAIXAR</button>
+        <button class="btn-adm-tool" style="background:var(--gold); color:black;" onclick="admAlterarSaldo()">ADD/TIRAR BLUE</button>
+        <button class="btn-adm-tool" style="background:black; color:white;" onclick="admAlterarStatus('banido')">BANIR</button>
     </div>
-    <div id="minhasPostagens" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; margin-top: 20px;"></div>
+
+    <h4 style="margin: 20px 0 10px 0; border-bottom: 1px solid #30363d; padding-bottom: 5px;">Minhas Trocas</h4>
+    <div id="minhasPostagens" class="grid-postagens"></div>
+
     <button class="btn-action" style="background:var(--gray);" onclick="fecharTelas()">VOLTAR</button>
+</div>
+
+<div id="telaEditPerfil" class="tela-full">
+    <h2>Configurar Perfil</h2>
+    <p>Foto de Perfil:</p>
+    <input type="file" id="editFoto" accept="image/*">
+    <p>Bio / Descrição:</p>
+    <textarea id="editBio" style="width:100%; height:80px; background:#161b22; color:white; border:1px solid #30363d; border-radius:8px; padding:10px;"></textarea>
+    <button class="btn-action" onclick="salvarPerfil()">SALVAR ALTERAÇÕES</button>
+    <button class="btn-action" style="background:none" onclick="document.getElementById('telaEditPerfil').style.display='none'">CANCELAR</button>
 </div>
 
 <div id="telaPostar" class="tela-full">
@@ -105,12 +102,8 @@
 
 <div id="telaChat" class="tela-full">
     <h3 id="chatTitle">Chat</h3>
-    <div id="chatBox"></div>
-    <div style="display:flex; gap:5px;">
-        <label style="background:var(--gray); padding:12px; border-radius:8px; cursor:pointer;">
-            <i class="fas fa-image"></i>
-            <input type="file" id="midiaChat" accept="image/*" style="display:none;" onchange="enviarMidiaChat(this)">
-        </label>
+    <div id="chatBox" style="height:300px; overflow-y:auto; display:flex; flex-direction:column; gap:10px; padding:10px; background:#0d1117;"></div>
+    <div style="display:flex; gap:5px; margin-top:10px;">
         <input type="text" id="msgIn" placeholder="Mensagem..." style="flex:1; padding:10px; border-radius:8px; border:none;">
         <button onclick="enviarMensagem()" style="background:var(--blue); border:none; color:white; padding:10px; border-radius:8px;"><i class="fas fa-paper-plane"></i></button>
     </div>
@@ -119,7 +112,7 @@
 
 <div id="telaCarteira" class="tela-full">
     <div style="background:linear-gradient(135deg, var(--sea), var(--blue)); padding:40px; border-radius:20px; text-align:center;">
-        <p>Saldo em Mãos</p>
+        <p>Saldo Atual</p>
         <h1 id="saldoBlue">0</h1>
         <small>BLUE COINS</small>
     </div>
@@ -129,17 +122,15 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getDatabase, ref, onValue, update, set, push, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
     const firebaseConfig = { apiKey: "AIzaSyDM5M1_O-wfcBDGYJIiYgiHVbqhiKC-0dw", databaseURL: "https://icek-9cdd7-default-rtdb.firebaseio.com", projectId: "icek-9cdd7" };
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
     const auth = getAuth(app);
-    const provider = new GoogleAuthProvider();
 
     window.user = null;
     let targetUidGlobal = null;
-    let chatAtivoId = null;
 
     function renderEstrela(cargo) {
         if(cargo === 'MOD') return '<i class="fas fa-star star-mod"></i>';
@@ -148,32 +139,26 @@
         return '';
     }
 
-    // LOGIN
     window.fazerLogin = async () => {
         const u = document.getElementById('userIn').value;
         const p = document.getElementById('passIn').value;
         if(u.toUpperCase() === "ADM" && p === "1533") {
-            window.user = { nome: "DONO ICE", cargo: "ADM1", uid: "master", moedasBlue: 999999, foto: 'https://cdn-icons-png.flaticon.com/512/711/711769.png' };
+            window.user = { nome: "DONO ICE", cargo: "ADM1", uid: "master", moedasBlue: 999999, foto: '' };
             localStorage.setItem('ice_master', JSON.stringify(window.user));
             location.reload(); return;
         }
-        try { await signInWithEmailAndPassword(auth, u, p); } 
-        catch (e) { try { await createUserWithEmailAndPassword(auth, u, p); } catch (err) { alert("Erro de acesso."); } }
+        try { await signInWithEmailAndPassword(auth, u, p); } catch (e) { await createUserWithEmailAndPassword(auth, u, p); }
     };
-    window.loginGoogle = () => signInWithPopup(auth, provider);
 
     onAuthStateChanged(auth, async (u) => {
         const local = localStorage.getItem('ice_master');
         if (local) { window.user = JSON.parse(local); entrarNoApp(); } 
         else if (u) {
             const snap = await get(ref(db, `usuarios/${u.uid}`));
-            let dados = snap.val();
-            if(dados && dados.status === 'banido') { alert("Você foi banido!"); return; }
-            if(!dados) {
-                dados = { nome: u.displayName || "Membro", cargo: 'user', moedasBlue: 0, uid: u.uid, status: 'ativo', foto: u.photoURL || '' };
-                await set(ref(db, `usuarios/${u.uid}`), dados);
-            }
-            window.user = dados; entrarNoApp();
+            window.user = snap.val() || { nome: "Novo Membro", cargo: 'user', uid: u.uid, moedasBlue: 0, status: 'ativo' };
+            if(!snap.exists()) await set(ref(db, `usuarios/${u.uid}`), window.user);
+            if(window.user.status === 'banido') { alert("Banido!"); return; }
+            entrarNoApp();
         }
     });
 
@@ -184,17 +169,15 @@
             const feed = document.getElementById('feed'); feed.innerHTML = "";
             snap.forEach(p => {
                 const post = p.val();
-                const div = document.createElement('div');
-                div.className = "card-timeline";
-                div.onclick = () => abrirPerfilAlheio(post.uid);
-                div.innerHTML = `<img src="${post.i1}"><div style="padding:15px;"><b>${post.u1} ${renderEstrela(post.cargo)}</b><br><small>${post.d1}</small></div>`;
-                feed.prepend(div);
+                feed.innerHTML = `<div class="card-timeline" onclick="abrirPerfilAlheio('${post.uid}')">
+                    <img src="${post.i1}">
+                    <div style="padding:15px;"><b>${post.u1 || 'Usuário'} ${renderEstrela(post.cargo)}</b><br><small>${post.d1}</small></div>
+                </div>` + feed.innerHTML;
             });
         });
         onValue(ref(db, `usuarios/${window.user.uid}`), s => { if(s.exists()) document.getElementById('saldoBlue').innerText = s.val().moedasBlue || 0; });
     }
 
-    // GESTÃO ADM1 (SUAS REQUISIÇÕES)
     window.abrirPerfilAlheio = async (uid) => {
         targetUidGlobal = uid;
         const snap = await get(ref(db, `usuarios/${uid}`));
@@ -206,82 +189,66 @@
 
         document.getElementById('perfilConteudo').innerHTML = `
             <div style="text-align:center; padding:20px;">
-                <img src="${t.foto || 'https://www.w3schools.com/howto/img_avatar.png'}" style="width:100px; height:100px; border-radius:50%; border:3px solid var(--blue);">
-                <h2>${t.nome} ${renderEstrela(t.cargo)}</h2>
+                <img src="${t.foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}" style="width:100px; height:100px; border-radius:50%; border:3px solid var(--blue); object-fit:cover;">
+                <h2 style="margin:10px 0 5px 0;">${renderEstrela(t.cargo)}<br>${t.nome || 'Sem Nome'}</h2>
+                <p style="color:#8b949e; font-size:14px; margin-bottom:15px;">${t.bio || 'Sem bio definida.'}</p>
                 <div style="display:flex; justify-content:space-around; margin:20px 0;">
                     <div><b>${t.moedasBlue || 0}</b><br><small>BLUE</small></div>
                     <div><b>${t.status || 'ativo'}</b><br><small>STATUS</small></div>
                 </div>
-                ${!eMeu ? `<button class="btn-action" onclick="abrirChat('${t.uid}', '${t.nome}')">CHAMAR NO CHAT</button>` : ''}
+                ${eMeu ? `<button class="btn-action" style="background:#30363d" onclick="document.getElementById('telaEditPerfil').style.display='block'">CONFIGURAR PERFIL</button>` : `<button class="btn-action" onclick="abrirChat('${t.uid}', '${t.nome}')">NEGOCIAR</button>`}
             </div>`;
+
+        // Carregar fotos dessa pessoa
+        const postsSnap = await get(ref(db, 'posts'));
+        const grid = document.getElementById('minhasPostagens'); grid.innerHTML = "";
+        postsSnap.forEach(p => { if(p.val().uid === uid) grid.innerHTML += `<img src="${p.val().i1}">`; });
+
         document.getElementById('telaPerfil').style.display = 'block';
     };
 
-    window.admAlterarCargo = async (novoCargo) => {
-        await update(ref(db, `usuarios/${targetUidGlobal}`), { cargo: novoCargo });
-        alert("Cargo alterado para: " + novoCargo);
-        abrirPerfilAlheio(targetUidGlobal);
+    window.salvarPerfil = () => {
+        const bio = document.getElementById('editBio').value;
+        const file = document.getElementById('editFoto').files[0];
+        const updates = { bio: bio };
+        if(file) {
+            const r = new FileReader();
+            r.onload = async (e) => { 
+                updates.foto = e.target.result; 
+                await update(ref(db, `usuarios/${window.user.uid}`), updates);
+                alert("Perfil Atualizado!"); location.reload();
+            };
+            r.readAsDataURL(file);
+        } else {
+            update(ref(db, `usuarios/${window.user.uid}`), updates).then(() => { alert("Bio atualizada!"); location.reload(); });
+        }
     };
 
-    window.admAlterarStatus = async (novoStatus) => {
-        await update(ref(db, `usuarios/${targetUidGlobal}`), { status: novoStatus });
-        alert("Usuário está agora: " + novoStatus);
-        abrirPerfilAlheio(targetUidGlobal);
-    };
-
+    window.admAlterarCargo = async (c) => { await update(ref(db, `usuarios/${targetUidGlobal}`), { cargo: c }); abrirPerfilAlheio(targetUidGlobal); };
+    window.admAlterarStatus = async (s) => { await update(ref(db, `usuarios/${targetUidGlobal}`), { status: s }); abrirPerfilAlheio(targetUidGlobal); };
     window.admAlterarSaldo = async () => {
-        const snap = await get(ref(db, `usuarios/${targetUidGlobal}`));
-        const atual = snap.val().moedasBlue || 0;
-        const valor = prompt("Saldo atual: " + atual + "\nDigite quanto quer ADICIONAR ou REMOVER (ex: 10 ou -10):");
-        if(valor) {
-            await update(ref(db, `usuarios/${targetUidGlobal}`), { moedasBlue: parseInt(atual) + parseInt(valor) });
+        const val = prompt("Quanto adicionar ou tirar (use -)?");
+        if(val) {
+            const snap = await get(ref(db, `usuarios/${targetUidGlobal}`));
+            await update(ref(db, `usuarios/${targetUidGlobal}`), { moedasBlue: (snap.val().moedasBlue || 0) + parseInt(val) });
             abrirPerfilAlheio(targetUidGlobal);
         }
     };
 
-    // CHAT E POSTS (MANTIDOS)
     window.enviarPost = () => {
         const f = document.getElementById('filePost').files[0];
+        const d = document.getElementById('descPost').value;
         if(!f) return alert("Selecione uma foto!");
         const r = new FileReader();
         r.onload = (e) => {
-            push(ref(db, 'posts'), { u1: window.user.nome, uid: window.user.uid, cargo: window.user.cargo, i1: e.target.result, d1: document.getElementById('descPost').value });
+            push(ref(db, 'posts'), { u1: window.user.nome, uid: window.user.uid, cargo: window.user.cargo, i1: e.target.result, d1: d });
             fecharTelas();
         };
         r.readAsDataURL(f);
     };
 
-    window.abrirChat = (uid, nome) => {
-        chatAtivoId = [window.user.uid, uid].sort().join("_");
-        document.getElementById('chatTitle').innerText = nome;
-        document.getElementById('telaChat').style.display = 'block';
-        onValue(ref(db, `chats/${chatAtivoId}`), s => {
-            const b = document.getElementById('chatBox'); b.innerHTML = "";
-            s.forEach(m => {
-                const msg = m.val();
-                const midia = msg.img ? `<img src="${msg.img}">` : '';
-                b.innerHTML += `<div class="msg ${msg.uid === window.user.uid ? 'msg-me':'msg-them'}"><b>${msg.u}:</b><br>${msg.t}${midia}</div>`;
-            });
-            b.scrollTop = b.scrollHeight;
-        });
-    };
-
-    window.enviarMensagem = () => {
-        const t = document.getElementById('msgIn').value;
-        if(!t) return;
-        push(ref(db, `chats/${chatAtivoId}`), { uid: window.user.uid, u: window.user.nome, t: t });
-        document.getElementById('msgIn').value = "";
-    };
-
-    window.enviarMidiaChat = (input) => {
-        const f = input.files[0];
-        const r = new FileReader();
-        r.onload = (e) => { push(ref(db, `chats/${chatAtivoId}`), { uid: window.user.uid, u: window.user.nome, t: '', img: e.target.result }); };
-        r.readAsDataURL(f);
-    };
-
     window.fecharTelas = () => { document.querySelectorAll('.tela-full').forEach(t=>t.style.display='none'); };
-    window.abrirMeuPerfil = () => { abrirPerfilAlheio(window.user.uid); };
+    window.abrirMeuPerfil = () => abrirPerfilAlheio(window.user.uid);
     window.abrirPostar = () => document.getElementById('telaPostar').style.display='block';
     window.abrirCarteira = () => document.getElementById('telaCarteira').style.display='block';
 </script>
