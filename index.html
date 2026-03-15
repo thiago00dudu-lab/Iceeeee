@@ -79,11 +79,23 @@
 
 <div id="telaPerfil" class="tela-full">
     <div id="perfilConteudo"></div>
+    
     <div id="painelAdmControle" style="display:none; background:rgba(255,215,0,0.1); border:1px solid var(--gold); padding:15px; border-radius:15px; margin-top:15px;">
-        <h4 style="color:var(--gold); margin:0 0 10px 0;">GESTÃO MASTER</h4>
-        <button class="btn-action" style="font-size:11px; width:auto; padding:8px;" onclick="admAlterarCargo('MOD')">DAR MOD</button>
-        <button class="btn-action" style="font-size:11px; width:auto; padding:8px; background:var(--red);" onclick="admAlterarCargo('ADM2')">DAR ADM2</button>
-        <button class="btn-action" style="font-size:11px; width:auto; padding:8px; background:var(--gold); color:black;" onclick="admAlterarSaldo()">ADD BLUES</button>
+        <h4 style="color:var(--gold); margin:0 0 10px 0; text-align:center;">GESTÃO MASTER</h4>
+        
+        <p style="font-size:12px; margin:5px 0; color:#aaa;">Cargos:</p>
+        <div style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:15px;">
+            <button class="btn-action" style="font-size:11px; width:calc(50% - 5px); padding:8px; margin:0; background:var(--gold); color:black;" onclick="admAlterarCargo('ADM1')">DAR ADM1</button>
+            <button class="btn-action" style="font-size:11px; width:calc(50% - 5px); padding:8px; margin:0; background:var(--red);" onclick="admAlterarCargo('ADM2')">DAR ADM2</button>
+            <button class="btn-action" style="font-size:11px; width:calc(50% - 5px); padding:8px; margin:0; background:var(--mod-blue);" onclick="admAlterarCargo('MOD')">DAR MOD</button>
+            <button class="btn-action" style="font-size:11px; width:calc(50% - 5px); padding:8px; margin:0; background:#555;" onclick="admAlterarCargo('user')">TIRAR CARGO</button>
+        </div>
+
+        <p style="font-size:12px; margin:5px 0; color:#aaa;">Economia:</p>
+        <div style="display:flex; gap:5px;">
+            <button class="btn-action" style="font-size:11px; padding:8px; margin:0; background:var(--green);" onclick="admAdicionarSaldo()">+ BLUES</button>
+            <button class="btn-action" style="font-size:11px; padding:8px; margin:0; background:var(--red);" onclick="admRetirarSaldo()">- BLUES</button>
+        </div>
     </div>
     <h4 style="margin:20px 0 10px 0; border-bottom:1px solid #30363d; padding-bottom:5px;">Postagens do Usuário</h4>
     <div id="minhasPostagens" class="grid-postagens"></div>
@@ -207,6 +219,8 @@
         const snap = await get(ref(db, `usuarios/${uid}`));
         const t = snap.val();
         const eMeu = window.user.uid === uid;
+        
+        // Verifica se o usuário atual é ADM1 e não está no próprio perfil para mostrar o painel
         document.getElementById('painelAdmControle').style.display = (window.user.cargo === 'ADM1' && !eMeu) ? 'block' : 'none';
         
         document.getElementById('perfilConteudo').innerHTML = `
@@ -282,11 +296,27 @@
         r.readAsDataURL(f);
     };
 
-    window.admAlterarCargo = async (c) => { await update(ref(db, `usuarios/${targetUidGlobal}`), { cargo: c }); abrirPerfilAlheio(targetUidGlobal); };
-    window.admAlterarSaldo = async () => {
-        const val = prompt("Valor:");
+    // NOVAS FUNÇÕES DO ADM
+    window.admAlterarCargo = async (c) => { 
+        await update(ref(db, `usuarios/${targetUidGlobal}`), { cargo: c }); 
+        abrirPerfilAlheio(targetUidGlobal); 
+    };
+    
+    window.admAdicionarSaldo = async () => {
+        const val = prompt("Valor de Blues para ADICIONAR:");
+        if(!val || isNaN(val)) return;
         const s = await get(ref(db, `usuarios/${targetUidGlobal}`));
         await update(ref(db, `usuarios/${targetUidGlobal}`), { moedasBlue: (s.val().moedasBlue || 0) + parseInt(val) });
+        abrirPerfilAlheio(targetUidGlobal);
+    };
+
+    window.admRetirarSaldo = async () => {
+        const val = prompt("Valor de Blues para RETIRAR:");
+        if(!val || isNaN(val)) return;
+        const s = await get(ref(db, `usuarios/${targetUidGlobal}`));
+        let novoSaldo = (s.val().moedasBlue || 0) - parseInt(val);
+        if(novoSaldo < 0) novoSaldo = 0; // Impede saldo negativo
+        await update(ref(db, `usuarios/${targetUidGlobal}`), { moedasBlue: novoSaldo });
         abrirPerfilAlheio(targetUidGlobal);
     };
 
