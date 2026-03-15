@@ -39,19 +39,17 @@
         .tela-full { display: none; position: fixed; inset: 0; background: var(--bg); z-index: 2000; overflow-y: auto; padding: 20px; box-sizing: border-box; }
         .btn-action { background: var(--blue); color: white; border: none; padding: 14px; border-radius: 8px; width: 100%; font-weight: bold; margin-top: 10px; cursor: pointer; }
         
-        .painel-adm { background: #1c2128; padding: 15px; border-radius: 12px; margin-top: 20px; border: 1px dashed var(--blue); }
-        .adm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-
         /* PERFIL ESTILO INSTA */
         .profile-header { text-align: center; padding: 20px 0; }
         .profile-img { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid var(--blue); margin-bottom: 10px; }
         .profile-stats { display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid var(--gray); border-bottom: 1px solid var(--gray); margin: 15px 0; }
         
         /* CHAT */
-        #chatBox { height: 300px; overflow-y: auto; background: #0d1117; border-radius: 10px; padding: 10px; border: 1px solid var(--gray); margin-bottom: 10px; }
-        .msg { margin-bottom: 10px; padding: 8px 12px; border-radius: 10px; max-width: 80%; }
-        .msg-me { background: var(--blue); align-self: flex-end; margin-left: auto; }
-        .msg-them { background: var(--gray); }
+        #chatBox { height: 300px; overflow-y: auto; background: #0d1117; border-radius: 10px; padding: 10px; border: 1px solid var(--gray); margin-bottom: 10px; display: flex; flex-direction: column; }
+        .msg { margin-bottom: 10px; padding: 8px 12px; border-radius: 10px; max-width: 80%; word-wrap: break-word; }
+        .msg-me { background: var(--blue); align-self: flex-end; }
+        .msg-them { background: var(--gray); align-self: flex-start; }
+        .msg img, .msg video { max-width: 100%; border-radius: 8px; margin-top: 5px; }
     </style>
 </head>
 <body>
@@ -71,6 +69,7 @@
     <div class="ad-circle" style="background: var(--mod-blue);" onclick="comprarCargo('MOD', 20)">MOD<br>R$ 20</div>
     <div class="ad-circle" style="background: var(--red);" onclick="comprarCargo('ADM2', 1000)">ADM 2<br>R$ 1k</div>
     <div class="ad-circle" style="background: var(--gold); color: black;" onclick="comprarCargo('ADM1', 'ice')">DONO<br>ICE $</div>
+    <div class="ad-circle" style="background: var(--green);" onclick="compartilharApp()"><i class="fas fa-share-alt"></i><br>CONVIDAR</div>
 </div>
 
 <div id="app" style="display:none;">
@@ -93,7 +92,27 @@
     <div id="perfilConteudo"></div>
     <div id="minhasPostagens" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; margin-top: 20px;"></div>
     <button class="btn-action" style="background:#30363d; margin-top:20px;" onclick="fecharTelas()">VOLTAR AO FEED</button>
-    <button class="btn-action" style="background:var(--red);" onclick="deslogar()">DESLOGAR</button>
+    <button class="btn-action" style="background:var(--red);" onclick="deslogar()">SAIR DA CONTA</button>
+</div>
+
+<div id="telaChat" class="tela-full">
+    <h3 id="chatTitle">Chat de Negociação</h3>
+    <div id="chatBox"></div>
+    
+    <div id="previewMidia" style="display:none; padding:10px; background:#161b22; border-radius:10px; margin-bottom:10px; position:relative;">
+        <small id="nomeArquivo" style="color:var(--blue)"></small>
+        <i class="fas fa-times" style="float:right; cursor:pointer;" onclick="limparMidiaChat()"></i>
+    </div>
+
+    <div style="display:flex; gap:5px; align-items:center;">
+        <label for="midiaChat" style="background:var(--gray); padding:12px; border-radius:8px; cursor:pointer;">
+            <i class="fas fa-paperclip"></i>
+            <input type="file" id="midiaChat" accept="image/*,video/*" style="display:none;" onchange="handleMidiaChat(this)">
+        </label>
+        <input type="text" id="msgIn" placeholder="Sua oferta..." style="flex:1; padding:12px; border-radius:8px; border:none;">
+        <button onclick="enviarMensagem()" style="background:var(--blue); border:none; color:white; padding:10px 20px; border-radius:8px;"><i class="fas fa-paper-plane"></i></button>
+    </div>
+    <button class="btn-action" style="background:none;" onclick="fecharChat()">Fechar Chat</button>
 </div>
 
 <div id="telaEditPerfil" class="tela-full">
@@ -107,21 +126,10 @@
 
 <div id="telaPostar" class="tela-full">
     <h2>Nova Postagem</h2>
-    <p>Escolha a foto do item para troca:</p>
     <input type="file" id="filePost" accept="image/*" style="color:white; margin-bottom:15px;">
     <input type="text" id="descPost" placeholder="O que você quer trocar?" style="width:100%; padding:15px; border-radius:8px; background:#161b22; color:white; border:1px solid #30363d; box-sizing:border-box;">
     <button class="btn-action" onclick="enviarPost()">POSTAR NO FEED</button>
     <button onclick="fecharTelas()" style="width:100%; background:none; color:red; border:none; margin-top:15px; cursor:pointer;">Cancelar</button>
-</div>
-
-<div id="telaChat" class="tela-full">
-    <h3 id="chatTitle">Chat de Negociação</h3>
-    <div id="chatBox"></div>
-    <div style="display:flex; gap:5px;">
-        <input type="text" id="msgIn" placeholder="Digite sua proposta..." style="flex:1; padding:12px; border-radius:8px; border:none;">
-        <button onclick="enviarMensagem()" style="background:var(--blue); border:none; color:white; padding:10px 20px; border-radius:8px;"><i class="fas fa-paper-plane"></i></button>
-    </div>
-    <button class="btn-action" style="background:none;" onclick="fecharChat()">Fechar Chat</button>
 </div>
 
 <div id="telaCarteira" class="tela-full">
@@ -135,7 +143,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, onValue, update, set, push, runTransaction, get, remove, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, onValue, update, set, push, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
     import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
     const firebaseConfig = { apiKey: "AIzaSyDM5M1_O-wfcBDGYJIiYgiHVbqhiKC-0dw", databaseURL: "https://icek-9cdd7-default-rtdb.firebaseio.com", projectId: "icek-9cdd7" };
@@ -146,8 +154,14 @@
 
     window.user = null;
     let chatAtivoId = null;
+    let midiaBase64 = null;
+    let tipoMidia = null;
 
-    // LOGIN
+    // SISTEMA DE REFERÊNCIA (FILHO DE QUEM)
+    const urlParams = new URLSearchParams(window.location.search);
+    const paiId = urlParams.get('ref');
+
+    // LOGIN E CADASTRO
     window.fazerLogin = async () => {
         const u = document.getElementById('userIn').value;
         const p = document.getElementById('passIn').value;
@@ -157,10 +171,11 @@
             location.reload();
             return;
         }
-        if(u.includes("@")) {
-            try { await signInWithEmailAndPassword(auth, u, p); } 
-            catch (e) { try { await createUserWithEmailAndPassword(auth, u, p); } catch (err) { alert(err.message); } }
-        } else { alert("Use um E-mail."); }
+        try { 
+            await signInWithEmailAndPassword(auth, u, p); 
+        } catch (e) { 
+            try { await createUserWithEmailAndPassword(auth, u, p); } catch (err) { alert("Erro: Use e-mail e senha válidos."); } 
+        }
     };
     
     window.loginGoogle = () => signInWithPopup(auth, provider);
@@ -172,12 +187,23 @@
             const snap = await get(ref(db, `usuarios/${u.uid}`));
             let dados = snap.val();
             if(!dados) {
-                dados = { nome: u.displayName || "Novo Membro", cargo: 'user', moedasBlue: 0, uid: u.uid, status: 'ativo', foto: u.photoURL || '', bio: 'Olá, vamos trocar!' };
+                dados = { 
+                    nome: u.displayName || "Usuário", 
+                    cargo: 'user', 
+                    moedasBlue: 0, 
+                    uid: u.uid, 
+                    status: 'ativo', 
+                    foto: u.photoURL || '', 
+                    bio: 'Olá, vamos trocar!',
+                    pai: paiId || 'Direto' 
+                };
                 await set(ref(db, `usuarios/${u.uid}`), dados);
             }
-            if(dados.status === 'banido') { alert("BANIDO"); signOut(auth); return; }
             window.user = dados; 
             mostrarApp();
+        } else {
+            document.getElementById('telaLogin').style.display = 'flex';
+            document.getElementById('app').style.display = 'none';
         }
     });
 
@@ -185,30 +211,26 @@
         document.getElementById('telaLogin').style.display = 'none';
         document.getElementById('app').style.display = 'block';
         onValue(ref(db, 'posts'), carregarFeed);
-        onValue(ref(db, 'economia/valor_ice'), s => { document.getElementById('btcValue').innerText = "ICE: $" + (s.val() || 0.7099).toFixed(4); });
-        if(window.user.uid !== 'master') {
-            onValue(ref(db, `usuarios/${window.user.uid}`), s => { 
+        onValue(ref(db, `usuarios/${window.user.uid}`), s => { 
+            if(s.exists()) {
                 window.user = s.val(); 
                 document.getElementById('saldoBlue').innerText = window.user.moedasBlue || 0; 
-            });
-        }
+            }
+        });
     }
 
     function carregarFeed(snap) {
         const f = document.getElementById('feed'); f.innerHTML = "";
         snap.forEach(c => {
             const p = c.val();
-            const starClass = p.cargoUser === 'ADM1' ? 'badge-gold' : (p.cargoUser === 'ADM2' ? 'badge-red' : 'badge-blue');
-            const label = p.cargoUser === 'user' ? '' : `<span class="badge ${starClass}">${p.cargoUser}</span>`;
             const div = document.createElement('div');
             div.className = "card-timeline";
             div.onclick = () => abrirPerfilAlheio(p.uid);
-            div.innerHTML = `<img src="${p.i1}"><div style="padding:15px;">${label} <b>${p.u1}</b><br><small>${p.d1}</small></div>`;
+            div.innerHTML = `<img src="${p.i1}"><div style="padding:15px;"><b>${p.u1}</b><br><small>${p.d1}</small></div>`;
             f.prepend(div);
         });
     }
 
-    // SISTEMA DE PERFIL ESTILO INSTAGRAM
     window.abrirMeuPerfil = () => abrirPerfilAlheio(window.user.uid);
 
     window.abrirPerfilAlheio = async (targetUid) => {
@@ -219,69 +241,64 @@
         const eMeuPerfil = window.user.uid === targetUid;
         const btnAcao = eMeuPerfil 
             ? `<button class="btn-action" style="background:var(--gray);" onclick="document.getElementById('telaEditPerfil').style.display='block'">EDITAR PERFIL</button>`
-            : `<button class="btn-action" onclick="abrirChat('${target.uid}', '${target.nome}')"><i class="fab fa-whatsapp"></i> NEGOCIAR AGORA</button>`;
+            : `<button class="btn-action" onclick="abrirChat('${target.uid}', '${target.nome}')"><i class="fas fa-handshake"></i> FAZER OFERTA AGORA</button>`;
 
         document.getElementById('perfilConteudo').innerHTML = `
             <div class="profile-header">
                 <img src="${target.foto || 'https://www.w3schools.com/howto/img_avatar.png'}" class="profile-img">
-                <h2>${target.nome} <span style="font-size:12px; vertical-align:middle;">${target.cargo !== 'user' ? '✔️' : ''}</span></h2>
-                <p style="font-size:14px; color:#8b949e;">${target.bio || 'Sem bio.'}</p>
+                <h2>${target.nome}</h2>
+                <p style="font-size:12px; color:var(--blue);">Convidado por: ${target.pai || 'Direto'}</p>
+                <p style="padding:0 20px; font-size:14px; color:#8b949e;">${target.bio || ''}</p>
                 ${btnAcao}
             </div>
             <div class="profile-stats">
                 <div><b>${target.moedasBlue || 0}</b><br><small>BLUE</small></div>
                 <div><b>${target.cargo}</b><br><small>CARGO</small></div>
-                <div><b>Ativo</b><br><small>STATUS</small></div>
             </div>
         `;
         
-        // Carregar fotos desse usuário específico (Estilo Grade)
         const postSnap = await get(ref(db, 'posts'));
-        const grid = document.getElementById('minhasPostagens');
-        grid.innerHTML = "";
-        postSnap.forEach(p => {
-            if(p.val().uid === targetUid) {
-                grid.innerHTML += `<img src="${p.val().i1}" style="width:100%; aspect-ratio:1/1; object-fit:cover; border-radius:5px;">`;
-            }
-        });
-
+        const grid = document.getElementById('minhasPostagens'); grid.innerHTML = "";
+        postSnap.forEach(p => { if(p.val().uid === targetUid) grid.innerHTML += `<img src="${p.val().i1}" style="width:100%; aspect-ratio:1/1; object-fit:cover; border-radius:5px;">`; });
         document.getElementById('telaPerfil').style.display = 'block';
     };
 
-    // EDITAR E SALVAR PERFIL
-    window.salvarPerfil = () => {
-        const fotoFile = document.getElementById('editFoto').files[0];
-        const novoNome = document.getElementById('editNome').value;
-        const novaBio = document.getElementById('editBio').value;
-
-        const atualizar = (fotoBase64 = null) => {
-            const updates = { nome: novoNome || window.user.nome, bio: novaBio || window.user.bio };
-            if(fotoBase64) updates.foto = fotoBase64;
-            update(ref(db, `usuarios/${window.user.uid}`), updates).then(() => {
-                alert("Perfil atualizado!");
-                location.reload();
-            });
+    // OFERTA COM MÍDIA (CHAT)
+    window.handleMidiaChat = (input) => {
+        const file = input.files[0];
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            midiaBase64 = e.target.result;
+            tipoMidia = file.type.startsWith('video') ? 'video' : 'img';
+            document.getElementById('previewMidia').style.display = 'block';
+            document.getElementById('nomeArquivo').innerText = "Arquivo pronto: " + file.name;
         };
-
-        if(fotoFile) {
-            const r = new FileReader();
-            r.onload = (e) => atualizar(e.target.result);
-            r.readAsDataURL(fotoFile);
-        } else { atualizar(); }
+        reader.readAsDataURL(file);
     };
 
-    // SISTEMA DE CHAT ABERTO
+    window.limparMidiaChat = () => {
+        midiaBase64 = null; tipoMidia = null;
+        document.getElementById('previewMidia').style.display = 'none';
+        document.getElementById('midiaChat').value = "";
+    };
+
     window.abrirChat = (targetUid, targetNome) => {
         chatAtivoId = [window.user.uid, targetUid].sort().join("_");
-        document.getElementById('chatTitle').innerText = "Chat com " + targetNome;
+        document.getElementById('chatTitle').innerText = "Negociar com " + targetNome;
         document.getElementById('telaChat').style.display = 'block';
         onValue(ref(db, `chats/${chatAtivoId}`), (snap) => {
-            const box = document.getElementById('chatBox');
-            box.innerHTML = "";
+            const box = document.getElementById('chatBox'); box.innerHTML = "";
             snap.forEach(m => {
                 const msg = m.val();
                 const classe = msg.uid === window.user.uid ? 'msg-me' : 'msg-them';
-                box.innerHTML += `<div class="msg ${classe}">${msg.texto}</div>`;
+                let midiaHtml = "";
+                if(msg.midia) {
+                    midiaHtml = msg.tipo === 'video' 
+                        ? `<video src="${msg.midia}" controls></video>` 
+                        : `<img src="${msg.midia}">`;
+                }
+                box.innerHTML += `<div class="msg ${classe}"><b>${msg.user}:</b><br>${msg.texto}${midiaHtml}</div>`;
             });
             box.scrollTop = box.scrollHeight;
         });
@@ -289,31 +306,56 @@
 
     window.enviarMensagem = () => {
         const txt = document.getElementById('msgIn').value;
-        if(!txt) return;
-        push(ref(db, `chats/${chatAtivoId}`), { uid: window.user.uid, texto: txt, timestamp: Date.now() });
+        if(!txt && !midiaBase64) return;
+        push(ref(db, `chats/${chatAtivoId}`), { 
+            uid: window.user.uid, 
+            user: window.user.nome,
+            texto: txt, 
+            midia: midiaBase64 || null,
+            tipo: tipoMidia || null,
+            timestamp: Date.now() 
+        });
         document.getElementById('msgIn').value = "";
+        limparMidiaChat();
     };
 
-    window.fecharChat = () => { document.getElementById('telaChat').style.display = 'none'; };
+    // COMPARTILHAR
+    window.compartilharApp = () => {
+        const link = window.location.origin + window.location.pathname + "?ref=" + window.user.uid;
+        if (navigator.share) {
+            navigator.share({ title: 'ICE TROCAS', text: 'Vem trocar comigo!', url: link });
+        } else {
+            alert("Link de Convite copiado!");
+            navigator.clipboard.writeText(link);
+        }
+    };
 
-    // POSTAGEM
+    // LOGOUT CORRIGIDO
+    window.deslogar = () => {
+        localStorage.removeItem('ice_master');
+        signOut(auth).then(() => {
+            window.user = null;
+            location.reload();
+        });
+    };
+
+    // UTILS ORIGINAIS
+    window.fecharTelas = () => { document.querySelectorAll('.tela-full').forEach(t=>t.style.display='none'); };
+    window.fecharChat = () => { document.getElementById('telaChat').style.display = 'none'; };
+    window.abrirPostar = () => document.getElementById('telaPostar').style.display='block';
+    window.abrirCarteira = () => document.getElementById('telaCarteira').style.display='block';
     window.enviarPost = () => {
         const file = document.getElementById('filePost').files[0];
         if(!file) return alert("Selecione uma imagem!");
         const r = new FileReader();
         r.onload = (e) => {
-            push(ref(db, 'posts'), { u1: window.user.nome, uid: window.user.uid, cargoUser: window.user.cargo, i1: e.target.result, d1: document.getElementById('descPost').value });
+            push(ref(db, 'posts'), { u1: window.user.nome, uid: window.user.uid, i1: e.target.result, d1: document.getElementById('descPost').value });
             fecharTelas();
         };
         r.readAsDataURL(file);
     };
-
-    // UTILS
     window.comprarCargo = (c, p) => { alert("PIX: thiago00dudu@gmail.com\nChame no Whats após pagar."); window.open("https://wa.me/5511983602504"); };
-    window.fecharTelas = () => { document.querySelectorAll('.tela-full').forEach(t=>t.style.display='none'); };
-    window.abrirPostar = () => document.getElementById('telaPostar').style.display='block';
-    window.abrirCarteira = () => document.getElementById('telaCarteira').style.display='block';
-    window.deslogar = () => { localStorage.clear(); signOut(auth); location.reload(); };
 </script>
 </body>
-</html>
+    </html>
+    
