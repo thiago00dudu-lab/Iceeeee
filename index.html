@@ -22,10 +22,10 @@
         .ads-side { position: fixed; right: 10px; top: 40%; transform: translateY(-50%); z-index: 4000; display: flex; flex-direction: column; gap: 12px; }
         .ad-circle { width: 70px; height: 70px; border-radius: 50%; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 9px; font-weight: bold; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.5); cursor: pointer; border: 2px solid rgba(255,255,255,0.3); transition: 0.3s; }
         
-        /* ESTRELAS */
-        .star-mod { color: var(--mod-blue); margin-left: 5px; }
-        .star-adm2 { color: var(--red); margin-left: 5px; }
-        .star-adm1 { color: var(--gold); margin-left: 5px; }
+        /* ESTRELAS ESTILOS */
+        .star-mod { color: #00BFFF; margin-left: 5px; }
+        .star-adm2 { color: #ff4d4d; margin-left: 5px; }
+        .star-adm1 { color: #FFD700; margin-left: 5px; }
 
         header { padding:15px; background: #161b22; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:100; border-bottom: 1px solid #30363d; }
         .card-timeline { background: #161b22; border-radius: 15px; overflow: hidden; margin: 15px; border: 1px solid #30363d; cursor: pointer; transition: 0.2s; }
@@ -97,15 +97,38 @@
 <div id="telaChat" class="tela-full">
     <h3 id="chatTitle">Chat de Negociação</h3>
     <div id="chatBox"></div>
+    
+    <div id="previewMidia" style="display:none; padding:10px; background:#161b22; border-radius:10px; margin-bottom:10px; position:relative;">
+        <small id="nomeArquivo" style="color:var(--blue)"></small>
+        <i class="fas fa-times" style="float:right; cursor:pointer;" onclick="limparMidiaChat()"></i>
+    </div>
+
     <div style="display:flex; gap:5px; align-items:center;">
         <label for="midiaChat" style="background:var(--gray); padding:12px; border-radius:8px; cursor:pointer;">
             <i class="fas fa-paperclip"></i>
-            <input type="file" id="midiaChat" accept="image/*,video/*" style="display:none;">
+            <input type="file" id="midiaChat" accept="image/*,video/*" style="display:none;" onchange="handleMidiaChat(this)">
         </label>
         <input type="text" id="msgIn" placeholder="Sua oferta..." style="flex:1; padding:12px; border-radius:8px; border:none;">
         <button onclick="enviarMensagem()" style="background:var(--blue); border:none; color:white; padding:10px 20px; border-radius:8px;"><i class="fas fa-paper-plane"></i></button>
     </div>
-    <button class="btn-action" style="background:none;" onclick="fecharTelas()">Fechar Chat</button>
+    <button class="btn-action" style="background:none;" onclick="fecharChat()">Fechar Chat</button>
+</div>
+
+<div id="telaEditPerfil" class="tela-full">
+    <h2>Editar Perfil</h2>
+    <input type="file" id="editFoto" accept="image/*" style="margin-bottom:10px;">
+    <input type="text" id="editNome" placeholder="Seu Nome" style="width:100%; padding:12px; margin-bottom:10px; background:#161b22; color:white; border:1px solid #30363d;">
+    <textarea id="editBio" placeholder="Sua Bio/Descrição" style="width:100%; padding:12px; height:80px; background:#161b22; color:white; border:1px solid #30363d;"></textarea>
+    <button class="btn-action" onclick="salvarPerfil()">SALVAR ALTERAÇÕES</button>
+    <button class="btn-action" style="background:none;" onclick="document.getElementById('telaEditPerfil').style.display='none'">Cancelar</button>
+</div>
+
+<div id="telaPostar" class="tela-full">
+    <h2>Nova Postagem</h2>
+    <input type="file" id="filePost" accept="image/*" style="color:white; margin-bottom:15px;">
+    <input type="text" id="descPost" placeholder="O que você quer trocar?" style="width:100%; padding:15px; border-radius:8px; background:#161b22; color:white; border:1px solid #30363d; box-sizing:border-box;">
+    <button class="btn-action" onclick="enviarPost()">POSTAR NO FEED</button>
+    <button onclick="fecharTelas()" style="width:100%; background:none; color:red; border:none; margin-top:15px; cursor:pointer;">Cancelar</button>
 </div>
 
 <div id="telaCarteira" class="tela-full">
@@ -115,14 +138,6 @@
         <small>BLUE COINS (ICE)</small>
     </div>
     <button class="btn-action" style="background:white; color:black; margin-top:30px;" onclick="fecharTelas()">VOLTAR PARA O FEED</button>
-</div>
-
-<div id="telaPostar" class="tela-full">
-    <h2>Nova Postagem</h2>
-    <input type="file" id="filePost" accept="image/*" style="color:white; margin-bottom:15px;">
-    <input type="text" id="descPost" placeholder="O que você quer trocar?" style="width:100%; padding:15px; border-radius:8px; background:#161b22; color:white; border:1px solid #30363d;">
-    <button class="btn-action" onclick="enviarPost()">POSTAR NO FEED</button>
-    <button onclick="fecharTelas()" style="width:100%; background:none; color:red; border:none; margin-top:15px;">Cancelar</button>
 </div>
 
 <script type="module">
@@ -138,14 +153,21 @@
 
     window.user = null;
     let chatAtivoId = null;
+    let midiaBase64 = null;
+    let tipoMidia = null;
 
-    function obterEstrela(cargo) {
-        if(cargo === 'MOD') return '<i class="fas fa-star star-mod" title="Moderador"></i>';
-        if(cargo === 'ADM2') return '<i class="fas fa-star star-adm2" title="ADM 2"></i>';
-        if(cargo === 'ADM1') return '<i class="fas fa-star star-adm1" title="Dono"></i>';
+    const urlParams = new URLSearchParams(window.location.search);
+    const paiId = urlParams.get('ref');
+
+    // FUNÇÃO AUXILIAR DE ESTRELA
+    function gerarEstrela(cargo) {
+        if(cargo === 'MOD') return '<i class="fas fa-star star-mod"></i>';
+        if(cargo === 'ADM2') return '<i class="fas fa-star star-adm2"></i>';
+        if(cargo === 'ADM1') return '<i class="fas fa-star star-adm1"></i>';
         return '';
     }
 
+    // LOGIN
     window.fazerLogin = async () => {
         const u = document.getElementById('userIn').value;
         const p = document.getElementById('passIn').value;
@@ -156,9 +178,9 @@
             return;
         }
         try { await signInWithEmailAndPassword(auth, u, p); } 
-        catch (e) { try { await createUserWithEmailAndPassword(auth, u, p); } catch (err) { alert("Erro no login."); } }
+        catch (e) { try { await createUserWithEmailAndPassword(auth, u, p); } catch (err) { alert("Dados incorretos."); } }
     };
-
+    
     window.loginGoogle = () => signInWithPopup(auth, provider);
 
     onAuthStateChanged(auth, async (u) => {
@@ -166,20 +188,28 @@
         if (local) { window.user = JSON.parse(local); mostrarApp(); } 
         else if (u) {
             const snap = await get(ref(db, `usuarios/${u.uid}`));
-            let dados = snap.val() || { nome: u.displayName || "Usuário", cargo: 'user', moedasBlue: 0, uid: u.uid, foto: u.photoURL || '', bio: 'Olá!', pai: 'Direto' };
-            if(!snap.val()) await set(ref(db, `usuarios/${u.uid}`), dados);
+            let dados = snap.val();
+            if(!dados) {
+                dados = { nome: u.displayName || "Usuário", cargo: 'user', moedasBlue: 0, uid: u.uid, status: 'ativo', foto: u.photoURL || '', bio: 'Olá!', pai: paiId || 'Direto' };
+                await set(ref(db, `usuarios/${u.uid}`), dados);
+            }
             window.user = dados; 
             mostrarApp();
-        } else { document.getElementById('telaLogin').style.display = 'flex'; }
+        } else {
+            document.getElementById('telaLogin').style.display = 'flex';
+        }
     });
 
     function mostrarApp() {
         document.getElementById('telaLogin').style.display = 'none';
         document.getElementById('app').style.display = 'block';
         onValue(ref(db, 'posts'), carregarFeed);
-        onValue(ref(db, `usuarios/${window.user.uid}`), s => { if(s.exists()) { window.user = s.val(); document.getElementById('saldoBlue').innerText = window.user.moedasBlue || 0; }});
+        onValue(ref(db, `usuarios/${window.user.uid}`), s => { 
+            if(s.exists()) { window.user = s.val(); document.getElementById('saldoBlue').innerText = window.user.moedasBlue || 0; }
+        });
     }
 
+    // CARREGAR FEED COM ESTRELAS (CORRIGIDO)
     function carregarFeed(snap) {
         const f = document.getElementById('feed'); f.innerHTML = "";
         snap.forEach(c => {
@@ -187,55 +217,90 @@
             const div = document.createElement('div');
             div.className = "card-timeline";
             div.onclick = () => abrirPerfilAlheio(p.uid);
-            const sId = `s-${Math.random().toString(36).substr(2, 5)}`;
-            div.innerHTML = `<img src="${p.i1}"><div style="padding:15px;"><b>${p.u1} <span id="${sId}"></span></b><br><small>${p.d1}</small></div>`;
+            
+            const spanId = `star-feed-${Math.random().toString(36).substr(2, 9)}`;
+            div.innerHTML = `<img src="${p.i1}"><div style="padding:15px;"><b>${p.u1} <span id="${spanId}"></span></b><br><small>${p.d1}</small></div>`;
             f.prepend(div);
-            get(ref(db, `usuarios/${p.uid}/cargo`)).then(s => { if(s.exists()) document.getElementById(sId).innerHTML = obterEstrela(s.val()); });
+
+            // Busca cargo do dono do post
+            get(ref(db, `usuarios/${p.uid}/cargo`)).then(s => {
+                if(s.exists()) document.getElementById(spanId).innerHTML = gerarEstrela(s.val());
+            });
         });
     }
 
     window.abrirMeuPerfil = () => abrirPerfilAlheio(window.user.uid);
 
-    window.abrirPerfilAlheio = async (tId) => {
-        const snap = await get(ref(db, `usuarios/${tId}`));
-        const t = snap.val(); if(!t) return;
-        const eMeu = window.user.uid === tId;
+    window.abrirPerfilAlheio = async (targetUid) => {
+        const snap = await get(ref(db, `usuarios/${targetUid}`));
+        const target = snap.val();
+        if(!target) return;
+
+        const eMeuPerfil = window.user.uid === targetUid;
+        const btnAcao = eMeuPerfil 
+            ? `<button class="btn-action" style="background:var(--gray);" onclick="document.getElementById('telaEditPerfil').style.display='block'">EDITAR PERFIL</button>`
+            : `<button class="btn-action" onclick="abrirChat('${target.uid}', '${target.nome}')"><i class="fas fa-handshake"></i> FAZER OFERTA AGORA</button>`;
+
         document.getElementById('perfilConteudo').innerHTML = `
             <div class="profile-header">
-                <img src="${t.foto || 'https://www.w3schools.com/howto/img_avatar.png'}" class="profile-img">
-                <h2>${t.nome} ${obterEstrela(t.cargo)}</h2>
-                <p>${t.bio || ''}</p>
-                ${eMeu ? '' : `<button class="btn-action" onclick="abrirChat('${t.uid}','${t.nome}')">FAZER OFERTA</button>`}
+                <img src="${target.foto || 'https://www.w3schools.com/howto/img_avatar.png'}" class="profile-img">
+                <h2>${target.nome} ${gerarEstrela(target.cargo)}</h2>
+                <p style="padding:0 20px; font-size:14px; color:#8b949e;">${target.bio || ''}</p>
+                ${btnAcao}
             </div>
             <div class="profile-stats">
-                <div><b>${t.moedasBlue || 0}</b><br><small>BLUE</small></div>
-                <div><b>${t.cargo}</b><br><small>CARGO</small></div>
-            </div>`;
+                <div><b>${target.moedasBlue || 0}</b><br><small>BLUE</small></div>
+                <div><b>${target.cargo}</b><br><small>CARGO</small></div>
+            </div>
+        `;
+        
+        const postSnap = await get(ref(db, 'posts'));
+        const grid = document.getElementById('minhasPostagens'); grid.innerHTML = "";
+        postSnap.forEach(p => { if(p.val().uid === targetUid) grid.innerHTML += `<img src="${p.val().i1}" style="width:100%; aspect-ratio:1/1; object-fit:cover; border-radius:5px;">`; });
         document.getElementById('telaPerfil').style.display = 'block';
     };
 
-    window.abrirChat = (tId, tNome) => {
-        chatAtivoId = [window.user.uid, tId].sort().join("_");
-        document.getElementById('chatTitle').innerText = tNome;
+    // CHAT E MÍDIA
+    window.handleMidiaChat = (input) => {
+        const file = input.files[0]; if(!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            midiaBase64 = e.target.result;
+            tipoMidia = file.type.startsWith('video') ? 'video' : 'img';
+            document.getElementById('previewMidia').style.display = 'block';
+            document.getElementById('nomeArquivo').innerText = "Arquivo pronto: " + file.name;
+        };
+        reader.readAsDataURL(file);
+    };
+
+    window.limparMidiaChat = () => { midiaBase64 = null; tipoMidia = null; document.getElementById('previewMidia').style.display = 'none'; };
+
+    window.abrirChat = (targetUid, targetNome) => {
+        chatAtivoId = [window.user.uid, targetUid].sort().join("_");
+        document.getElementById('chatTitle').innerText = targetNome;
         document.getElementById('telaChat').style.display = 'block';
-        onValue(ref(db, `chats/${chatAtivoId}`), s => {
+        onValue(ref(db, `chats/${chatAtivoId}`), (snap) => {
             const box = document.getElementById('chatBox'); box.innerHTML = "";
-            s.forEach(m => {
+            snap.forEach(m => {
                 const msg = m.val();
-                box.innerHTML += `<div class="msg ${msg.uid === window.user.uid ? 'msg-me':'msg-them'}"><b>${msg.user}:</b><br>${msg.texto}</div>`;
+                const midiaHtml = msg.midia ? (msg.tipo === 'video' ? `<video src="${msg.midia}" controls></video>` : `<img src="${msg.midia}">`) : "";
+                box.innerHTML += `<div class="msg ${msg.uid === window.user.uid ? 'msg-me':'msg-them'}"><b>${msg.user}:</b><br>${msg.texto}${midiaHtml}</div>`;
             });
             box.scrollTop = box.scrollHeight;
         });
     };
 
     window.enviarMensagem = () => {
-        const txt = document.getElementById('msgIn').value; if(!txt) return;
-        push(ref(db, `chats/${chatAtivoId}`), { uid: window.user.uid, user: window.user.nome, texto: txt });
-        document.getElementById('msgIn').value = "";
+        const txt = document.getElementById('msgIn').value;
+        if(!txt && !midiaBase64) return;
+        push(ref(db, `chats/${chatAtivoId}`), { uid: window.user.uid, user: window.user.nome, texto: txt, midia: midiaBase64 || null, tipo: tipoMidia || null });
+        document.getElementById('msgIn').value = ""; limparMidiaChat();
     };
 
+    // POSTAR
     window.enviarPost = () => {
-        const file = document.getElementById('filePost').files[0]; if(!file) return alert("Selecione uma imagem");
+        const file = document.getElementById('filePost').files[0];
+        if(!file) return alert("Selecione uma imagem!");
         const r = new FileReader();
         r.onload = (e) => {
             push(ref(db, 'posts'), { u1: window.user.nome, uid: window.user.uid, i1: e.target.result, d1: document.getElementById('descPost').value });
@@ -244,12 +309,28 @@
         r.readAsDataURL(file);
     };
 
+    // EDITAR PERFIL
+    window.salvarPerfil = async () => {
+        const updates = { nome: document.getElementById('editNome').value, bio: document.getElementById('editBio').value };
+        const file = document.getElementById('editFoto').files[0];
+        if(file) {
+            const r = new FileReader();
+            r.onload = async (e) => { updates.foto = e.target.result; await update(ref(db, `usuarios/${window.user.uid}`), updates); location.reload(); };
+            r.readAsDataURL(file);
+        } else {
+            await update(ref(db, `usuarios/${window.user.uid}`), updates); location.reload();
+        }
+    };
+
+    // UTILS
     window.fecharTelas = () => document.querySelectorAll('.tela-full').forEach(t=>t.style.display='none');
-    window.abrirCarteira = () => document.getElementById('telaCarteira').style.display='block';
+    window.fecharChat = () => document.getElementById('telaChat').style.display = 'none';
     window.abrirPostar = () => document.getElementById('telaPostar').style.display='block';
-    window.deslogar = () => { localStorage.removeItem('ice_master'); signOut(auth).then(()=>location.reload()); };
-    window.compartilharApp = () => { const link = window.location.origin + window.location.pathname + "?ref=" + window.user.uid; navigator.clipboard.writeText(link); alert("Link copiado!"); };
-    window.comprarCargo = (c, p) => { alert("PIX: thiago00dudu@gmail.com\nEnvie comprovante."); window.open("https://wa.me/5511983602504"); };
+    window.abrirCarteira = () => document.getElementById('telaCarteira').style.display='block';
+    window.deslogar = () => { localStorage.removeItem('ice_master'); signOut(auth).then(() => location.reload()); };
+    window.compartilharApp = () => { const link = window.location.origin + window.location.pathname + "?ref=" + window.user.uid; navigator.clipboard.writeText(link); alert("Link de Convite copiado!"); };
+    window.comprarCargo = (c, p) => { alert("PIX: thiago00dudu@gmail.com\nChame no Whats após pagar."); window.open("https://wa.me/5511983602504"); };
 </script>
 </body>
-</html>
+    </html>
+    
