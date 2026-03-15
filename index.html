@@ -14,7 +14,7 @@
         .login-box { background: white; padding: 30px; border-radius: 20px; width: 85%; max-width: 350px; text-align: center; color: black; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .login-box input { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #ddd; box-sizing: border-box; }
 
-        /* ESTRELAS */
+        /* BADGES ESTRELAS */
         .badge-star { font-size: 14px; margin-bottom: 2px; display: flex; gap: 4px; align-items: center; }
         .star-mod { color: var(--mod-blue); }
         .star-adm2 { color: var(--red); }
@@ -24,7 +24,7 @@
         .side-menu { position: fixed; right: 15px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 15px; z-index: 4000; }
         .btn-float { width: 45px; height: 45px; border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center; color: white; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.4); font-size: 18px; }
 
-        /* INTERFACE */
+        /* FEED E NAV */
         header { padding:15px; background: #161b22; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:100; border-bottom: 1px solid #30363d; }
         .card-timeline { background: #161b22; border-radius: 15px; overflow: hidden; margin: 15px; border: 1px solid #30363d; }
         .card-timeline img { width: 100%; height: 320px; object-fit: cover; }
@@ -34,27 +34,29 @@
         .nav i { color: #8b949e; font-size: 22px; cursor: pointer; }
         .nav i.active { color: var(--blue); }
 
+        /* TELAS FULL */
         .tela-full { display: none; position: fixed; inset: 0; background: var(--bg); z-index: 2000; overflow-y: auto; padding: 20px; box-sizing: border-box; }
         .btn-action { background: var(--blue); color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; font-weight: bold; margin-top: 10px; cursor: pointer; }
-        .grid-postagens { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; margin-top: 15px; }
-        .grid-postagens img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 5px; background: #161b22; }
+        
+        /* BOTÕES COM ÍCONES DO PAINEL ADM */
+        .btn-adm-icon { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 11px; padding: 10px; border-radius: 8px; border: none; color: white; cursor: pointer; font-weight: bold; flex: 1; }
     </style>
 </head>
 <body>
 
 <div class="side-menu" id="menuFlutuante" style="display:none;">
-    <button class="btn-float" style="background: var(--mod-blue);" title="Comprar Moderador" onclick="comprarCargo('MODERADOR', 'R$ 20,00')"><i class="fas fa-star"></i></button>
-    <button class="btn-float" style="background: var(--red);" title="Comprar ADM2" onclick="comprarCargo('ADM 2', 'R$ 50,00')"><i class="fas fa-crown"></i></button>
+    <button class="btn-float" style="background: var(--mod-blue);" onclick="comprarCargo('MODERADOR', 'R$ 20,00')"><i class="fas fa-star"></i></button>
+    <button class="btn-float" style="background: var(--red);" onclick="comprarCargo('ADM 2', 'R$ 50,00')"><i class="fas fa-crown"></i></button>
     <button class="btn-float" style="background: var(--gold); color:black;" onclick="alert('Market Cap: R$ 22M')"><i class="fas fa-chart-line"></i></button>
     <button class="btn-float" style="background: var(--green);" onclick="alert('Link copiado!')"><i class="fas fa-share-alt"></i></button>
 </div>
 
 <div id="telaLogin">
     <div class="login-box">
-        <h2 style="margin-bottom:20px;">ICE TROCAS</h2>
+        <h2>ICE TROCAS</h2>
         <input type="text" id="userIn" placeholder="E-mail ou ADM">
         <input type="password" id="passIn" placeholder="Senha">
-        <button class="btn-action" onclick="fazerLogin()">ACESSAR</button>
+        <button class="btn-action" onclick="fazerLogin()">ENTRAR</button>
     </div>
 </div>
 
@@ -71,21 +73,21 @@
 <div id="telaPerfil" class="tela-full">
     <div id="perfilConteudo"></div>
     
-    <div id="painelAdmControle" style="display:none; background:rgba(255,215,0,0.1); border:2px solid var(--gold); padding:15px; border-radius:15px; margin-top:15px;">
-        <h3 style="margin:0 0 10px 0; text-align:center; color: var(--gold);"><i class="fas fa-tools"></i> PAINEL MASTER</h3>
+    <div id="painelAdmControle" style="display:none; background:rgba(255,215,0,0.05); border:2px solid var(--gold); padding:15px; border-radius:15px; margin-top:15px;">
+        <h3 style="margin:0 0 15px 0; text-align:center; color: var(--gold);"><i class="fas fa-user-shield"></i> GESTÃO ADM1</h3>
         
-        <p style="font-size:12px; margin-bottom:5px;">Gerenciar Cargo:</p>
-        <div style="display:flex; flex-wrap:wrap; gap:5px;">
-            <button class="btn-action" style="font-size:10px; width:48%; background:var(--gold); color:black;" onclick="setCargo('ADM1')">DAR ADM1</button>
-            <button class="btn-action" style="font-size:10px; width:48%; background:var(--red);" onclick="setCargo('ADM2')">DAR ADM2</button>
-            <button class="btn-action" style="font-size:10px; width:48%; background:var(--mod-blue);" onclick="setCargo('MOD')">DAR MOD</button>
-            <button class="btn-action" style="font-size:10px; width:48%; background:#444;" onclick="setCargo('user')">REBAIXAR</button>
+        <p style="font-size:12px; color:#aaa; margin-bottom:8px;">Modificar Cargo:</p>
+        <div style="display:flex; flex-wrap:wrap; gap:5px; margin-bottom:15px;">
+            <button class="btn-adm-icon" style="background:var(--gold); color:black;" onclick="setCargo('ADM1')"><i class="fas fa-king"></i> ADM1</button>
+            <button class="btn-adm-icon" style="background:var(--red);" onclick="setCargo('ADM2')"><i class="fas fa-shield-alt"></i> ADM2</button>
+            <button class="btn-adm-icon" style="background:var(--mod-blue);" onclick="setCargo('MOD')"><i class="fas fa-star"></i> MOD</button>
+            <button class="btn-adm-icon" style="background:#444;" onclick="setCargo('user')"><i class="fas fa-user"></i> USER</button>
         </div>
 
-        <p style="font-size:12px; margin-top:15px; margin-bottom:5px;">Moedas BLUE:</p>
+        <p style="font-size:12px; color:#aaa; margin-bottom:8px;">Controle de Moedas BLUE:</p>
         <div style="display:flex; gap:10px;">
-            <button class="btn-action" style="background:var(--green); flex:1;" onclick="setMoedas(true)">+ DAR BLUE</button>
-            <button class="btn-action" style="background:var(--red); flex:1;" onclick="setMoedas(false)">- TIRAR</button>
+            <button class="btn-adm-icon" style="background:var(--green);" onclick="setMoedas(true)"><i class="fas fa-plus-circle"></i> ADICIONAR</button>
+            <button class="btn-adm-icon" style="background:var(--red);" onclick="setMoedas(false)"><i class="fas fa-minus-circle"></i> RETIRAR</button>
         </div>
     </div>
 
@@ -94,7 +96,7 @@
 
 <div id="telaCarteira" class="tela-full">
     <div style="background:linear-gradient(135deg, var(--sea), var(--blue)); padding:40px; border-radius:20px; text-align:center;">
-        <p>Meu Saldo</p>
+        <p>Saldo em Carteira</p>
         <h1 id="saldoBlue">0</h1>
         <small>BLUE COINS</small>
     </div>
@@ -102,9 +104,9 @@
 </div>
 
 <div id="telaPostar" class="tela-full">
-    <h2>Postar Troca</h2>
-    <input type="file" id="filePost" accept="image/*" style="margin-bottom:15px;">
-    <input type="text" id="descPost" placeholder="O que você está trocando?">
+    <h2>Nova Postagem</h2>
+    <input type="file" id="filePost" accept="image/*">
+    <input type="text" id="descPost" placeholder="Descrição da troca...">
     <button class="btn-action" onclick="enviarPost()">PUBLICAR</button>
     <button class="btn-action" style="background:none" onclick="fecharTelas()">CANCELAR</button>
 </div>
@@ -122,12 +124,11 @@
     window.user = null;
     let targetUid = null;
 
-    // COMPRA COM SEUS DADOS
     window.comprarCargo = (cargo, preco) => {
         const pix = "thiago00dudu@gmail.com";
         const zap = "5511983602504";
-        alert(`INFO DE COMPRA:\n\nCargo: ${cargo}\nValor: ${preco}\nPIX: ${pix}\n\nApós pagar, você será levado ao WhatsApp para enviar o comprovante.`);
-        window.open(`https://wa.me/${zap}?text=Fiz o PIX de ${preco} para o cargo ${cargo}. Meu ID: ${window.user.uid}`, '_blank');
+        alert(`PIX: ${pix}\nValor: ${preco}\nEnvie o comprovante no Zap!`);
+        window.open(`https://wa.me/${zap}?text=Comprovante PIX ${cargo}. ID: ${window.user.uid}`, '_blank');
     };
 
     function getBadge(cargo) {
@@ -175,7 +176,7 @@
                     <div class="card-info">
                         <div class="badge-container">${getBadge(post.cargo)}<b>${post.u1}</b></div>
                         <small>${post.d1}</small>
-                        <button class="btn-action" onclick="abrirPerfil('${post.uid}')">NEGOCIAR / PERFIL</button>
+                        <button class="btn-action" onclick="abrirPerfil('${post.uid}')">VER PERFIL</button>
                     </div>
                 </div>` + feed.innerHTML;
             });
@@ -187,19 +188,16 @@
         targetUid = uid;
         const snap = await get(ref(db, `usuarios/${uid}`));
         const t = snap.val();
-        
-        // MOSTRAR PAINEL APENAS SE VOCÊ FOR ADM1 E O PERFIL NÃO FOR O SEU
         const painel = document.getElementById('painelAdmControle');
         painel.style.display = (window.user.cargo === 'ADM1' && window.user.uid !== uid) ? 'block' : 'none';
 
         document.getElementById('perfilConteudo').innerHTML = `
             <div style="text-align:center; padding:20px;">
-                <i class="fas fa-user-circle" style="font-size:80px; color:var(--blue);"></i>
+                <i class="fas fa-user-circle" style="font-size:70px; color:var(--blue);"></i>
                 <div style="display:flex; justify-content:center; margin-top:10px;">${getBadge(t.cargo)}</div>
                 <h2>${t.nome}</h2>
-                <div style="background:#161b22; padding:15px; border-radius:15px; margin-top:10px; border:1px solid #30363d;">
-                    <span style="color:#8b949e;">SALDO ATUAL:</span><br>
-                    <b style="font-size:24px; color:var(--blue);">${t.moedasBlue || 0} BLUE</b>
+                <div style="background:#161b22; padding:15px; border-radius:12px; margin-top:10px;">
+                    <small>SALDO:</small><br><b style="font-size:22px; color:var(--blue);">${t.moedasBlue || 0} BLUE</b>
                 </div>
             </div>`;
         document.getElementById('telaPerfil').style.display = 'block';
@@ -207,11 +205,11 @@
 
     window.setCargo = async (c) => {
         await update(ref(db, `usuarios/${targetUid}`), { cargo: c });
-        alert("Cargo Atualizado!"); abrirPerfil(targetUid);
+        alert("Cargo alterado com sucesso!"); abrirPerfil(targetUid);
     };
 
     window.setMoedas = async (somar) => {
-        const qtd = prompt("Quantidade de moedas:");
+        const qtd = prompt("Quantidade de Blues:");
         if(!qtd) return;
         const snap = await get(ref(db, `usuarios/${targetUid}`));
         let novoSaldo = somar ? (snap.val().moedasBlue + parseInt(qtd)) : (snap.val().moedasBlue - parseInt(qtd));
