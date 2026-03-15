@@ -14,7 +14,7 @@
         .login-box { background: white; padding: 30px; border-radius: 20px; width: 85%; max-width: 350px; text-align: center; color: black; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .login-box input { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #ddd; box-sizing: border-box; }
 
-        /* BANNER URSO */
+        /* BANNER */
         .hero-banner { width: 100%; height: 220px; background: url('https://img2.unifans.io/67b9308608886.jpg') center/cover; position: relative; border-bottom: 3px solid var(--blue); }
         .hero-overlay { position: absolute; bottom: 0; background: linear-gradient(transparent, rgba(0,0,0,0.9)); width: 100%; padding: 15px; box-sizing: border-box; }
 
@@ -22,33 +22,30 @@
         .ads-side { position: fixed; right: 10px; top: 40%; transform: translateY(-50%); z-index: 4000; display: flex; flex-direction: column; gap: 12px; }
         .ad-circle { width: 70px; height: 70px; border-radius: 50%; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 9px; font-weight: bold; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.5); cursor: pointer; border: 2px solid rgba(255,255,255,0.3); transition: 0.3s; }
         
-        /* ESTRELAS ESTILOS */
+        /* ESTRELAS */
         .star-mod { color: #00BFFF; margin-left: 5px; }
         .star-adm2 { color: #ff4d4d; margin-left: 5px; }
         .star-adm1 { color: #FFD700; margin-left: 5px; }
 
         header { padding:15px; background: #161b22; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:100; border-bottom: 1px solid #30363d; }
-        .card-timeline { background: #161b22; border-radius: 15px; overflow: hidden; margin: 15px; border: 1px solid #30363d; cursor: pointer; transition: 0.2s; }
+        .card-timeline { background: #161b22; border-radius: 15px; overflow: hidden; margin: 15px; border: 1px solid #30363d; cursor: pointer; }
         .card-timeline img { width: 100%; height: 300px; object-fit: cover; }
 
-        .nav { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background: #161b22; border: 1px solid #30363d; display: flex; gap: 25px; padding: 12px 30px; border-radius: 40px; z-index: 3000; box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
+        .nav { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background: #161b22; border: 1px solid #30363d; display: flex; gap: 25px; padding: 12px 30px; border-radius: 40px; z-index: 3000; }
         .nav i { color: #8b949e; font-size: 22px; cursor: pointer; }
         .nav i.active { color: var(--blue); }
 
         .tela-full { display: none; position: fixed; inset: 0; background: var(--bg); z-index: 2000; overflow-y: auto; padding: 20px; box-sizing: border-box; }
         .btn-action { background: var(--blue); color: white; border: none; padding: 14px; border-radius: 8px; width: 100%; font-weight: bold; margin-top: 10px; cursor: pointer; }
         
-        /* PERFIL */
         .profile-header { text-align: center; padding: 20px 0; }
         .profile-img { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid var(--blue); margin-bottom: 10px; }
         .profile-stats { display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid var(--gray); border-bottom: 1px solid var(--gray); margin: 15px 0; }
         
-        /* CHAT */
         #chatBox { height: 300px; overflow-y: auto; background: #0d1117; border-radius: 10px; padding: 10px; border: 1px solid var(--gray); margin-bottom: 10px; display: flex; flex-direction: column; }
-        .msg { margin-bottom: 10px; padding: 8px 12px; border-radius: 10px; max-width: 80%; word-wrap: break-word; }
+        .msg { margin-bottom: 10px; padding: 8px 12px; border-radius: 10px; max-width: 80%; }
         .msg-me { background: var(--blue); align-self: flex-end; }
         .msg-them { background: var(--gray); align-self: flex-start; }
-        .msg img, .msg video { max-width: 100%; border-radius: 8px; margin-top: 5px; }
     </style>
 </head>
 <body>
@@ -56,7 +53,7 @@
 <div id="telaLogin">
     <div class="login-box">
         <h2 style="margin-top:0;">ICE TROCAS</h2>
-        <p style="font-size:12px; color:#666;">Entre como ADM ou use o Google para Cadastro Livre</p>
+        <p style="font-size:12px; color:#666;">Entre como ADM ou use o Google</p>
         <input type="text" id="userIn" placeholder="Usuário ou E-mail">
         <input type="password" id="passIn" placeholder="Senha">
         <button class="btn-action" style="background:var(--sea);" onclick="fazerLogin()">ENTRAR / CADASTRAR</button>
@@ -65,18 +62,16 @@
 </div>
 
 <div class="ads-side">
-    <div class="ad-circle" style="background: var(--mod-blue);" onclick="comprarCargo('MOD', 20)">MOD<br>R$ 20</div>
-    <div class="ad-circle" style="background: var(--red);" onclick="comprarCargo('ADM2', 1000)">ADM 2<br>R$ 1k</div>
-    <div class="ad-circle" style="background: var(--gold); color: black;" onclick="comprarCargo('ADM1', 'ice')">DONO<br>ICE $</div>
+    <div class="ad-circle" style="background: var(--mod-blue);" onclick="comprarCargo('MOD')">MOD<br>R$ 20</div>
+    <div class="ad-circle" style="background: var(--red);" onclick="comprarCargo('ADM2')">ADM 2<br>R$ 1k</div>
+    <div class="ad-circle" style="background: var(--gold); color: black;" onclick="comprarCargo('ADM1')">DONO<br>ICE $</div>
     <div class="ad-circle" style="background: var(--green);" onclick="compartilharApp()"><i class="fas fa-share-alt"></i><br>CONVIDAR</div>
 </div>
 
 <div id="app" style="display:none;">
     <header>
-        <div><b>ICE TROCAS</b><br><small id="btcValue" style="color:var(--blue);"></small></div>
-        <div onclick="abrirMeuPerfil()" style="cursor:pointer;">
-             <i class="fas fa-user-circle" style="font-size:24px;"></i>
-        </div>
+        <div><b>ICE TROCAS</b><br><small id="statusConect" style="color:var(--blue);">Online</small></div>
+        <div onclick="abrirMeuPerfil()" style="cursor:pointer;"><i class="fas fa-user-circle" style="font-size:24px;"></i></div>
     </header>
     <div class="hero-banner"><div class="hero-overlay"><h2>O que vamos trocar hoje?</h2><small>1 BLUE = R$ 1,00</small></div></div>
     <div id="feed"></div>
@@ -90,54 +85,35 @@
 <div id="telaPerfil" class="tela-full">
     <div id="perfilConteudo"></div>
     <div id="minhasPostagens" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; margin-top: 20px;"></div>
-    <button class="btn-action" style="background:#30363d; margin-top:20px;" onclick="fecharTelas()">VOLTAR AO FEED</button>
-    <button class="btn-action" style="background:var(--red);" onclick="deslogar()">SAIR DA CONTA</button>
-</div>
-
-<div id="telaChat" class="tela-full">
-    <h3 id="chatTitle">Chat de Negociação</h3>
-    <div id="chatBox"></div>
-    
-    <div id="previewMidia" style="display:none; padding:10px; background:#161b22; border-radius:10px; margin-bottom:10px; position:relative;">
-        <small id="nomeArquivo" style="color:var(--blue)"></small>
-        <i class="fas fa-times" style="float:right; cursor:pointer;" onclick="limparMidiaChat()"></i>
-    </div>
-
-    <div style="display:flex; gap:5px; align-items:center;">
-        <label for="midiaChat" style="background:var(--gray); padding:12px; border-radius:8px; cursor:pointer;">
-            <i class="fas fa-paperclip"></i>
-            <input type="file" id="midiaChat" accept="image/*,video/*" style="display:none;" onchange="handleMidiaChat(this)">
-        </label>
-        <input type="text" id="msgIn" placeholder="Sua oferta..." style="flex:1; padding:12px; border-radius:8px; border:none;">
-        <button onclick="enviarMensagem()" style="background:var(--blue); border:none; color:white; padding:10px 20px; border-radius:8px;"><i class="fas fa-paper-plane"></i></button>
-    </div>
-    <button class="btn-action" style="background:none;" onclick="fecharChat()">Fechar Chat</button>
-</div>
-
-<div id="telaEditPerfil" class="tela-full">
-    <h2>Editar Perfil</h2>
-    <input type="file" id="editFoto" accept="image/*" style="margin-bottom:10px;">
-    <input type="text" id="editNome" placeholder="Seu Nome" style="width:100%; padding:12px; margin-bottom:10px; background:#161b22; color:white; border:1px solid #30363d;">
-    <textarea id="editBio" placeholder="Sua Bio/Descrição" style="width:100%; padding:12px; height:80px; background:#161b22; color:white; border:1px solid #30363d;"></textarea>
-    <button class="btn-action" onclick="salvarPerfil()">SALVAR ALTERAÇÕES</button>
-    <button class="btn-action" style="background:none;" onclick="document.getElementById('telaEditPerfil').style.display='none'">Cancelar</button>
+    <button class="btn-action" style="background:#30363d; margin-top:20px;" onclick="fecharTelas()">VOLTAR</button>
+    <button class="btn-action" style="background:var(--red);" onclick="deslogar()">SAIR</button>
 </div>
 
 <div id="telaPostar" class="tela-full">
     <h2>Nova Postagem</h2>
-    <input type="file" id="filePost" accept="image/*" style="color:white; margin-bottom:15px;">
-    <input type="text" id="descPost" placeholder="O que você quer trocar?" style="width:100%; padding:15px; border-radius:8px; background:#161b22; color:white; border:1px solid #30363d; box-sizing:border-box;">
-    <button class="btn-action" onclick="enviarPost()">POSTAR NO FEED</button>
-    <button onclick="fecharTelas()" style="width:100%; background:none; color:red; border:none; margin-top:15px; cursor:pointer;">Cancelar</button>
+    <input type="file" id="filePost" accept="image/*">
+    <input type="text" id="descPost" placeholder="O que você quer trocar?" style="width:100%; padding:15px; margin: 15px 0; background:#161b22; color:white; border:1px solid #30363d; border-radius:8px;">
+    <button class="btn-action" onclick="enviarPost()">POSTAR AGORA</button>
+    <button class="btn-action" style="background:none;" onclick="fecharTelas()">Cancelar</button>
 </div>
 
 <div id="telaCarteira" class="tela-full">
     <div style="background:linear-gradient(135deg, var(--sea), var(--blue)); padding:50px 20px; border-radius:20px; text-align:center;">
-        <p style="opacity:0.8;">Meu Saldo Atual</p>
-        <h1 id="saldoBlue" style="font-size:48px; margin:10px 0;">0</h1>
-        <small>BLUE COINS (ICE)</small>
+        <p>Meu Saldo Atual</p>
+        <h1 id="saldoBlue">0</h1>
+        <small>BLUE COINS</small>
     </div>
-    <button class="btn-action" style="background:white; color:black; margin-top:30px;" onclick="fecharTelas()">VOLTAR PARA O FEED</button>
+    <button class="btn-action" style="margin-top:20px;" onclick="fecharTelas()">VOLTAR</button>
+</div>
+
+<div id="telaChat" class="tela-full">
+    <h3 id="chatTitle">Chat</h3>
+    <div id="chatBox"></div>
+    <div style="display:flex; gap:5px;">
+        <input type="text" id="msgIn" placeholder="Sua mensagem..." style="flex:1; padding:12px; border-radius:8px; border:none;">
+        <button onclick="enviarMensagem()" style="background:var(--blue); border:none; color:white; padding:10px 20px; border-radius:8px;"><i class="fas fa-paper-plane"></i></button>
+    </div>
+    <button class="btn-action" style="background:none;" onclick="fecharTelas()">Fechar</button>
 </div>
 
 <script type="module">
@@ -153,63 +129,73 @@
 
     window.user = null;
     let chatAtivoId = null;
-    let midiaBase64 = null;
-    let tipoMidia = null;
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const paiId = urlParams.get('ref');
-
-    // --- LOGICA DE HIERARQUIA ---
-    function gerarEstrela(cargo) {
-        if(cargo === 'MOD') return '<i class="fas fa-star star-mod" title="Moderador"></i>';
-        if(cargo === 'ADM2') return '<i class="fas fa-star star-adm2" title="ADM Nível 2"></i>';
-        if(cargo === 'ADM1') return '<i class="fas fa-star star-adm1" title="Dono do Ice"></i>';
+    // --- HIERARQUIA ---
+    function obterEstrela(cargo) {
+        if(cargo === 'MOD') return '<i class="fas fa-star star-mod"></i>';
+        if(cargo === 'ADM2') return '<i class="fas fa-star star-adm2"></i>';
+        if(cargo === 'ADM1') return '<i class="fas fa-star star-adm1"></i>';
         return '';
     }
 
-    // LOGIN
+    // --- LOGIN DESTRAVADO ---
+    window.mostrarApp = () => {
+        document.getElementById('telaLogin').style.display = 'none';
+        document.getElementById('app').style.display = 'block';
+    };
+
     window.fazerLogin = async () => {
         const u = document.getElementById('userIn').value;
         const p = document.getElementById('passIn').value;
+        
         if(u.toUpperCase() === "ADM" && p === "1533") {
-            const master = { nome: "ADM MASTER", cargo: "ADM1", uid: "master", moedasBlue: 999999, status: 'ativo', foto: 'https://cdn-icons-png.flaticon.com/512/711/711769.png' };
-            localStorage.setItem('ice_master', JSON.stringify(master));
-            location.reload();
+            window.user = { nome: "ADM MASTER", cargo: "ADM1", uid: "master", moedasBlue: 999999, foto: 'https://cdn-icons-png.flaticon.com/512/711/711769.png' };
+            localStorage.setItem('ice_master', JSON.stringify(window.user));
+            mostrarApp();
+            carregarDadosIniciais();
             return;
         }
-        try { await signInWithEmailAndPassword(auth, u, p); } 
-        catch (e) { try { await createUserWithEmailAndPassword(auth, u, p); } catch (err) { alert("Dados incorretos."); } }
+
+        try { 
+            await signInWithEmailAndPassword(auth, u, p); 
+        } catch (e) { 
+            try { await createUserWithEmailAndPassword(auth, u, p); } 
+            catch (err) { alert("Erro no login ou senha curta."); } 
+        }
     };
     
     window.loginGoogle = () => signInWithPopup(auth, provider);
 
     onAuthStateChanged(auth, async (u) => {
         const local = localStorage.getItem('ice_master');
-        if (local) { window.user = JSON.parse(local); mostrarApp(); } 
-        else if (u) {
+        if (local) { 
+            window.user = JSON.parse(local); 
+            mostrarApp(); 
+            carregarDadosIniciais();
+        } else if (u) {
             const snap = await get(ref(db, `usuarios/${u.uid}`));
             let dados = snap.val();
             if(!dados) {
-                dados = { nome: u.displayName || "Usuário", cargo: 'user', moedasBlue: 0, uid: u.uid, status: 'ativo', foto: u.photoURL || '', bio: 'Olá!', pai: paiId || 'Direto' };
+                dados = { nome: u.displayName || "Novato", cargo: 'user', moedasBlue: 0, uid: u.uid, foto: u.photoURL || '', bio: 'Disponível para trocas!' };
                 await set(ref(db, `usuarios/${u.uid}`), dados);
             }
             window.user = dados; 
             mostrarApp();
-        } else {
-            document.getElementById('telaLogin').style.display = 'flex';
+            carregarDadosIniciais();
         }
     });
 
-    function mostrarApp() {
-        document.getElementById('telaLogin').style.display = 'none';
-        document.getElementById('app').style.display = 'block';
+    function carregarDadosIniciais() {
         onValue(ref(db, 'posts'), carregarFeed);
         onValue(ref(db, `usuarios/${window.user.uid}`), s => { 
-            if(s.exists()) { window.user = s.val(); document.getElementById('saldoBlue').innerText = window.user.moedasBlue || 0; }
+            if(s.exists()) {
+                window.user = s.val();
+                document.getElementById('saldoBlue').innerText = window.user.moedasBlue || 0;
+            }
         });
     }
 
-    // CARREGAR FEED (FIX: Estrela por Cargo)
+    // --- FEED ---
     function carregarFeed(snap) {
         const f = document.getElementById('feed'); f.innerHTML = "";
         snap.forEach(c => {
@@ -217,13 +203,12 @@
             const div = document.createElement('div');
             div.className = "card-timeline";
             div.onclick = () => abrirPerfilAlheio(p.uid);
-            
-            const estrela = gerarEstrela(p.cargo); // Pega o cargo salvo na postagem
-            div.innerHTML = `<img src="${p.i1}"><div style="padding:15px;"><b>${p.u1} ${estrela}</b><br><small>${p.d1}</small></div>`;
+            div.innerHTML = `<img src="${p.i1}"><div style="padding:15px;"><b>${p.u1} ${obterEstrela(p.cargo)}</b><br><small>${p.d1}</small></div>`;
             f.prepend(div);
         });
     }
 
+    // --- PERFIL E BLUE ---
     window.abrirMeuPerfil = () => abrirPerfilAlheio(window.user.uid);
 
     window.abrirPerfilAlheio = async (targetUid) => {
@@ -231,89 +216,44 @@
         const target = snap.val();
         if(!target) return;
 
-        const eMeuPerfil = window.user.uid === targetUid;
-        const eAdmin = window.user.cargo === 'ADM1' || window.user.uid === 'master';
+        const eMeu = window.user.uid === targetUid;
+        const souAdmin = window.user.cargo === 'ADM1' || window.user.uid === 'master';
 
-        let btns = eMeuPerfil 
-            ? `<button class="btn-action" style="background:var(--gray);" onclick="document.getElementById('telaEditPerfil').style.display='block'">EDITAR PERFIL</button>`
-            : `<button class="btn-action" onclick="abrirChat('${target.uid}', '${target.nome}')"><i class="fas fa-handshake"></i> FAZER OFERTA AGORA</button>`;
-
-        // BOTÃO DE GERENCIAR BLUE (SÓ PARA ADM)
-        if (eAdmin && !eMeuPerfil) {
-            btns += `<button class="btn-action" style="background:var(--gold); color:black;" onclick="gerenciarBlue('${target.uid}', ${target.moedasBlue || 0})">EDITAR BLUE COINS</button>`;
+        let htmlAcao = eMeu ? `<p>Seu Perfil</p>` : `<button class="btn-action" onclick="abrirChat('${target.uid}', '${target.nome}')">NEGOCIAR</button>`;
+        
+        // BOTÃO DE ADD/REMOVER BLUE (SÓ ADM VÊ)
+        if(souAdmin && !eMeu) {
+            htmlAcao += `<button class="btn-action" style="background:var(--gold); color:black;" onclick="modificarBlue('${target.uid}', ${target.moedasBlue || 0})">EDITAR BLUE COINS</button>`;
         }
 
         document.getElementById('perfilConteudo').innerHTML = `
             <div class="profile-header">
                 <img src="${target.foto || 'https://www.w3schools.com/howto/img_avatar.png'}" class="profile-img">
-                <h2 style="display:flex; justify-content:center; align-items:center;">${target.nome} ${gerarEstrela(target.cargo)}</h2>
-                <p style="padding:0 20px; font-size:14px; color:#8b949e;">${target.bio || ''}</p>
-                ${btns}
+                <h2>${target.nome} ${obterEstrela(target.cargo)}</h2>
+                <p>${target.bio || ''}</p>
+                ${htmlAcao}
             </div>
             <div class="profile-stats">
                 <div><b>${target.moedasBlue || 0}</b><br><small>BLUE</small></div>
                 <div><b>${target.cargo}</b><br><small>CARGO</small></div>
             </div>
         `;
-        
-        const postSnap = await get(ref(db, 'posts'));
-        const grid = document.getElementById('minhasPostagens'); grid.innerHTML = "";
-        postSnap.forEach(p => { if(p.val().uid === targetUid) grid.innerHTML += `<img src="${p.val().i1}" style="width:100%; aspect-ratio:1/1; object-fit:cover; border-radius:5px;">`; });
         document.getElementById('telaPerfil').style.display = 'block';
     };
 
-    // FUNÇÃO ADM: DAR/TIRAR BLUE
-    window.gerenciarBlue = async (uid, saldoAtual) => {
-        const valor = prompt("Saldo atual: " + saldoAtual + "\nQuanto deseja adicionar ou remover? (Use - para tirar)");
-        if (valor === null) return;
-        const novoSaldo = parseInt(saldoAtual) + parseInt(valor);
-        if (isNaN(novoSaldo)) return alert("Valor inválido");
-        await update(ref(db, `usuarios/${uid}`), { moedasBlue: novoSaldo });
+    window.modificarBlue = async (uid, atual) => {
+        const valor = prompt("Saldo atual: " + atual + "\nDigite o valor para ADICIONAR ou REMOVER (use - para tirar):");
+        if(valor === null) return;
+        const novo = parseInt(atual) + parseInt(valor);
+        await update(ref(db, `usuarios/${uid}`), { moedasBlue: novo });
         alert("Saldo atualizado!");
         abrirPerfilAlheio(uid);
     };
 
-    // CHAT E MÍDIA
-    window.handleMidiaChat = (input) => {
-        const file = input.files[0]; if(!file) return;
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            midiaBase64 = e.target.result;
-            tipoMidia = file.type.startsWith('video') ? 'video' : 'img';
-            document.getElementById('previewMidia').style.display = 'block';
-            document.getElementById('nomeArquivo').innerText = "Arquivo pronto: " + file.name;
-        };
-        reader.readAsDataURL(file);
-    };
-
-    window.limparMidiaChat = () => { midiaBase64 = null; tipoMidia = null; document.getElementById('previewMidia').style.display = 'none'; };
-
-    window.abrirChat = (targetUid, targetNome) => {
-        chatAtivoId = [window.user.uid, targetUid].sort().join("_");
-        document.getElementById('chatTitle').innerText = targetNome;
-        document.getElementById('telaChat').style.display = 'block';
-        onValue(ref(db, `chats/${chatAtivoId}`), (snap) => {
-            const box = document.getElementById('chatBox'); box.innerHTML = "";
-            snap.forEach(m => {
-                const msg = m.val();
-                const midiaHtml = msg.midia ? (msg.tipo === 'video' ? `<video src="${msg.midia}" controls></video>` : `<img src="${msg.midia}">`) : "";
-                box.innerHTML += `<div class="msg ${msg.uid === window.user.uid ? 'msg-me':'msg-them'}"><b>${msg.user}:</b><br>${msg.texto}${midiaHtml}</div>`;
-            });
-            box.scrollTop = box.scrollHeight;
-        });
-    };
-
-    window.enviarMensagem = () => {
-        const txt = document.getElementById('msgIn').value;
-        if(!txt && !midiaBase64) return;
-        push(ref(db, `chats/${chatAtivoId}`), { uid: window.user.uid, user: window.user.nome, texto: txt, midia: midiaBase64 || null, tipo: tipoMidia || null });
-        document.getElementById('msgIn').value = ""; limparMidiaChat();
-    };
-
-    // POSTAR (FIX: Agora salva o cargo junto com o post)
+    // --- POSTAR ---
     window.enviarPost = () => {
         const file = document.getElementById('filePost').files[0];
-        if(!file) return alert("Selecione uma imagem!");
+        if(!file) return alert("Falta a foto!");
         const r = new FileReader();
         r.onload = (e) => {
             push(ref(db, 'posts'), { 
@@ -328,20 +268,38 @@
         r.readAsDataURL(file);
     };
 
-    // EDITAR PERFIL
-    window.salvarPerfil = async () => {
-        const updates = { nome: document.getElementById('editNome').value, bio: document.getElementById('editBio').value };
-        const file = document.getElementById('editFoto').files[0];
-        if(file) {
-            const r = new FileReader();
-            r.onload = async (e) => { updates.foto = e.target.result; await update(ref(db, `usuarios/${window.user.uid}`), updates); location.reload(); };
-            r.readAsDataURL(file);
-        } else {
-            await update(ref(db, `usuarios/${window.user.uid}`), updates); location.reload();
-        }
+    // --- CHAT ---
+    window.abrirChat = (id, nome) => {
+        chatAtivoId = [window.user.uid, id].sort().join("_");
+        document.getElementById('chatTitle').innerText = nome;
+        document.getElementById('telaChat').style.display = 'block';
+        onValue(ref(db, `chats/${chatAtivoId}`), (s) => {
+            const b = document.getElementById('chatBox'); b.innerHTML = "";
+            s.forEach(m => {
+                const msg = m.val();
+                b.innerHTML += `<div class="msg ${msg.uid === window.user.uid ? 'msg-me':'msg-them'}"><b>${msg.u}:</b><br>${msg.t}</div>`;
+            });
+            b.scrollTop = b.scrollHeight;
+        });
     };
 
-    // UTILS
-    window.fecharTelas = () => document.querySelectorAll('.tela-full').forEach(t=>t.style.display='none');
-    window.fecharChat = () => document.getElementById('telaChat').style.display = 'none';
-    window.abrirPostar = () => document.getElementById('telaPo
+    window.enviarMensagem = () => {
+        const t = document.getElementById('msgIn').value;
+        if(!t) return;
+        push(ref(db, `chats/${chatAtivoId}`), { uid: window.user.uid, u: window.user.nome, t: t });
+        document.getElementById('msgIn').value = "";
+    };
+
+    // --- AUXILIARES ---
+    window.fecharTelas = () => {
+        document.querySelectorAll('.tela-full').forEach(t => t.style.display = 'none');
+    };
+    window.abrirPostar = () => document.getElementById('telaPostar').style.display = 'block';
+    window.abrirCarteira = () => document.getElementById('telaCarteira').style.display = 'block';
+    window.deslogar = () => { localStorage.removeItem('ice_master'); signOut(auth).then(() => location.reload()); };
+    window.comprarCargo = (c) => { window.open("https://wa.me/5511983602504?text=Quero+ser+" + c); };
+    window.compartilharApp = () => { alert("Link copiado!"); navigator.clipboard.writeText(window.location.href); };
+</script>
+</body>
+    </html>
+    
