@@ -22,11 +22,10 @@
         .ads-side { position: fixed; right: 10px; top: 40%; transform: translateY(-50%); z-index: 4000; display: flex; flex-direction: column; gap: 12px; }
         .ad-circle { width: 70px; height: 70px; border-radius: 50%; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 9px; font-weight: bold; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.5); cursor: pointer; border: 2px solid rgba(255,255,255,0.3); transition: 0.3s; }
         
-        /* BADGES */
-        .badge { font-size: 11px; font-weight: bold; text-transform: uppercase; margin-bottom: 4px; display: inline-block; padding: 2px 8px; border-radius: 4px; }
-        .badge-gold { background: var(--gold); color: black; }
-        .badge-red { background: var(--red); color: white; }
-        .badge-blue { background: var(--mod-blue); color: white; }
+        /* BADGES / ESTRELAS */
+        .star-mod { color: var(--mod-blue); margin-left: 5px; }
+        .star-adm2 { color: var(--red); margin-left: 5px; }
+        .star-adm1 { color: var(--gold); margin-left: 5px; }
 
         header { padding:15px; background: #161b22; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:100; border-bottom: 1px solid #30363d; }
         .card-timeline { background: #161b22; border-radius: 15px; overflow: hidden; margin: 15px; border: 1px solid #30363d; cursor: pointer; transition: 0.2s; }
@@ -39,12 +38,10 @@
         .tela-full { display: none; position: fixed; inset: 0; background: var(--bg); z-index: 2000; overflow-y: auto; padding: 20px; box-sizing: border-box; }
         .btn-action { background: var(--blue); color: white; border: none; padding: 14px; border-radius: 8px; width: 100%; font-weight: bold; margin-top: 10px; cursor: pointer; }
         
-        /* PERFIL ESTILO INSTA */
         .profile-header { text-align: center; padding: 20px 0; }
         .profile-img { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid var(--blue); margin-bottom: 10px; }
         .profile-stats { display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid var(--gray); border-bottom: 1px solid var(--gray); margin: 15px 0; }
         
-        /* CHAT */
         #chatBox { height: 300px; overflow-y: auto; background: #0d1117; border-radius: 10px; padding: 10px; border: 1px solid var(--gray); margin-bottom: 10px; display: flex; flex-direction: column; }
         .msg { margin-bottom: 10px; padding: 8px 12px; border-radius: 10px; max-width: 80%; word-wrap: break-word; }
         .msg-me { background: var(--blue); align-self: flex-end; }
@@ -98,12 +95,10 @@
 <div id="telaChat" class="tela-full">
     <h3 id="chatTitle">Chat de Negociação</h3>
     <div id="chatBox"></div>
-    
     <div id="previewMidia" style="display:none; padding:10px; background:#161b22; border-radius:10px; margin-bottom:10px; position:relative;">
         <small id="nomeArquivo" style="color:var(--blue)"></small>
         <i class="fas fa-times" style="float:right; cursor:pointer;" onclick="limparMidiaChat()"></i>
     </div>
-
     <div style="display:flex; gap:5px; align-items:center;">
         <label for="midiaChat" style="background:var(--gray); padding:12px; border-radius:8px; cursor:pointer;">
             <i class="fas fa-paperclip"></i>
@@ -157,11 +152,17 @@
     let midiaBase64 = null;
     let tipoMidia = null;
 
-    // SISTEMA DE REFERÊNCIA (FILHO DE QUEM)
     const urlParams = new URLSearchParams(window.location.search);
     const paiId = urlParams.get('ref');
 
-    // LOGIN E CADASTRO
+    // FUNÇÃO AUXILIAR PARA GERAR ESTRELA POR CARGO
+    function obterEstrela(cargo) {
+        if(cargo === 'MOD') return '<i class="fas fa-star star-mod" title="Moderador"></i>';
+        if(cargo === 'ADM2') return '<i class="fas fa-star star-adm2" title="ADM 2"></i>';
+        if(cargo === 'ADM1') return '<i class="fas fa-star star-adm1" title="Dono"></i>';
+        return '';
+    }
+
     window.fazerLogin = async () => {
         const u = document.getElementById('userIn').value;
         const p = document.getElementById('passIn').value;
@@ -219,16 +220,23 @@
         });
     }
 
-    function carregarFeed(snap) {
+    // CARREGAR FEED COM ESTRELAS DINÂMICAS
+    async function carregarFeed(snap) {
         const f = document.getElementById('feed'); f.innerHTML = "";
-        snap.forEach(c => {
-            const p = c.val();
+        const posts = [];
+        snap.forEach(c => { posts.push(c.val()); });
+
+        for (const p of posts.reverse()) {
+            const userSnap = await get(ref(db, `usuarios/${p.uid}`));
+            const userData = userSnap.val();
+            const estrela = userData ? obterEstrela(userData.cargo) : "";
+
             const div = document.createElement('div');
             div.className = "card-timeline";
             div.onclick = () => abrirPerfilAlheio(p.uid);
-            div.innerHTML = `<img src="${p.i1}"><div style="padding:15px;"><b>${p.u1}</b><br><small>${p.d1}</small></div>`;
-            f.prepend(div);
-        });
+            div.innerHTML = `<img src="${p.i1}"><div style="padding:15px;"><b>${p.u1} ${estrela}</b><br><small>${p.d1}</small></div>`;
+            f.appendChild(div);
+        }
     }
 
     window.abrirMeuPerfil = () => abrirPerfilAlheio(window.user.uid);
@@ -239,6 +247,8 @@
         if(!target) return;
 
         const eMeuPerfil = window.user.uid === targetUid;
+        const estrela = obterEstrela(target.cargo);
+        
         const btnAcao = eMeuPerfil 
             ? `<button class="btn-action" style="background:var(--gray);" onclick="document.getElementById('telaEditPerfil').style.display='block'">EDITAR PERFIL</button>`
             : `<button class="btn-action" onclick="abrirChat('${target.uid}', '${target.nome}')"><i class="fas fa-handshake"></i> FAZER OFERTA AGORA</button>`;
@@ -246,7 +256,7 @@
         document.getElementById('perfilConteudo').innerHTML = `
             <div class="profile-header">
                 <img src="${target.foto || 'https://www.w3schools.com/howto/img_avatar.png'}" class="profile-img">
-                <h2>${target.nome}</h2>
+                <h2>${target.nome} ${estrela}</h2>
                 <p style="font-size:12px; color:var(--blue);">Convidado por: ${target.pai || 'Direto'}</p>
                 <p style="padding:0 20px; font-size:14px; color:#8b949e;">${target.bio || ''}</p>
                 ${btnAcao}
@@ -263,7 +273,6 @@
         document.getElementById('telaPerfil').style.display = 'block';
     };
 
-    // OFERTA COM MÍDIA (CHAT)
     window.handleMidiaChat = (input) => {
         const file = input.files[0];
         if(!file) return;
@@ -319,7 +328,6 @@
         limparMidiaChat();
     };
 
-    // COMPARTILHAR
     window.compartilharApp = () => {
         const link = window.location.origin + window.location.pathname + "?ref=" + window.user.uid;
         if (navigator.share) {
@@ -330,7 +338,6 @@
         }
     };
 
-    // LOGOUT CORRIGIDO
     window.deslogar = () => {
         localStorage.removeItem('ice_master');
         signOut(auth).then(() => {
@@ -339,11 +346,11 @@
         });
     };
 
-    // UTILS ORIGINAIS
     window.fecharTelas = () => { document.querySelectorAll('.tela-full').forEach(t=>t.style.display='none'); };
     window.fecharChat = () => { document.getElementById('telaChat').style.display = 'none'; };
     window.abrirPostar = () => document.getElementById('telaPostar').style.display='block';
     window.abrirCarteira = () => document.getElementById('telaCarteira').style.display='block';
+    
     window.enviarPost = () => {
         const file = document.getElementById('filePost').files[0];
         if(!file) return alert("Selecione uma imagem!");
@@ -354,8 +361,6 @@
         };
         r.readAsDataURL(file);
     };
-    window.comprarCargo = (c, p) => { alert("PIX: thiago00dudu@gmail.com\nChame no Whats após pagar."); window.open("https://wa.me/5511983602504"); };
-</script>
-</body>
-    </html>
-    
+
+    window.salvarPerfil = async () => {
+        const nome = document
