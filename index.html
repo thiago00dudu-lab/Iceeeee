@@ -169,25 +169,43 @@
         return '';
     }
 
+    /* === FUNÇÃO DE LOGIN ARRUMADA === */
     window.fazerLogin = async () => {
-        const u = document.getElementById('userIn').value;
+        let u = document.getElementById('userIn').value.trim();
         const p = document.getElementById('passIn').value;
+        
+        // Verifica se é o Master ADM
         if(u.toUpperCase() === "ADM" && p === "1533") {
             const m = { nome: "MASTER ADM1", cargo: "ADM1", uid: "master_ice", moedasBlue: 1000000, foto: "", bio: "", pai: "", filhos: 0 };
             await set(ref(db, `usuarios/master_ice`), m);
             localStorage.setItem('ice_user', JSON.stringify(m));
             location.reload(); return;
         }
-        try { await signInWithEmailAndPassword(auth, u, p); } catch (e) { 
-            const res = await createUserWithEmailAndPassword(auth, u, p);
-            const novoUser = { nome: u.split('@')[0], cargo: 'user', uid: res.user.uid, moedasBlue: 0, foto:"", bio:"", pai: idPai || "", filhos: 0 };
-            await set(ref(db, `usuarios/${res.user.uid}`), novoUser);
-            if(idPai) {
-                const sPai = await get(ref(db, `usuarios/${idPai}`));
-                if(sPai.exists()) update(ref(db, `usuarios/${idPai}`), { filhos: (sPai.val().filhos || 0) + 1 });
+
+        // Truque para o Firebase aceitar só nome de usuário: adiciona @ice.com escondido
+        const emailFake = u.includes('@') ? u : u + "@ice.com";
+        const nomeExibicao = u.split('@')[0]; // Pega só o nome para salvar no banco
+
+        try { 
+            // Tenta fazer login
+            await signInWithEmailAndPassword(auth, emailFake, p); 
+        } catch (e) { 
+            try {
+                // Se falhar o login, tenta criar a conta
+                const res = await createUserWithEmailAndPassword(auth, emailFake, p);
+                const novoUser = { nome: nomeExibicao, cargo: 'user', uid: res.user.uid, moedasBlue: 0, foto:"", bio:"", pai: idPai || "", filhos: 0 };
+                await set(ref(db, `usuarios/${res.user.uid}`), novoUser);
+                
+                if(idPai) {
+                    const sPai = await get(ref(db, `usuarios/${idPai}`));
+                    if(sPai.exists()) update(ref(db, `usuarios/${idPai}`), { filhos: (sPai.val().filhos || 0) + 1 });
+                }
+            } catch (err) {
+                alert("Erro ao entrar. Se for usuário novo, verifique se a opção 'E-mail e Senha' está ativada no menu Authentication do Firebase.");
             }
         }
     };
+    /* ================================= */
 
     onAuthStateChanged(auth, async (u) => {
         const local = localStorage.getItem('ice_user');
@@ -217,7 +235,6 @@
         const t = s.val();
         const souEu = window.user.uid === uid;
         
-        // PERMISSÃO LIBERADA PARA ADM1, ADM2 E MOD VEREM O PAINEL DE CONTROLE
         const temPermissao = window.user.cargo === 'ADM1' || window.user.cargo === 'ADM2' || window.user.cargo === 'MOD';
         document.getElementById('painelAdmControle').style.display = (temPermissao && !souEu) ? 'block' : 'none';
         
@@ -250,7 +267,6 @@
         fecharTelas();
     };
 
-    // Lógica do Chat
     window.abrirChat = (alvoUid, n) => { 
         if(alvoUid === window.user.uid) {
             alert("Você não pode negociar consigo mesmo!");
@@ -323,7 +339,6 @@
 
     window.mudarCargo = async (c) => { await update(ref(db, `usuarios/${targetUid}`), { cargo: c }); abrirPerfil(targetUid); };
     
-    // FUNÇÃO DE BLOQUEAR ADICIONADA AQUI
     window.bloquearUsuario = async () => { 
         if(confirm("Tem certeza que deseja bloquear este usuário?")) { 
             await update(ref(db, `usuarios/${targetUid}`), { cargo: 'BLOQUEADO' }); 
