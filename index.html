@@ -20,7 +20,7 @@
         .star-adm2 { color: var(--red); }
         .star-adm1 { color: var(--gold); }
 
-        /* MENU FLUTUANTE (NOVIDADE) */
+        /* MENU FLUTUANTE */
         .side-menu { position: fixed; right: 15px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 15px; z-index: 4000; }
         .btn-float { width: 45px; height: 45px; border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center; color: white; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.4); font-size: 18px; transition: 0.3s; }
         .btn-float:active { transform: scale(0.9); }
@@ -49,10 +49,10 @@
 <body>
 
 <div class="side-menu" id="menuFlutuante" style="display:none;">
-    <button class="btn-float" style="background: var(--mod-blue);" title="Comprar MOD" onclick="comprarCargo('MOD', 20)">
+    <button class="btn-float" style="background: var(--mod-blue);" title="Comprar MOD" onclick="instrucaoCompra('MOD', '20 Blues')">
         <i class="fas fa-star"></i>
     </button>
-    <button class="btn-float" style="background: var(--red);" title="Comprar ADM2" onclick="comprarCargo('ADM2', 1000)">
+    <button class="btn-float" style="background: var(--red);" title="Comprar ADM2" onclick="instrucaoCompra('ADM2', '1000 Blues')">
         <i class="fas fa-crown"></i>
     </button>
     <button class="btn-float" style="background: var(--gold); color:black;" title="Market Cap" onclick="verBolsa()">
@@ -68,7 +68,7 @@
         <h2>ICE TROCAS</h2>
         <input type="text" id="userIn" placeholder="E-mail">
         <input type="password" id="passIn" placeholder="Senha">
-        <button class="btn-action" onclick="fazerLogin()">ENTRAR</button>
+        <button class="btn-action" onclick="fazerLogin()">ENTRAR / CADASTRAR</button>
     </div>
 </div>
 
@@ -122,6 +122,7 @@
         <p>Meu Saldo</p>
         <h1 id="saldoBlue">0</h1>
         <small>BLUE COINS</small>
+        <p style="margin-top:20px; font-size:12px;">ID do Usuário:<br><span id="userIdDisplay">---</span></p>
     </div>
     <button class="btn-action" style="margin-top:20px;" onclick="fecharTelas()">VOLTAR</button>
 </div>
@@ -147,7 +148,18 @@
         return '';
     }
 
-    // LOGIN COM FILIAÇÃO
+    // COMPRA DE CARGOS COM PIX
+    window.instrucaoCompra = (cargo, valor) => {
+        alert(
+            `💎 ADQUIRIR CARGO: ${cargo}\n\n` +
+            `1. Faça o PIX de ${valor} para:\n` +
+            `Chave: thiago00dudu@gmail.com\n\n` +
+            `2. Envie o comprovante e seu ID para o Suporte:\n` +
+            `WhatsApp: 11983602504\n\n` +
+            `Seu ID: ${window.user.uid}`
+        );
+    };
+
     window.fazerLogin = async () => {
         const u = document.getElementById('userIn').value;
         const p = document.getElementById('passIn').value;
@@ -163,7 +175,6 @@
             const res = await signInWithEmailAndPassword(auth, u, p); 
         } catch (e) { 
             const res = await createUserWithEmailAndPassword(auth, u, p);
-            // Se for novo e tiver pai, vincula
             if(paiUid) await update(ref(db, `usuarios/${res.user.uid}`), { pai: paiUid });
         }
     };
@@ -183,6 +194,7 @@
         document.getElementById('telaLogin').style.display = 'none';
         document.getElementById('app').style.display = 'block';
         document.getElementById('menuFlutuante').style.display = 'flex';
+        document.getElementById('userIdDisplay').innerText = window.user.uid;
         
         onValue(ref(db, 'posts'), snap => {
             const feed = document.getElementById('feed'); feed.innerHTML = "";
@@ -200,32 +212,19 @@
         onValue(ref(db, `usuarios/${window.user.uid}`), s => { if(s.exists()){ window.user = s.val(); document.getElementById('saldoBlue').innerText = s.val().moedasBlue || 0; } });
     }
 
-    // COMPRA DE CARGOS E BOLSA
-    window.comprarCargo = async (cargo, preco) => {
-        if(window.user.moedasBlue < preco) return alert("Você precisa de " + preco + " BLUE!");
-        if(confirm("Deseja comprar " + cargo + " por " + preco + " BLUE?")) {
-            await update(ref(db, `usuarios/${window.user.uid}`), { 
-                cargo: cargo, 
-                moedasBlue: window.user.moedasBlue - preco 
-            });
-            alert("Parabéns! Você agora é " + cargo);
-        }
-    };
-
     window.verBolsa = async () => {
         const snap = await get(ref(db, 'usuarios'));
         let totalBlue = 0;
         snap.forEach(u => { totalBlue += (u.val().moedasBlue || 0); });
         const valorBolsa = 22000000 + (totalBlue * 100);
-        alert("📊 VALOR DE MERCADO ICE:\n\nR$ " + valorBolsa.toLocaleString('pt-BR') + "\n\nO valor cresce a cada BLUE comprada!");
+        alert("📊 VALOR DE MERCADO ICE:\n\nR$ " + valorBolsa.toLocaleString('pt-BR') + "\n\nO valor cresce conforme as pessoas compram BLUE!");
     };
 
     window.compartilharLink = () => {
         const link = window.location.origin + "?ref=" + window.user.uid;
-        prompt("Seu link de filiação (Envie para amigos):", link);
+        prompt("Seu link de filiação:", link);
     };
 
-    // FUNÇÕES DE FEED E CHAT (MANTIDAS)
     window.abrirTelaOferta = (uid, nome) => {
         targetUidGlobal = uid;
         document.getElementById('ofertaTitle').innerText = "Oferta para " + nome;
