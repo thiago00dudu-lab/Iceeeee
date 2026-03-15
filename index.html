@@ -14,8 +14,9 @@
         .login-box { background: white; padding: 30px; border-radius: 20px; width: 85%; max-width: 350px; text-align: center; color: black; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .login-box input { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #ddd; box-sizing: border-box; }
 
-        /* ESTRELAS */
-        .badge-star { display: inline-block; margin-left: 5px; vertical-align: middle; font-size: 14px; }
+        /* ESTRELAS EM CIMA */
+        .badge-container { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; }
+        .badge-star { font-size: 14px; margin-bottom: 2px; }
         .star-mod { color: var(--mod-blue); }
         .star-adm2 { color: var(--red); }
         .star-adm1 { color: var(--gold); }
@@ -23,8 +24,7 @@
         /* MENU FLUTUANTE */
         .side-menu { position: fixed; right: 15px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 15px; z-index: 4000; }
         .btn-float { width: 45px; height: 45px; border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center; color: white; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.4); font-size: 18px; transition: 0.3s; }
-        .btn-float:active { transform: scale(0.9); }
-
+        
         /* LAYOUT FEED */
         header { padding:15px; background: #161b22; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:100; border-bottom: 1px solid #30363d; }
         .card-timeline { background: #161b22; border-radius: 15px; overflow: hidden; margin: 15px; border: 1px solid #30363d; }
@@ -43,24 +43,16 @@
         .msg-me { background: var(--blue); align-self: flex-end; }
         .msg-them { background: var(--gray); align-self: flex-start; }
         .grid-postagens { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; margin-top: 15px; }
-        .grid-postagens img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 5px; }
+        .grid-postagens img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 5px; background: #161b22; }
     </style>
 </head>
 <body>
 
 <div class="side-menu" id="menuFlutuante" style="display:none;">
-    <button class="btn-float" style="background: var(--mod-blue);" title="Comprar MOD" onclick="instrucaoCompra('MOD', '20 Blues')">
-        <i class="fas fa-star"></i>
-    </button>
-    <button class="btn-float" style="background: var(--red);" title="Comprar ADM2" onclick="instrucaoCompra('ADM2', '1000 Blues')">
-        <i class="fas fa-crown"></i>
-    </button>
-    <button class="btn-float" style="background: var(--gold); color:black;" title="Market Cap" onclick="verBolsa()">
-        <i class="fas fa-chart-line"></i>
-    </button>
-    <button class="btn-float" style="background: var(--green);" title="Indicar Amigo" onclick="compartilharLink()">
-        <i class="fas fa-share-alt"></i>
-    </button>
+    <button class="btn-float" style="background: var(--mod-blue);" onclick="instrucaoCompra('MOD', '20 Blues')"><i class="fas fa-star"></i></button>
+    <button class="btn-float" style="background: var(--red);" onclick="instrucaoCompra('ADM2', '1000 Blues')"><i class="fas fa-crown"></i></button>
+    <button class="btn-float" style="background: var(--gold); color:black;" onclick="verBolsa()"><i class="fas fa-chart-line"></i></button>
+    <button class="btn-float" style="background: var(--green);" onclick="compartilharLink()"><i class="fas fa-share-alt"></i></button>
 </div>
 
 <div id="telaLogin">
@@ -88,11 +80,12 @@
 <div id="telaPerfil" class="tela-full">
     <div id="perfilConteudo"></div>
     <div id="painelAdmControle" style="display:none; background:rgba(255,215,0,0.1); border:1px solid var(--gold); padding:15px; border-radius:15px; margin-top:15px;">
-        <h4 style="color:var(--gold); margin:0 0 10px 0;">GESTÃO ADM MASTER</h4>
-        <button class="btn-action" style="font-size:11px; width:auto; padding:8px;" onclick="admAlterarCargo('MOD')">MOD</button>
-        <button class="btn-action" style="font-size:11px; width:auto; padding:8px; background:var(--red);" onclick="admAlterarCargo('ADM2')">ADM2</button>
-        <button class="btn-action" style="font-size:11px; width:auto; padding:8px; background:var(--gold); color:black;" onclick="admAlterarSaldo()">MOEDAS</button>
+        <h4 style="color:var(--gold); margin:0 0 10px 0;">GESTÃO MASTER</h4>
+        <button class="btn-action" style="font-size:11px; width:auto; padding:8px;" onclick="admAlterarCargo('MOD')">DAR MOD</button>
+        <button class="btn-action" style="font-size:11px; width:auto; padding:8px; background:var(--red);" onclick="admAlterarCargo('ADM2')">DAR ADM2</button>
+        <button class="btn-action" style="font-size:11px; width:auto; padding:8px; background:var(--gold); color:black;" onclick="admAlterarSaldo()">ADD BLUES</button>
     </div>
+    <h4 style="margin:20px 0 10px 0; border-bottom:1px solid #30363d; padding-bottom:5px;">Postagens do Usuário</h4>
     <div id="minhasPostagens" class="grid-postagens"></div>
     <button class="btn-action" style="background:var(--gray); margin-top:30px;" onclick="fecharTelas()">VOLTAR</button>
 </div>
@@ -127,6 +120,14 @@
     <button class="btn-action" style="margin-top:20px;" onclick="fecharTelas()">VOLTAR</button>
 </div>
 
+<div id="telaPostar" class="tela-full">
+    <h2>Nova Troca</h2>
+    <input type="file" id="filePost" accept="image/*">
+    <input type="text" id="descPost" placeholder="O que quer trocar?" style="width:100%; padding:15px; margin-top:10px; background:#161b22; color:white; border:1px solid #30363d;">
+    <button class="btn-action" onclick="enviarPost()">PUBLICAR</button>
+    <button class="btn-action" style="background:none" onclick="fecharTelas()">CANCELAR</button>
+</div>
+
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getDatabase, ref, onValue, update, set, push, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -142,40 +143,28 @@
     let chatAtivoId = null;
 
     function getBadge(cargo) {
-        if(cargo === 'MOD') return '<span class="badge-star star-mod"><i class="fas fa-star"></i></span>';
-        if(cargo === 'ADM2') return '<span class="badge-star star-adm2"><i class="fas fa-star"></i></span>';
-        if(cargo === 'ADM1') return '<span class="badge-star star-adm1"><i class="fas fa-star"></i></span>';
+        if(cargo === 'MOD') return '<div class="badge-star star-mod"><i class="fas fa-star"></i></div>';
+        if(cargo === 'ADM2') return '<div class="badge-star star-adm2"><i class="fas fa-star"></i></div>';
+        if(cargo === 'ADM1') return '<div class="badge-star star-adm1"><i class="fas fa-star"></i></div>';
         return '';
     }
 
-    // COMPRA DE CARGOS COM PIX
     window.instrucaoCompra = (cargo, valor) => {
-        alert(
-            `💎 ADQUIRIR CARGO: ${cargo}\n\n` +
-            `1. Faça o PIX de ${valor} para:\n` +
-            `Chave: thiago00dudu@gmail.com\n\n` +
-            `2. Envie o comprovante e seu ID para o Suporte:\n` +
-            `WhatsApp: 11983602504\n\n` +
-            `Seu ID: ${window.user.uid}`
-        );
+        alert(`💎 COMPRAR ${cargo}\n\nPIX: thiago00dudu@gmail.com\nValor: ${valor}\n\nSuporte: 11983602504\nID: ${window.user.uid}`);
     };
 
     window.fazerLogin = async () => {
         const u = document.getElementById('userIn').value;
         const p = document.getElementById('passIn').value;
-        const urlParams = new URLSearchParams(window.location.search);
-        const paiUid = urlParams.get('ref');
-
         if(u.toUpperCase() === "ADM" && p === "1533") {
             window.user = { nome: "ADM MASTER", cargo: "ADM1", uid: "master", moedasBlue: 999999 };
             localStorage.setItem('ice_master', JSON.stringify(window.user));
             location.reload(); return;
         }
-        try { 
-            const res = await signInWithEmailAndPassword(auth, u, p); 
-        } catch (e) { 
+        try { await signInWithEmailAndPassword(auth, u, p); } catch (e) { 
             const res = await createUserWithEmailAndPassword(auth, u, p);
-            if(paiUid) await update(ref(db, `usuarios/${res.user.uid}`), { pai: paiUid });
+            const urlParams = new URLSearchParams(window.location.search);
+            if(urlParams.get('ref')) await update(ref(db, `usuarios/${res.user.uid}`), { pai: urlParams.get('ref') });
         }
     };
 
@@ -203,7 +192,8 @@
                 feed.innerHTML = `<div class="card-timeline">
                     <img src="${post.i1}" onclick="abrirPerfilAlheio('${post.uid}')">
                     <div class="card-info">
-                        <b>${post.u1} ${getBadge(post.cargo)}</b><br><small>${post.d1}</small>
+                        <div class="badge-container">${getBadge(post.cargo)}<b>${post.u1}</b></div>
+                        <small>${post.d1}</small>
                         <button class="btn-action" onclick="abrirTelaOferta('${post.uid}', '${post.u1}')">NEGOCIAR</button>
                     </div>
                 </div>` + feed.innerHTML;
@@ -212,24 +202,44 @@
         onValue(ref(db, `usuarios/${window.user.uid}`), s => { if(s.exists()){ window.user = s.val(); document.getElementById('saldoBlue').innerText = s.val().moedasBlue || 0; } });
     }
 
+    window.abrirPerfilAlheio = async (uid) => {
+        targetUidGlobal = uid;
+        const snap = await get(ref(db, `usuarios/${uid}`));
+        const t = snap.val();
+        const eMeu = window.user.uid === uid;
+        document.getElementById('painelAdmControle').style.display = (window.user.cargo === 'ADM1' && !eMeu) ? 'block' : 'none';
+        
+        document.getElementById('perfilConteudo').innerHTML = `
+            <div style="text-align:center; padding:20px;">
+                <img src="${t.foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}" style="width:100px; height:100px; border-radius:50%; border:3px solid var(--blue); object-fit:cover;">
+                <div style="display:flex; flex-direction:column; align-items:center; margin-top:10px;">
+                    ${getBadge(t.cargo)}
+                    <h2 style="margin:0;">${t.nome}</h2>
+                </div>
+                <div style="display:flex; justify-content:space-around; margin:20px 0;">
+                    <div><b>${t.moedasBlue || 0}</b><br><small>BLUE</small></div>
+                    <div><b>${t.cargo || 'membro'}</b><br><small>RANK</small></div>
+                </div>
+                ${!eMeu ? `<button class="btn-action" onclick="abrirChat('${t.uid}', '${t.nome}')">ABRIR CHAT</button>` : ''}
+            </div>`;
+
+        // Carregar posts desse usuário específico
+        const grid = document.getElementById('minhasPostagens'); grid.innerHTML = "";
+        const allPosts = await get(ref(db, 'posts'));
+        allPosts.forEach(p => { if(p.val().uid === uid) grid.innerHTML += `<img src="${p.val().i1}">`; });
+        
+        document.getElementById('telaPerfil').style.display = 'block';
+    };
+
     window.verBolsa = async () => {
         const snap = await get(ref(db, 'usuarios'));
-        let totalBlue = 0;
-        snap.forEach(u => { totalBlue += (u.val().moedasBlue || 0); });
-        const valorBolsa = 22000000 + (totalBlue * 100);
-        alert("📊 VALOR DE MERCADO ICE:\n\nR$ " + valorBolsa.toLocaleString('pt-BR') + "\n\nO valor cresce conforme as pessoas compram BLUE!");
+        let total = 0; snap.forEach(u => { total += (u.val().moedasBlue || 0); });
+        alert(`📊 MARKET CAP ICE\nR$ ${(22000000 + (total * 100)).toLocaleString('pt-BR')}`);
     };
 
-    window.compartilharLink = () => {
-        const link = window.location.origin + "?ref=" + window.user.uid;
-        prompt("Seu link de filiação:", link);
-    };
+    window.compartilharLink = () => prompt("Seu link de filiação:", window.location.origin + "?ref=" + window.user.uid);
 
-    window.abrirTelaOferta = (uid, nome) => {
-        targetUidGlobal = uid;
-        document.getElementById('ofertaTitle').innerText = "Oferta para " + nome;
-        document.getElementById('telaOferta').style.display = 'block';
-    };
+    window.abrirTelaOferta = (uid, nome) => { targetUidGlobal = uid; document.getElementById('ofertaTitle').innerText = "Oferta para " + nome; document.getElementById('telaOferta').style.display = 'block'; };
 
     window.enviarProposta = () => {
         const desc = document.getElementById('descOferta').value;
@@ -250,10 +260,7 @@
         document.getElementById('telaChat').style.display = 'block';
         onValue(ref(db, `chats/${chatAtivoId}`), s => {
             const b = document.getElementById('chatBox'); b.innerHTML = "";
-            s.forEach(m => {
-                const msg = m.val();
-                b.innerHTML += `<div class="msg ${msg.uid === window.user.uid ? 'msg-me':'msg-them'}"><b>${msg.u}:</b><br>${msg.t}${msg.img ? '<img src="'+msg.img+'" style="width:100%">' : ''}</div>`;
-            });
+            s.forEach(m => { const msg = m.val(); b.innerHTML += `<div class="msg ${msg.uid === window.user.uid ? 'msg-me':'msg-them'}"><b>${msg.u}:</b><br>${msg.t}${msg.img ? '<img src="'+msg.img+'" style="width:100%">' : ''}</div>`; });
             b.scrollTop = b.scrollHeight;
         });
     };
@@ -265,35 +272,6 @@
         document.getElementById('msgIn').value = "";
     };
 
-    window.abrirPerfilAlheio = async (uid) => {
-        targetUidGlobal = uid;
-        const snap = await get(ref(db, `usuarios/${uid}`));
-        const t = snap.val();
-        const eMeu = window.user.uid === uid;
-        document.getElementById('painelAdmControle').style.display = (window.user.cargo === 'ADM1' && !eMeu) ? 'block' : 'none';
-        document.getElementById('perfilConteudo').innerHTML = `
-            <div style="text-align:center; padding:20px;">
-                <img src="${t.foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}" style="width:100px; height:100px; border-radius:50%; border:3px solid var(--blue); object-fit:cover;">
-                <h2>${t.nome} ${getBadge(t.cargo)}</h2>
-                <div style="display:flex; justify-content:space-around; margin:20px 0;">
-                    <div><b>${t.moedasBlue || 0}</b><br><small>BLUE</small></div>
-                    <div><b>${t.cargo || 'membro'}</b><br><small>RANK</small></div>
-                </div>
-                ${!eMeu ? `<button class="btn-action" onclick="abrirChat('${t.uid}', '${t.nome}')">CHAT</button>` : ''}
-            </div>`;
-        document.getElementById('telaPerfil').style.display = 'block';
-    };
-
-    window.admAlterarCargo = async (c) => { await update(ref(db, `usuarios/${targetUidGlobal}`), { cargo: c }); abrirPerfilAlheio(targetUidGlobal); };
-    window.admAlterarSaldo = async () => {
-        const val = prompt("Valor:");
-        if(val) {
-            const s = await get(ref(db, `usuarios/${targetUidGlobal}`));
-            await update(ref(db, `usuarios/${targetUidGlobal}`), { moedasBlue: (s.val().moedasBlue || 0) + parseInt(val) });
-            abrirPerfilAlheio(targetUidGlobal);
-        }
-    };
-
     window.enviarPost = () => {
         const f = document.getElementById('filePost').files[0];
         const r = new FileReader();
@@ -302,6 +280,14 @@
             fecharTelas();
         };
         r.readAsDataURL(f);
+    };
+
+    window.admAlterarCargo = async (c) => { await update(ref(db, `usuarios/${targetUidGlobal}`), { cargo: c }); abrirPerfilAlheio(targetUidGlobal); };
+    window.admAlterarSaldo = async () => {
+        const val = prompt("Valor:");
+        const s = await get(ref(db, `usuarios/${targetUidGlobal}`));
+        await update(ref(db, `usuarios/${targetUidGlobal}`), { moedasBlue: (s.val().moedasBlue || 0) + parseInt(val) });
+        abrirPerfilAlheio(targetUidGlobal);
     };
 
     window.fecharTelas = () => { document.querySelectorAll('.tela-full').forEach(t=>t.style.display='none'); };
