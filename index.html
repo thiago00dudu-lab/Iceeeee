@@ -14,18 +14,22 @@
         .login-box { background: white; padding: 30px; border-radius: 20px; width: 85%; max-width: 350px; text-align: center; color: black; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .login-box input { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #ddd; box-sizing: border-box; }
 
-        /* ESTRELAS - CORREÇÃO DE POSICIONAMENTO */
+        /* ESTRELAS */
         .badge-star { display: inline-block; margin-left: 5px; vertical-align: middle; font-size: 14px; }
         .star-mod { color: var(--mod-blue); }
         .star-adm2 { color: var(--red); }
         .star-adm1 { color: var(--gold); }
+
+        /* MENU FLUTUANTE (NOVIDADE) */
+        .side-menu { position: fixed; right: 15px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 15px; z-index: 4000; }
+        .btn-float { width: 45px; height: 45px; border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center; color: white; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.4); font-size: 18px; transition: 0.3s; }
+        .btn-float:active { transform: scale(0.9); }
 
         /* LAYOUT FEED */
         header { padding:15px; background: #161b22; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:100; border-bottom: 1px solid #30363d; }
         .card-timeline { background: #161b22; border-radius: 15px; overflow: hidden; margin: 15px; border: 1px solid #30363d; }
         .card-timeline img { width: 100%; height: 320px; object-fit: cover; }
         .card-info { padding: 15px; }
-        .card-info b { display: flex; align-items: center; font-size: 16px; }
 
         .nav { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background: #161b22; border: 1px solid #30363d; display: flex; gap: 25px; padding: 12px 30px; border-radius: 40px; z-index: 3000; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
         .nav i { color: #8b949e; font-size: 22px; cursor: pointer; }
@@ -34,26 +38,37 @@
         .tela-full { display: none; position: fixed; inset: 0; background: var(--bg); z-index: 2000; overflow-y: auto; padding: 20px; box-sizing: border-box; }
         .btn-action { background: var(--blue); color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; font-weight: bold; margin-top: 10px; cursor: pointer; }
         
-        /* CHAT E OFERTA */
-        #chatBox { height: 60vh; overflow-y: auto; background: #0d1117; display: flex; flex-direction: column; gap: 10px; padding: 10px; border: 1px solid var(--gray); border-radius: 10px; }
-        .msg { padding: 10px; border-radius: 10px; max-width: 85%; position: relative; }
+        #chatBox { height: 60vh; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 10px; }
+        .msg { padding: 10px; border-radius: 10px; max-width: 85%; }
         .msg-me { background: var(--blue); align-self: flex-end; }
         .msg-them { background: var(--gray); align-self: flex-start; }
-        .msg img { max-width: 100%; border-radius: 8px; margin-top: 5px; display: block; }
-        
-        /* GRID PERFIL */
         .grid-postagens { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; margin-top: 15px; }
         .grid-postagens img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 5px; }
     </style>
 </head>
 <body>
 
+<div class="side-menu" id="menuFlutuante" style="display:none;">
+    <button class="btn-float" style="background: var(--mod-blue);" title="Comprar MOD" onclick="comprarCargo('MOD', 20)">
+        <i class="fas fa-star"></i>
+    </button>
+    <button class="btn-float" style="background: var(--red);" title="Comprar ADM2" onclick="comprarCargo('ADM2', 1000)">
+        <i class="fas fa-crown"></i>
+    </button>
+    <button class="btn-float" style="background: var(--gold); color:black;" title="Market Cap" onclick="verBolsa()">
+        <i class="fas fa-chart-line"></i>
+    </button>
+    <button class="btn-float" style="background: var(--green);" title="Indicar Amigo" onclick="compartilharLink()">
+        <i class="fas fa-share-alt"></i>
+    </button>
+</div>
+
 <div id="telaLogin">
     <div class="login-box">
-        <h2 style="margin-top:0">ICE TROCAS</h2>
+        <h2>ICE TROCAS</h2>
         <input type="text" id="userIn" placeholder="E-mail">
         <input type="password" id="passIn" placeholder="Senha">
-        <button class="btn-action" onclick="fazerLogin()">ENTRAR / CRIAR CONTA</button>
+        <button class="btn-action" onclick="fazerLogin()">ENTRAR</button>
     </div>
 </div>
 
@@ -76,56 +91,37 @@
         <h4 style="color:var(--gold); margin:0 0 10px 0;">GESTÃO ADM MASTER</h4>
         <button class="btn-action" style="font-size:11px; width:auto; padding:8px;" onclick="admAlterarCargo('MOD')">MOD</button>
         <button class="btn-action" style="font-size:11px; width:auto; padding:8px; background:var(--red);" onclick="admAlterarCargo('ADM2')">ADM2</button>
-        <button class="btn-action" style="font-size:11px; width:auto; padding:8px; background:var(--gray);" onclick="admAlterarCargo('user')">MEMBRO</button>
         <button class="btn-action" style="font-size:11px; width:auto; padding:8px; background:var(--gold); color:black;" onclick="admAlterarSaldo()">MOEDAS</button>
     </div>
-    <h4 style="margin:25px 0 10px 0;">Galeria de Trocas</h4>
     <div id="minhasPostagens" class="grid-postagens"></div>
-    <button class="btn-action" style="background:var(--gray); margin-top:30px;" onclick="fecharTelas()">VOLTAR AO FEED</button>
+    <button class="btn-action" style="background:var(--gray); margin-top:30px;" onclick="fecharTelas()">VOLTAR</button>
 </div>
 
 <div id="telaOferta" class="tela-full">
     <h2 id="ofertaTitle">Fazer Proposta</h2>
     <div style="background:#161b22; padding:15px; border-radius:15px;">
-        <p>Envie fotos/vídeos do seu produto:</p>
         <input type="file" id="fileOferta" accept="image/*,video/*">
-        <textarea id="descOferta" placeholder="Descreva sua oferta (ex: Troco por tal coisa...)" style="width:100%; height:100px; margin-top:10px; background:#0d1117; color:white; border:1px solid var(--gray); padding:10px; border-radius:8px;"></textarea>
-        <button class="btn-action" style="background:var(--green);" onclick="enviarProposta()">ENVIAR PARA O CHAT</button>
+        <textarea id="descOferta" placeholder="Sua oferta..." style="width:100%; height:100px; margin-top:10px; background:#0d1117; color:white; border:1px solid var(--gray); padding:10px; border-radius:8px;"></textarea>
+        <button class="btn-action" style="background:var(--green);" onclick="enviarProposta()">ENVIAR PROPOSTA</button>
     </div>
     <button class="btn-action" style="background:none;" onclick="document.getElementById('telaOferta').style.display='none'">Cancelar</button>
 </div>
 
 <div id="telaChat" class="tela-full">
-    <h3 id="chatTitle" style="border-bottom: 1px solid var(--gray); padding-bottom:10px;">Chat</h3>
+    <h3 id="chatTitle">Chat</h3>
     <div id="chatBox"></div>
     <div style="display:flex; gap:8px; margin-top:10px;">
         <input type="text" id="msgIn" placeholder="Digite..." style="flex:1; padding:12px; border-radius:8px; border:none; background:#161b22; color:white;">
         <button onclick="enviarMensagem()" style="background:var(--blue); border:none; color:white; width:50px; border-radius:8px;"><i class="fas fa-paper-plane"></i></button>
     </div>
-    <button class="btn-action" style="background:none" onclick="fecharTelas()">SAIR DO CHAT</button>
-</div>
-
-<div id="telaEditPerfil" class="tela-full">
-    <h2>Configurar Meu Perfil</h2>
-    <input type="file" id="editFoto" accept="image/*">
-    <input type="text" id="editNome" placeholder="Seu Nome" style="width:100%; padding:12px; margin:10px 0; background:#161b22; color:white; border:1px solid var(--gray);">
-    <textarea id="editBio" placeholder="Sua Bio" style="width:100%; height:80px; background:#161b22; color:white; border:1px solid var(--gray); padding:10px;"></textarea>
-    <button class="btn-action" onclick="salvarPerfil()">SALVAR</button>
-    <button class="btn-action" style="background:none" onclick="document.getElementById('telaEditPerfil').style.display='none'">VOLTAR</button>
-</div>
-
-<div id="telaPostar" class="tela-full">
-    <h2>Novo Anúncio</h2>
-    <input type="file" id="filePost" accept="image/*">
-    <input type="text" id="descPost" placeholder="O que você está trocando?" style="width:100%; padding:15px; margin-top:10px; background:#161b22; color:white; border:1px solid var(--gray);">
-    <button class="btn-action" onclick="enviarPost()">POSTAR NO FEED</button>
-    <button class="btn-action" style="background:none" onclick="fecharTelas()">CANCELAR</button>
+    <button class="btn-action" style="background:none" onclick="fecharTelas()">FECHAR</button>
 </div>
 
 <div id="telaCarteira" class="tela-full">
     <div style="background:linear-gradient(135deg, var(--sea), var(--blue)); padding:40px; border-radius:20px; text-align:center;">
-        <p>Saldo Blue</p>
+        <p>Meu Saldo</p>
         <h1 id="saldoBlue">0</h1>
+        <small>BLUE COINS</small>
     </div>
     <button class="btn-action" style="margin-top:20px;" onclick="fecharTelas()">VOLTAR</button>
 </div>
@@ -144,7 +140,6 @@
     let targetUidGlobal = null;
     let chatAtivoId = null;
 
-    // LÓGICA DE ESTRELAS CORRIGIDA
     function getBadge(cargo) {
         if(cargo === 'MOD') return '<span class="badge-star star-mod"><i class="fas fa-star"></i></span>';
         if(cargo === 'ADM2') return '<span class="badge-star star-adm2"><i class="fas fa-star"></i></span>';
@@ -152,15 +147,25 @@
         return '';
     }
 
+    // LOGIN COM FILIAÇÃO
     window.fazerLogin = async () => {
         const u = document.getElementById('userIn').value;
         const p = document.getElementById('passIn').value;
+        const urlParams = new URLSearchParams(window.location.search);
+        const paiUid = urlParams.get('ref');
+
         if(u.toUpperCase() === "ADM" && p === "1533") {
-            window.user = { nome: "ADM MASTER", cargo: "ADM1", uid: "master", moedasBlue: 999999, foto: '' };
+            window.user = { nome: "ADM MASTER", cargo: "ADM1", uid: "master", moedasBlue: 999999 };
             localStorage.setItem('ice_master', JSON.stringify(window.user));
             location.reload(); return;
         }
-        try { await signInWithEmailAndPassword(auth, u, p); } catch (e) { await createUserWithEmailAndPassword(auth, u, p); }
+        try { 
+            const res = await signInWithEmailAndPassword(auth, u, p); 
+        } catch (e) { 
+            const res = await createUserWithEmailAndPassword(auth, u, p);
+            // Se for novo e tiver pai, vincula
+            if(paiUid) await update(ref(db, `usuarios/${res.user.uid}`), { pai: paiUid });
+        }
     };
 
     onAuthStateChanged(auth, async (u) => {
@@ -168,7 +173,7 @@
         if (local) { window.user = JSON.parse(local); entrarNoApp(); } 
         else if (u) {
             const snap = await get(ref(db, `usuarios/${u.uid}`));
-            window.user = snap.val() || { nome: u.email.split('@')[0], cargo: 'user', uid: u.uid, moedasBlue: 0, status: 'ativo', foto:'' };
+            window.user = snap.val() || { nome: u.email.split('@')[0], cargo: 'user', uid: u.uid, moedasBlue: 0 };
             if(!snap.exists()) await set(ref(db, `usuarios/${u.uid}`), window.user);
             entrarNoApp();
         }
@@ -177,26 +182,50 @@
     function entrarNoApp() {
         document.getElementById('telaLogin').style.display = 'none';
         document.getElementById('app').style.display = 'block';
+        document.getElementById('menuFlutuante').style.display = 'flex';
+        
         onValue(ref(db, 'posts'), snap => {
             const feed = document.getElementById('feed'); feed.innerHTML = "";
             snap.forEach(p => {
                 const post = p.val();
-                const div = document.createElement('div');
-                div.className = "card-timeline";
-                div.innerHTML = `
+                feed.innerHTML = `<div class="card-timeline">
                     <img src="${post.i1}" onclick="abrirPerfilAlheio('${post.uid}')">
                     <div class="card-info">
-                        <b>${post.u1} ${getBadge(post.cargo)}</b>
-                        <small>${post.d1}</small>
-                        <button class="btn-action" style="padding:6px; font-size:12px; margin-top:8px;" onclick="abrirTelaOferta('${post.uid}', '${post.u1}')">NEGOCIAR AGORA</button>
-                    </div>`;
-                feed.prepend(div);
+                        <b>${post.u1} ${getBadge(post.cargo)}</b><br><small>${post.d1}</small>
+                        <button class="btn-action" onclick="abrirTelaOferta('${post.uid}', '${post.u1}')">NEGOCIAR</button>
+                    </div>
+                </div>` + feed.innerHTML;
             });
         });
         onValue(ref(db, `usuarios/${window.user.uid}`), s => { if(s.exists()){ window.user = s.val(); document.getElementById('saldoBlue').innerText = s.val().moedasBlue || 0; } });
     }
 
-    // TELA DE OFERTA E CHAT
+    // COMPRA DE CARGOS E BOLSA
+    window.comprarCargo = async (cargo, preco) => {
+        if(window.user.moedasBlue < preco) return alert("Você precisa de " + preco + " BLUE!");
+        if(confirm("Deseja comprar " + cargo + " por " + preco + " BLUE?")) {
+            await update(ref(db, `usuarios/${window.user.uid}`), { 
+                cargo: cargo, 
+                moedasBlue: window.user.moedasBlue - preco 
+            });
+            alert("Parabéns! Você agora é " + cargo);
+        }
+    };
+
+    window.verBolsa = async () => {
+        const snap = await get(ref(db, 'usuarios'));
+        let totalBlue = 0;
+        snap.forEach(u => { totalBlue += (u.val().moedasBlue || 0); });
+        const valorBolsa = 22000000 + (totalBlue * 100);
+        alert("📊 VALOR DE MERCADO ICE:\n\nR$ " + valorBolsa.toLocaleString('pt-BR') + "\n\nO valor cresce a cada BLUE comprada!");
+    };
+
+    window.compartilharLink = () => {
+        const link = window.location.origin + "?ref=" + window.user.uid;
+        prompt("Seu link de filiação (Envie para amigos):", link);
+    };
+
+    // FUNÇÕES DE FEED E CHAT (MANTIDAS)
     window.abrirTelaOferta = (uid, nome) => {
         targetUidGlobal = uid;
         document.getElementById('ofertaTitle').innerText = "Oferta para " + nome;
@@ -206,19 +235,10 @@
     window.enviarProposta = () => {
         const desc = document.getElementById('descOferta').value;
         const file = document.getElementById('fileOferta').files[0];
-        if(!desc && !file) return alert("Preencha a oferta!");
-
         const r = new FileReader();
         r.onload = (e) => {
-            const midia = file ? e.target.result : null;
             chatAtivoId = [window.user.uid, targetUidGlobal].sort().join("_");
-            push(ref(db, `chats/${chatAtivoId}`), {
-                uid: window.user.uid,
-                u: window.user.nome,
-                t: "📦 PROPOSTA DE TROCA: " + desc,
-                img: midia,
-                data: Date.now()
-            });
+            push(ref(db, `chats/${chatAtivoId}`), { uid: window.user.uid, u: window.user.nome, t: "📦 PROPOSTA: " + desc, img: file ? e.target.result : null });
             document.getElementById('telaOferta').style.display = 'none';
             abrirChat(targetUidGlobal, "Negociando...");
         };
@@ -233,8 +253,7 @@
             const b = document.getElementById('chatBox'); b.innerHTML = "";
             s.forEach(m => {
                 const msg = m.val();
-                const midia = msg.img ? `<img src="${msg.img}">` : '';
-                b.innerHTML += `<div class="msg ${msg.uid === window.user.uid ? 'msg-me':'msg-them'}"><b>${msg.u}:</b><br>${msg.t}${midia}</div>`;
+                b.innerHTML += `<div class="msg ${msg.uid === window.user.uid ? 'msg-me':'msg-them'}"><b>${msg.u}:</b><br>${msg.t}${msg.img ? '<img src="'+msg.img+'" style="width:100%">' : ''}</div>`;
             });
             b.scrollTop = b.scrollHeight;
         });
@@ -243,50 +262,32 @@
     window.enviarMensagem = () => {
         const t = document.getElementById('msgIn').value;
         if(!t) return;
-        push(ref(db, `chats/${chatAtivoId}`), { uid: window.user.uid, u: window.user.nome, t: t, data: Date.now() });
+        push(ref(db, `chats/${chatAtivoId}`), { uid: window.user.uid, u: window.user.nome, t: t });
         document.getElementById('msgIn').value = "";
     };
 
-    // PERFIL E GESTÃO
     window.abrirPerfilAlheio = async (uid) => {
         targetUidGlobal = uid;
         const snap = await get(ref(db, `usuarios/${uid}`));
         const t = snap.val();
         const eMeu = window.user.uid === uid;
-        
         document.getElementById('painelAdmControle').style.display = (window.user.cargo === 'ADM1' && !eMeu) ? 'block' : 'none';
-
         document.getElementById('perfilConteudo').innerHTML = `
             <div style="text-align:center; padding:20px;">
-                <img src="${t.foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}" style="width:110px; height:110px; border-radius:50%; border:3px solid var(--blue); object-fit:cover;">
-                <h2 style="display:flex; justify-content:center; align-items:center;">${t.nome} ${getBadge(t.cargo)}</h2>
-                <p style="color:#8b949e;">${t.bio || 'Sem biografia.'}</p>
-                <div style="display:flex; justify-content:space-around; margin:20px 0; background:#161b22; padding:15px; border-radius:15px;">
+                <img src="${t.foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}" style="width:100px; height:100px; border-radius:50%; border:3px solid var(--blue); object-fit:cover;">
+                <h2>${t.nome} ${getBadge(t.cargo)}</h2>
+                <div style="display:flex; justify-content:space-around; margin:20px 0;">
                     <div><b>${t.moedasBlue || 0}</b><br><small>BLUE</small></div>
                     <div><b>${t.cargo || 'membro'}</b><br><small>RANK</small></div>
                 </div>
-                ${eMeu ? `<button class="btn-action" style="background:var(--gray)" onclick="document.getElementById('telaEditPerfil').style.display='block'">EDITAR MEU PERFIL</button>` : `<button class="btn-action" onclick="abrirChat('${t.uid}', '${t.nome}')">CONVERSAR NO CHAT</button>`}
+                ${!eMeu ? `<button class="btn-action" onclick="abrirChat('${t.uid}', '${t.nome}')">CHAT</button>` : ''}
             </div>`;
-
-        const postsSnap = await get(ref(db, 'posts'));
-        const grid = document.getElementById('minhasPostagens'); grid.innerHTML = "";
-        postsSnap.forEach(p => { if(p.val().uid === uid) grid.innerHTML += `<img src="${p.val().i1}">`; });
         document.getElementById('telaPerfil').style.display = 'block';
-    };
-
-    window.salvarPerfil = () => {
-        const up = { nome: document.getElementById('editNome').value, bio: document.getElementById('editBio').value };
-        const f = document.getElementById('editFoto').files[0];
-        if(f) {
-            const r = new FileReader();
-            r.onload = async (e) => { up.foto = e.target.result; await update(ref(db, `usuarios/${window.user.uid}`), up); location.reload(); };
-            r.readAsDataURL(f);
-        } else { update(ref(db, `usuarios/${window.user.uid}`), up).then(() => location.reload()); }
     };
 
     window.admAlterarCargo = async (c) => { await update(ref(db, `usuarios/${targetUidGlobal}`), { cargo: c }); abrirPerfilAlheio(targetUidGlobal); };
     window.admAlterarSaldo = async () => {
-        const val = prompt("Valor para somar ou subtrair:");
+        const val = prompt("Valor:");
         if(val) {
             const s = await get(ref(db, `usuarios/${targetUidGlobal}`));
             await update(ref(db, `usuarios/${targetUidGlobal}`), { moedasBlue: (s.val().moedasBlue || 0) + parseInt(val) });
@@ -296,7 +297,6 @@
 
     window.enviarPost = () => {
         const f = document.getElementById('filePost').files[0];
-        if(!f) return alert("Foto obrigatória!");
         const r = new FileReader();
         r.onload = (e) => {
             push(ref(db, 'posts'), { u1: window.user.nome, uid: window.user.uid, cargo: window.user.cargo, i1: e.target.result, d1: document.getElementById('descPost').value });
