@@ -9,52 +9,46 @@
         :root { --bg: #0d1117; --sea: #0f3452; --blue: #1877f2; --gold: #FFD700; --white: #fff; --green: #25d366; --red: #ff4d4d; --mod-blue: #00BFFF; }
         body { margin:0; font-family: sans-serif; background: var(--bg); color: white; padding-bottom: 90px; overflow-x: hidden; }
         
-        /* TELA DE LOGIN */
+        /* LOGIN */
         #telaLogin { position: fixed; inset: 0; background: var(--sea); z-index: 5000; display: flex; align-items: center; justify-content: center; }
-        .login-box { background: white; padding: 30px; border-radius: 20px; width: 85%; max-width: 350px; text-align: center; color: black; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .login-box { background: white; padding: 30px; border-radius: 20px; width: 85%; max-width: 350px; text-align: center; color: black; }
         .login-box input { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #ddd; box-sizing: border-box; }
 
-        /* BANNER DO URSO POLAR */
-        .hero-banner { width: 100%; height: 250px; background: url('https://img2.unifans.io/67b9308608886.jpg') center/cover; position: relative; border-bottom: 3px solid var(--blue); }
+        /* BANNER */
+        .hero-banner { width: 100%; height: 220px; background: url('https://img2.unifans.io/67b9308608886.jpg') center/cover; position: relative; border-bottom: 3px solid var(--blue); }
         .hero-overlay { position: absolute; bottom: 0; background: linear-gradient(transparent, rgba(0,0,0,0.9)); width: 100%; padding: 15px; box-sizing: border-box; }
 
-        /* ANÚNCIOS FLUTUANTES (COMPRA DE CARGOS) */
+        /* ADS */
         .ads-side { position: fixed; right: 10px; top: 40%; transform: translateY(-50%); z-index: 4000; display: flex; flex-direction: column; gap: 12px; }
-        .ad-circle { width: 70px; height: 70px; border-radius: 50%; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 9px; font-weight: bold; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.5); cursor: pointer; border: 2px solid rgba(255,255,255,0.3); transition: 0.3s; }
-        .ad-circle:active { transform: scale(0.9); }
+        .ad-circle { width: 70px; height: 70px; border-radius: 50%; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 9px; font-weight: bold; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.5); cursor: pointer; border: 2px solid rgba(255,255,255,0.3); }
         
-        /* ESTRELAS E BADGES DE HIERARQUIA */
-        .badge { font-size: 12px; font-weight: bold; display: block; margin-bottom: 5px; text-transform: uppercase; }
+        /* BADGES */
+        .badge { font-size: 11px; font-weight: bold; text-transform: uppercase; margin-bottom: 4px; display: block; }
         .badge-gold { color: var(--gold); }
         .badge-red { color: var(--red); }
         .badge-blue { color: var(--mod-blue); }
 
-        /* HEADER E FEED */
         header { padding:15px; background: #161b22; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:100; border-bottom: 1px solid #30363d; }
-        .wrap { max-width: 500px; margin: auto; }
-        .card-timeline { background: #161b22; border-radius: 15px; overflow: hidden; margin: 15px; border: 1px solid #30363d; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-        .card-timeline img { width: 100%; height: 320px; object-fit: cover; }
-        .btn-delete-post { position: absolute; top: 10px; right: 10px; background: rgba(255,0,0,0.8); color: white; border: none; padding: 8px; border-radius: 50%; cursor: pointer; z-index: 10; }
+        .card-timeline { background: #161b22; border-radius: 15px; overflow: hidden; margin: 15px; border: 1px solid #30363d; cursor: pointer; }
+        .card-timeline img { width: 100%; height: 300px; object-fit: cover; }
 
-        /* NAVEGAÇÃO INFERIOR */
-        .nav { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background: #161b22; border: 1px solid #30363d; display: flex; gap: 20px; padding: 12px 25px; border-radius: 40px; z-index: 3000; box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
+        .nav { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background: #161b22; border: 1px solid #30363d; display: flex; gap: 25px; padding: 12px 30px; border-radius: 40px; z-index: 3000; }
         .nav i { color: #8b949e; font-size: 22px; cursor: pointer; }
+
+        .tela-full { display: none; position: fixed; inset: 0; background: var(--bg); z-index: 2000; overflow-y: auto; padding: 20px; }
+        .btn-action { background: var(--blue); color: white; border: none; padding: 14px; border-radius: 8px; width: 100%; font-weight: bold; margin-top: 10px; cursor: pointer; }
         
-        /* BOTÕES DE ADM NO FEED */
-        .adm-tools { display: flex; justify-content: space-around; padding: 10px; background: #0d1117; border-top: 1px solid #30363d; gap: 5px; }
-        .adm-tools button { border: none; padding: 6px; border-radius: 4px; color: white; font-size: 10px; font-weight: bold; flex: 1; cursor: pointer; }
-        
-        /* TELAS FULLSCREEN */
-        .tela-full { display: none; position: fixed; inset: 0; background: var(--bg); z-index: 2000; overflow-y: auto; padding: 20px; box-sizing: border-box; }
-        .btn-action { background: var(--blue); color: white; border: none; padding: 15px; border-radius: 8px; width: 100%; font-weight: bold; margin-top: 10px; cursor: pointer; }
+        /* PAINEL ADM NO PERFIL */
+        .painel-adm { background: #1c2128; padding: 15px; border-radius: 12px; margin-top: 20px; border: 1px dashed var(--blue); }
+        .adm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
     </style>
 </head>
 <body>
 
 <div id="telaLogin">
     <div class="login-box">
-        <h2 style="color:var(--sea); margin-top:0;">ICE LOGIN</h2>
-        <input type="text" id="userIn" placeholder="Usuário ou ADM">
+        <h2>ICE LOGIN</h2>
+        <input type="text" id="userIn" placeholder="E-mail ou ADM">
         <input type="password" id="passIn" placeholder="Senha">
         <button class="btn-action" style="background:var(--sea);" onclick="fazerLogin()">ENTRAR</button>
         <button class="btn-action" style="background:#db4437;" onclick="loginGoogle()">GOOGLE AUTH</button>
@@ -62,60 +56,44 @@
 </div>
 
 <div class="ads-side">
-    <div class="ad-circle" style="background: var(--mod-blue);" onclick="comprarCargo('MOD', 20)">
-        <i class="fas fa-star"></i> MOD<br>R$ 20 ou<br>20 BLUE
-    </div>
-    <div class="ad-circle" style="background: var(--red);" onclick="comprarCargo('ADM2', 1000)">
-        <i class="fas fa-star"></i> ADM 2<br>R$ 1k ou<br>1k BLUE
-    </div>
-    <div class="ad-circle" style="background: var(--gold); color: black;" onclick="comprarCargo('ADM1', 'ice')">
-        <i class="fas fa-crown"></i> DONO<br>VALOR<br>ICE $
-    </div>
+    <div class="ad-circle" style="background: var(--mod-blue);" onclick="comprarCargo('MOD', 20)">MOD<br>R$ 20</div>
+    <div class="ad-circle" style="background: var(--red);" onclick="comprarCargo('ADM2', 1000)">ADM 2<br>R$ 1k</div>
+    <div class="ad-circle" style="background: var(--gold); color: black;" onclick="comprarCargo('ADM1', 'ice')">DONO<br>ICE $</div>
 </div>
 
 <div id="app" style="display:none;">
     <header>
-        <div><b>ICE TROCAS</b><br><small id="btcValue" style="color:var(--blue); font-weight: bold;"></small></div>
-        <button onclick="deslogar()" style="border:none; background:none; color:red; font-weight:bold; cursor:pointer;">SAIR</button>
+        <div><b>ICE TROCAS</b><br><small id="btcValue" style="color:var(--blue);"></small></div>
+        <button onclick="deslogar()" style="border:none; background:none; color:red; font-weight:bold;">SAIR</button>
     </header>
-
-    <div class="hero-banner">
-        <div class="hero-overlay">
-            <h2 style="margin:0; font-size: 18px;">O que vamos trocar hoje?</h2>
-            <small>Aceitamos Reais ou BLUE - Mesmo Valor!</small>
-        </div>
-    </div>
-    
-    <div class="wrap" id="feed"></div>
-
+    <div class="hero-banner"><div class="hero-overlay"><h2>O que vamos trocar?</h2><small>1 BLUE = R$ 1,00</small></div></div>
+    <div id="feed"></div>
     <div class="nav">
         <i class="fas fa-home" onclick="fecharTelas()"></i>
         <i class="fas fa-plus-circle" onclick="abrirPostar()" style="color: var(--blue);"></i>
         <i class="fas fa-wallet" onclick="abrirCarteira()"></i>
-        <i class="fas fa-user-circle" onclick="alert('Usuário: ' + window.user.nome + '\nCargo: ' + window.user.cargo)"></i>
     </div>
+</div>
+
+<div id="telaPerfil" class="tela-full">
+    <div id="perfilConteudo"></div>
+    <button class="btn-action" style="background:#30363d;" onclick="fecharTelas()">VOLTAR AO FEED</button>
 </div>
 
 <div id="telaPostar" class="tela-full">
-    <div class="wrap">
-        <h2>Nova Troca</h2>
-        <p>Selecione a foto do que quer trocar:</p>
-        <input type="file" id="filePost" accept="image/*" style="margin-bottom:15px; color:white;">
-        <input type="text" id="descPost" placeholder="Ex: Troco controle de PS5 por jogos..." style="width:100%; padding:15px; border-radius:8px; background:#161b22; color:white; border:1px solid #30363d; box-sizing: border-box;">
-        <button class="btn-action" onclick="enviarPost()">PUBLICAR AGORA</button>
-        <button onclick="fecharTelas()" style="width:100%; background:none; color:red; border:none; margin-top:20px; cursor:pointer;">CANCELAR</button>
-    </div>
+    <h2>Nova Postagem</h2>
+    <input type="file" id="filePost" accept="image/*" style="color:white;"><br><br>
+    <input type="text" id="descPost" placeholder="Descrição da troca..." style="width:100%; padding:12px; border-radius:8px; background:#161b22; color:white; border:1px solid #30363d;">
+    <button class="btn-action" onclick="enviarPost()">POSTAR</button>
 </div>
 
 <div id="telaCarteira" class="tela-full">
-    <div class="wrap" style="text-align: center;">
-        <div style="background:linear-gradient(135deg, var(--sea), var(--blue)); padding:50px 20px; border-radius:25px; box-shadow: 0 10px 20px rgba(0,0,0,0.4);">
-            <p style="text-transform: uppercase; letter-spacing: 1px; opacity: 0.8;">Meu Saldo Blue</p>
-            <h1 id="saldoBlue" style="font-size: 55px; margin: 10px 0;">0</h1>
-            <small>1 BLUE vale R$ 1,00</small>
-        </div>
-        <button class="btn-action" style="background:white; color:black; margin-top:30px;" onclick="fecharTelas()">VOLTAR PARA O FEED</button>
+    <div style="background:linear-gradient(135deg, var(--sea), var(--blue)); padding:40px; border-radius:20px; text-align:center;">
+        <p>Meu Saldo</p>
+        <h1 id="saldoBlue">0</h1>
+        <small>BLUE COINS</small>
     </div>
+    <button class="btn-action" style="background:white; color:black;" onclick="fecharTelas()">VOLTAR</button>
 </div>
 
 <script type="module">
@@ -123,7 +101,6 @@
     import { getDatabase, ref, onValue, update, set, push, runTransaction, get, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
     import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-    // CONFIGURAÇÃO FIREBASE (DATABASE ATIVO)
     const firebaseConfig = { apiKey: "AIzaSyDM5M1_O-wfcBDGYJIiYgiHVbqhiKC-0dw", databaseURL: "https://icek-9cdd7-default-rtdb.firebaseio.com", projectId: "icek-9cdd7" };
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
@@ -131,9 +108,8 @@
     const provider = new GoogleAuthProvider();
 
     window.user = null;
-    let iceCotacao = 0.7099;
 
-    // SISTEMA DE LOGIN MASTER (ADM/1533)
+    // LOGIN
     window.fazerLogin = () => {
         const u = document.getElementById('userIn').value;
         const p = document.getElementById('passIn').value;
@@ -141,21 +117,17 @@
             const master = { nome: "ADM MASTER", cargo: "ADM1", uid: "master", moedasBlue: 999999 };
             localStorage.setItem('ice_master', JSON.stringify(master));
             location.reload();
-        } else {
-            alert("Login mestre incorreto. Use Google ou verifique os dados.");
         }
     };
-    
     window.loginGoogle = () => signInWithPopup(auth, provider);
 
-    // PERSISTÊNCIA DE LOGIN E CARGOS
     onAuthStateChanged(auth, async (u) => {
         const local = localStorage.getItem('ice_master');
         if (local) { window.user = JSON.parse(local); mostrarApp(); } 
         else if (u) {
             const snap = await get(ref(db, `usuarios/${u.uid}`));
             let dados = snap.val() || { nome: u.displayName, cargo: 'user', moedasBlue: 0, uid: u.uid, status: 'ativo' };
-            if(dados.status === 'banido') { alert("Sua conta está banida!"); signOut(auth); return; }
+            if(dados.status === 'banido') { alert("BANIDO!"); signOut(auth); return; }
             if(!snap.val()) set(ref(db, `usuarios/${u.uid}`), dados);
             window.user = dados; mostrarApp();
         }
@@ -165,120 +137,99 @@
         document.getElementById('telaLogin').style.display = 'none';
         document.getElementById('app').style.display = 'block';
         onValue(ref(db, 'posts'), carregarFeed);
-        // Atualiza Valor do ICE no Header
-        onValue(ref(db, 'economia/valor_ice'), s => {
-            iceCotacao = s.val() || 0.7099;
-            document.getElementById('btcValue').innerText = "ICE: $" + iceCotacao.toFixed(4);
-        });
-        // Atualiza Saldo Blue em tempo real
+        onValue(ref(db, 'economia/valor_ice'), s => { document.getElementById('btcValue').innerText = "ICE: $" + (s.val() || 0.7099).toFixed(4); });
         if(window.user.uid !== 'master') {
-            onValue(ref(db, `usuarios/${window.user.uid}`), s => { 
-                document.getElementById('saldoBlue').innerText = s.val()?.moedasBlue || 0; 
-            });
-        } else { document.getElementById('saldoBlue').innerText = "∞"; }
+            onValue(ref(db, `usuarios/${window.user.uid}`), s => { document.getElementById('saldoBlue').innerText = s.val()?.moedasBlue || 0; });
+        }
     }
 
-    // FEED COM HIERARQUIA DE ESTRELAS
     function carregarFeed(snap) {
         const f = document.getElementById('feed'); f.innerHTML = "";
         snap.forEach(c => {
             const p = c.val();
             const pid = c.key;
-            
-            // Badge de Cargos com Estrelas Coloridas
-            let badge = "";
-            if(p.cargoUser === 'ADM1') badge = `<span class="badge badge-gold"><i class="fas fa-star"></i> ADM OURO</span>`;
-            else if(p.cargoUser === 'ADM2') badge = `<span class="badge badge-red"><i class="fas fa-star"></i> ADM 2</span>`;
-            else if(p.cargoUser === 'MOD') badge = `<span class="badge badge-blue"><i class="fas fa-star"></i> MODERADOR</span>`;
-
-            // Ferramentas Administrativas (Poderes)
-            let ferramentas = "";
-            if(window.user.cargo !== 'user') {
-                ferramentas = `<div class="adm-tools">
-                    <button style="background:var(--green)" onclick="mudarCargo('${p.uid}', 1)">SUBIR</button>
-                    <button style="background:orange" onclick="mudarCargo('${p.uid}', -1)">DESCER</button>
-                    ${window.user.cargo === 'ADM1' ? `<button style="background:var(--blue)" onclick="gerirMoeda('${p.uid}')">BLUE</button>` : ''}
-                    <button style="background:var(--red)" onclick="banirUsuario('${p.uid}')">BAN</button>
-                </div>`;
-            }
+            let star = p.cargoUser === 'ADM1' ? 'badge-gold' : (p.cargoUser === 'ADM2' ? 'badge-red' : 'badge-blue');
+            let starName = p.cargoUser === 'user' ? '' : `<span class="badge ${star}"><i class="fas fa-star"></i> ${p.cargoUser}</span>`;
 
             const div = document.createElement('div');
             div.className = "card-timeline";
-            div.innerHTML = `
-                ${(window.user.cargo !== 'user') ? `<button class="btn-delete-post" onclick="apagarPost('${pid}')"><i class="fas fa-trash"></i></button>` : ''}
-                <img src="${p.i1}">
-                <div style="padding:15px;">
-                    ${badge}
-                    <b>${p.u1}</b> <br>
-                    <small style="color:#8b949e;">${p.d1}</small>
-                </div>
-                ${ferramentas}
-            `;
+            div.onclick = () => abrirPerfilAlheio(p.uid);
+            div.innerHTML = `<img src="${p.i1}"><div style="padding:15px;">${starName}<b>${p.u1}</b><br><small>${p.d1}</small></div>`;
             f.prepend(div);
         });
     }
 
-    // AÇÕES DE MODERAÇÃO E MOEDAS
-    window.apagarPost = (id) => { if(confirm("Apagar postagem permanentemente?")) remove(ref(db, `posts/${id}`)); };
-    
-    window.banirUsuario = (uid) => { 
-        if(uid === 'master') return;
-        if(confirm("Deseja BANIR este usuário do sistema?")) update(ref(db, `usuarios/${uid}`), { status: 'banido' }); 
+    // ABRIR PERFIL E MOSTRAR PAINEL ADM
+    window.abrirPerfilAlheio = async (targetUid) => {
+        const snap = await get(ref(db, `usuarios/${targetUid}`));
+        const u = snap.val();
+        if(!u) return;
+
+        let painelAdm = "";
+        if(window.user.cargo !== 'user') {
+            painelAdm = `
+                <div class="painel-adm">
+                    <h3 style="margin-top:0; color:var(--blue);">Painel de Controle</h3>
+                    <p>Cargo Atual: <b>${u.cargo}</b> | Blues: <b>${u.moedasBlue || 0}</b></p>
+                    <div class="adm-grid">
+                        <button onclick="mudarCargo('${u.uid}', 1)" style="background:var(--green); border:none; padding:10px; border-radius:5px; color:white; font-weight:bold;">SUBIR CARGO</button>
+                        <button onclick="mudarCargo('${u.uid}', -1)" style="background:orange; border:none; padding:10px; border-radius:5px; color:white; font-weight:bold;">REBAIXAR</button>
+                        ${window.user.cargo === 'ADM1' ? `<button onclick="gerirMoeda('${u.uid}')" style="background:var(--blue); border:none; padding:10px; border-radius:5px; color:white; font-weight:bold;">DAR BLUES</button>` : ''}
+                        <button onclick="banirUsuario('${u.uid}')" style="background:var(--red); border:none; padding:10px; border-radius:5px; color:white; font-weight:bold;">BANIR</button>
+                    </div>
+                </div>`;
+        }
+
+        document.getElementById('perfilConteudo').innerHTML = `
+            <div style="text-align:center; padding:20px;">
+                <i class="fas fa-user-circle" style="font-size:80px; color:var(--blue);"></i>
+                <h2>${u.nome}</h2>
+                <p>Status: ${u.status}</p>
+                <button class="btn-action" onclick="window.open('https://wa.me/5511983602504')">NEGOCIAR TROCA</button>
+            </div>
+            ${painelAdm}
+        `;
+        document.getElementById('telaPerfil').style.display = 'block';
     };
 
-    window.gerirMoeda = (uid) => { 
-        let v = prompt("Quantos BLUE (Moedas) deseja adicionar ou tirar?\nUse sinal de - para tirar (Ex: -50)"); 
-        if(v) runTransaction(ref(db, `usuarios/${uid}/moedasBlue`), val => (val || 0) + parseInt(v)); 
-    };
-
-    window.mudarCargo = async (uid, dir) => {
-        if(uid === 'master') return;
-        const cargos = ["user", "MOD", "ADM2", "ADM1"];
-        const s = await get(ref(db, `usuarios/${uid}`));
-        let nivAtual = cargos.indexOf(s.val().cargo);
-        let meuNiv = cargos.indexOf(window.user.cargo);
-        let novoNiv = nivAtual + dir;
-
-        if(novoNiv >= 0 && novoNiv < cargos.length) {
-            // Regra: Somente ADM1 sobe para ADM1. Outros só sobem até o seu nível.
-            if(window.user.cargo !== 'ADM1' && novoNiv >= meuNiv && dir > 0) return alert("Sem autoridade!");
-            update(ref(db, `usuarios/${uid}`), { cargo: cargos[novoNiv] });
+    // PODERES CORRIGIDOS
+    window.gerirMoeda = (uid) => {
+        let v = prompt("Quantos Blues dar ou tirar? (Ex: 100 ou -50)");
+        if(v) {
+            runTransaction(ref(db, `usuarios/${uid}/moedasBlue`), val => (val || 0) + parseInt(v))
+            .then(() => { alert("Saldo atualizado!"); abrirPerfilAlheio(uid); });
         }
     };
 
-    // COMPRA DE CARGOS PIX / WHATSAPP
-    window.comprarCargo = (cargo, preco) => {
-        let valorTexto = preco === 'ice' ? "Preço calculado pelo ICE $" + iceCotacao : "R$ " + preco + " ou " + preco + " BLUE";
-        navigator.clipboard.writeText("thiago00dudu@gmail.com");
-        alert("CHAVE PIX COPIADA: thiago00dudu@gmail.com\nCargo: " + cargo + "\nValor: " + valorTexto + "\n\nEnvie o comprovante no WhatsApp agora.");
-        window.open(`https://wa.me/5511983602504?text=Olá, paguei o cargo ${cargo}. Segue o comprovante.`);
+    window.mudarCargo = async (uid, dir) => {
+        const cargos = ["user", "MOD", "ADM2", "ADM1"];
+        const s = await get(ref(db, `usuarios/${uid}`));
+        let novoIdx = cargos.indexOf(s.val().cargo) + dir;
+        if(novoIdx >= 0 && novoIdx < cargos.length) {
+            await update(ref(db, `usuarios/${uid}`), { cargo: cargos[novoIdx] });
+            alert("Cargo alterado!");
+            abrirPerfilAlheio(uid);
+        }
     };
 
-    // FUNÇÕES DE NAVEGAÇÃO E POSTAGEM
+    window.banirUsuario = (uid) => { if(confirm("Banir?")) update(ref(db, `usuarios/${uid}`), {status:'banido'}); };
+
     window.enviarPost = () => {
         const file = document.getElementById('filePost').files[0];
-        const desc = document.getElementById('descPost').value;
-        if(!file) return alert("Escolha uma imagem!");
-        
         const r = new FileReader();
         r.onload = (e) => {
-            push(ref(db, 'posts'), { 
-                u1: window.user.nome, 
-                uid: window.user.uid, 
-                cargoUser: window.user.cargo, 
-                i1: e.target.result, 
-                d1: desc 
-            });
+            push(ref(db, 'posts'), { u1: window.user.nome, uid: window.user.uid, cargoUser: window.user.cargo, i1: e.target.result, d1: document.getElementById('descPost').value });
             fecharTelas();
-            document.getElementById('descPost').value = "";
         };
         r.readAsDataURL(file);
     };
 
-    window.deslogar = () => { localStorage.clear(); signOut(auth); location.reload(); };
+    window.comprarCargo = (c, p) => { alert("PIX COPIADO!"); window.open("https://wa.me/5511983602504"); };
     window.fecharTelas = () => { document.querySelectorAll('.tela-full').forEach(t=>t.style.display='none'); };
-    window.abrirPostar = () => { document.getElementById('telaPostar').style.display='block'; };
-    window.abrirCarteira = () => { document.getElementById('telaCarteira').style.display='block'; };
+    window.abrirPostar = () => document.getElementById('telaPostar').style.display='block';
+    window.abrirCarteira = () => document.getElementById('telaCarteira').style.display='block';
+    window.deslogar = () => { localStorage.clear(); signOut(auth); location.reload(); };
 </script>
 </body>
-</html>
+        </html>
+        
