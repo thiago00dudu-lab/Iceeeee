@@ -159,11 +159,11 @@
     const urlParams = new URLSearchParams(window.location.search);
     const paiId = urlParams.get('ref');
 
-    // FUNÇÃO AUXILIAR DE ESTRELA
+    // --- LOGICA DE HIERARQUIA ---
     function gerarEstrela(cargo) {
-        if(cargo === 'MOD') return '<i class="fas fa-star star-mod"></i>';
-        if(cargo === 'ADM2') return '<i class="fas fa-star star-adm2"></i>';
-        if(cargo === 'ADM1') return '<i class="fas fa-star star-adm1"></i>';
+        if(cargo === 'MOD') return '<i class="fas fa-star star-mod" title="Moderador"></i>';
+        if(cargo === 'ADM2') return '<i class="fas fa-star star-adm2" title="ADM Nível 2"></i>';
+        if(cargo === 'ADM1') return '<i class="fas fa-star star-adm1" title="Dono do Ice"></i>';
         return '';
     }
 
@@ -209,7 +209,7 @@
         });
     }
 
-    // CARREGAR FEED COM ESTRELAS (CORRIGIDO)
+    // CARREGAR FEED (FIX: Estrela por Cargo)
     function carregarFeed(snap) {
         const f = document.getElementById('feed'); f.innerHTML = "";
         snap.forEach(c => {
@@ -218,14 +218,9 @@
             div.className = "card-timeline";
             div.onclick = () => abrirPerfilAlheio(p.uid);
             
-            const spanId = `star-feed-${Math.random().toString(36).substr(2, 9)}`;
-            div.innerHTML = `<img src="${p.i1}"><div style="padding:15px;"><b>${p.u1} <span id="${spanId}"></span></b><br><small>${p.d1}</small></div>`;
+            const estrela = gerarEstrela(p.cargo); // Pega o cargo salvo na postagem
+            div.innerHTML = `<img src="${p.i1}"><div style="padding:15px;"><b>${p.u1} ${estrela}</b><br><small>${p.d1}</small></div>`;
             f.prepend(div);
-
-            // Busca cargo do dono do post
-            get(ref(db, `usuarios/${p.uid}/cargo`)).then(s => {
-                if(s.exists()) document.getElementById(spanId).innerHTML = gerarEstrela(s.val());
-            });
         });
     }
 
@@ -237,16 +232,23 @@
         if(!target) return;
 
         const eMeuPerfil = window.user.uid === targetUid;
-        const btnAcao = eMeuPerfil 
+        const eAdmin = window.user.cargo === 'ADM1' || window.user.uid === 'master';
+
+        let btns = eMeuPerfil 
             ? `<button class="btn-action" style="background:var(--gray);" onclick="document.getElementById('telaEditPerfil').style.display='block'">EDITAR PERFIL</button>`
             : `<button class="btn-action" onclick="abrirChat('${target.uid}', '${target.nome}')"><i class="fas fa-handshake"></i> FAZER OFERTA AGORA</button>`;
+
+        // BOTÃO DE GERENCIAR BLUE (SÓ PARA ADM)
+        if (eAdmin && !eMeuPerfil) {
+            btns += `<button class="btn-action" style="background:var(--gold); color:black;" onclick="gerenciarBlue('${target.uid}', ${target.moedasBlue || 0})">EDITAR BLUE COINS</button>`;
+        }
 
         document.getElementById('perfilConteudo').innerHTML = `
             <div class="profile-header">
                 <img src="${target.foto || 'https://www.w3schools.com/howto/img_avatar.png'}" class="profile-img">
-                <h2>${target.nome} ${gerarEstrela(target.cargo)}</h2>
+                <h2 style="display:flex; justify-content:center; align-items:center;">${target.nome} ${gerarEstrela(target.cargo)}</h2>
                 <p style="padding:0 20px; font-size:14px; color:#8b949e;">${target.bio || ''}</p>
-                ${btnAcao}
+                ${btns}
             </div>
             <div class="profile-stats">
                 <div><b>${target.moedasBlue || 0}</b><br><small>BLUE</small></div>
@@ -258,6 +260,17 @@
         const grid = document.getElementById('minhasPostagens'); grid.innerHTML = "";
         postSnap.forEach(p => { if(p.val().uid === targetUid) grid.innerHTML += `<img src="${p.val().i1}" style="width:100%; aspect-ratio:1/1; object-fit:cover; border-radius:5px;">`; });
         document.getElementById('telaPerfil').style.display = 'block';
+    };
+
+    // FUNÇÃO ADM: DAR/TIRAR BLUE
+    window.gerenciarBlue = async (uid, saldoAtual) => {
+        const valor = prompt("Saldo atual: " + saldoAtual + "\nQuanto deseja adicionar ou remover? (Use - para tirar)");
+        if (valor === null) return;
+        const novoSaldo = parseInt(saldoAtual) + parseInt(valor);
+        if (isNaN(novoSaldo)) return alert("Valor inválido");
+        await update(ref(db, `usuarios/${uid}`), { moedasBlue: novoSaldo });
+        alert("Saldo atualizado!");
+        abrirPerfilAlheio(uid);
     };
 
     // CHAT E MÍDIA
@@ -297,13 +310,19 @@
         document.getElementById('msgIn').value = ""; limparMidiaChat();
     };
 
-    // POSTAR
+    // POSTAR (FIX: Agora salva o cargo junto com o post)
     window.enviarPost = () => {
         const file = document.getElementById('filePost').files[0];
         if(!file) return alert("Selecione uma imagem!");
         const r = new FileReader();
         r.onload = (e) => {
-            push(ref(db, 'posts'), { u1: window.user.nome, uid: window.user.uid, i1: e.target.result, d1: document.getElementById('descPost').value });
+            push(ref(db, 'posts'), { 
+                u1: window.user.nome, 
+                uid: window.user.uid, 
+                cargo: window.user.cargo, 
+                i1: e.target.result, 
+                d1: document.getElementById('descPost').value 
+            });
             fecharTelas();
         };
         r.readAsDataURL(file);
@@ -325,12 +344,4 @@
     // UTILS
     window.fecharTelas = () => document.querySelectorAll('.tela-full').forEach(t=>t.style.display='none');
     window.fecharChat = () => document.getElementById('telaChat').style.display = 'none';
-    window.abrirPostar = () => document.getElementById('telaPostar').style.display='block';
-    window.abrirCarteira = () => document.getElementById('telaCarteira').style.display='block';
-    window.deslogar = () => { localStorage.removeItem('ice_master'); signOut(auth).then(() => location.reload()); };
-    window.compartilharApp = () => { const link = window.location.origin + window.location.pathname + "?ref=" + window.user.uid; navigator.clipboard.writeText(link); alert("Link de Convite copiado!"); };
-    window.comprarCargo = (c, p) => { alert("PIX: thiago00dudu@gmail.com\nChame no Whats após pagar."); window.open("https://wa.me/5511983602504"); };
-</script>
-</body>
-    </html>
-    
+    window.abrirPostar = () => document.getElementById('telaPo
