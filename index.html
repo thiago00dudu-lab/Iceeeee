@@ -6,7 +6,7 @@
     <title>ICE TROCAS - Oficial</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <style>
-        :root { --bg: #0d1117; --sea: #0f3452; --blue: #1877f2; --gold: #FFD700; --white: #fff; --green: #25d366; --red: #ff4d4d; --mod-blue: #00BFFF; }
+        :root { --bg: #0d1117; --sea: #0f3452; --blue: #1877f2; --gold: #FFD700; --white: #fff; --green: #25d366; --red: #ff4d4d; --mod-blue: #00BFFF; --gray: #30363d; }
         body { margin:0; font-family: sans-serif; background: var(--bg); color: white; padding-bottom: 90px; overflow-x: hidden; }
         
         /* LOGIN */
@@ -23,10 +23,10 @@
         .ad-circle { width: 70px; height: 70px; border-radius: 50%; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 9px; font-weight: bold; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.5); cursor: pointer; border: 2px solid rgba(255,255,255,0.3); transition: 0.3s; }
         
         /* BADGES */
-        .badge { font-size: 11px; font-weight: bold; text-transform: uppercase; margin-bottom: 4px; display: block; }
-        .badge-gold { color: var(--gold); }
-        .badge-red { color: var(--red); }
-        .badge-blue { color: var(--mod-blue); }
+        .badge { font-size: 11px; font-weight: bold; text-transform: uppercase; margin-bottom: 4px; display: inline-block; padding: 2px 8px; border-radius: 4px; }
+        .badge-gold { background: var(--gold); color: black; }
+        .badge-red { background: var(--red); color: white; }
+        .badge-blue { background: var(--mod-blue); color: white; }
 
         header { padding:15px; background: #161b22; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:100; border-bottom: 1px solid #30363d; }
         .card-timeline { background: #161b22; border-radius: 15px; overflow: hidden; margin: 15px; border: 1px solid #30363d; cursor: pointer; transition: 0.2s; }
@@ -41,6 +41,17 @@
         
         .painel-adm { background: #1c2128; padding: 15px; border-radius: 12px; margin-top: 20px; border: 1px dashed var(--blue); }
         .adm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+
+        /* PERFIL ESTILO INSTA */
+        .profile-header { text-align: center; padding: 20px 0; }
+        .profile-img { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid var(--blue); margin-bottom: 10px; }
+        .profile-stats { display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid var(--gray); border-bottom: 1px solid var(--gray); margin: 15px 0; }
+        
+        /* CHAT */
+        #chatBox { height: 300px; overflow-y: auto; background: #0d1117; border-radius: 10px; padding: 10px; border: 1px solid var(--gray); margin-bottom: 10px; }
+        .msg { margin-bottom: 10px; padding: 8px 12px; border-radius: 10px; max-width: 80%; }
+        .msg-me { background: var(--blue); align-self: flex-end; margin-left: auto; }
+        .msg-them { background: var(--gray); }
     </style>
 </head>
 <body>
@@ -65,7 +76,9 @@
 <div id="app" style="display:none;">
     <header>
         <div><b>ICE TROCAS</b><br><small id="btcValue" style="color:var(--blue);"></small></div>
-        <button onclick="deslogar()" style="border:none; background:none; color:red; font-weight:bold; cursor:pointer;">SAIR</button>
+        <div onclick="abrirMeuPerfil()" style="cursor:pointer;">
+             <i class="fas fa-user-circle" style="font-size:24px;"></i>
+        </div>
     </header>
     <div class="hero-banner"><div class="hero-overlay"><h2>O que vamos trocar hoje?</h2><small>1 BLUE = R$ 1,00</small></div></div>
     <div id="feed"></div>
@@ -78,7 +91,18 @@
 
 <div id="telaPerfil" class="tela-full">
     <div id="perfilConteudo"></div>
+    <div id="minhasPostagens" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; margin-top: 20px;"></div>
     <button class="btn-action" style="background:#30363d; margin-top:20px;" onclick="fecharTelas()">VOLTAR AO FEED</button>
+    <button class="btn-action" style="background:var(--red);" onclick="deslogar()">DESLOGAR</button>
+</div>
+
+<div id="telaEditPerfil" class="tela-full">
+    <h2>Editar Perfil</h2>
+    <input type="file" id="editFoto" accept="image/*" style="margin-bottom:10px;">
+    <input type="text" id="editNome" placeholder="Seu Nome" style="width:100%; padding:12px; margin-bottom:10px; background:#161b22; color:white; border:1px solid #30363d;">
+    <textarea id="editBio" placeholder="Sua Bio/Descrição" style="width:100%; padding:12px; height:80px; background:#161b22; color:white; border:1px solid #30363d;"></textarea>
+    <button class="btn-action" onclick="salvarPerfil()">SALVAR ALTERAÇÕES</button>
+    <button class="btn-action" style="background:none;" onclick="document.getElementById('telaEditPerfil').style.display='none'">Cancelar</button>
 </div>
 
 <div id="telaPostar" class="tela-full">
@@ -88,6 +112,16 @@
     <input type="text" id="descPost" placeholder="O que você quer trocar?" style="width:100%; padding:15px; border-radius:8px; background:#161b22; color:white; border:1px solid #30363d; box-sizing:border-box;">
     <button class="btn-action" onclick="enviarPost()">POSTAR NO FEED</button>
     <button onclick="fecharTelas()" style="width:100%; background:none; color:red; border:none; margin-top:15px; cursor:pointer;">Cancelar</button>
+</div>
+
+<div id="telaChat" class="tela-full">
+    <h3 id="chatTitle">Chat de Negociação</h3>
+    <div id="chatBox"></div>
+    <div style="display:flex; gap:5px;">
+        <input type="text" id="msgIn" placeholder="Digite sua proposta..." style="flex:1; padding:12px; border-radius:8px; border:none;">
+        <button onclick="enviarMensagem()" style="background:var(--blue); border:none; color:white; padding:10px 20px; border-radius:8px;"><i class="fas fa-paper-plane"></i></button>
+    </div>
+    <button class="btn-action" style="background:none;" onclick="fecharChat()">Fechar Chat</button>
 </div>
 
 <div id="telaCarteira" class="tela-full">
@@ -101,7 +135,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, onValue, update, set, push, runTransaction, get, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, onValue, update, set, push, runTransaction, get, remove, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
     import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
     const firebaseConfig = { apiKey: "AIzaSyDM5M1_O-wfcBDGYJIiYgiHVbqhiKC-0dw", databaseURL: "https://icek-9cdd7-default-rtdb.firebaseio.com", projectId: "icek-9cdd7" };
@@ -111,66 +145,37 @@
     const provider = new GoogleAuthProvider();
 
     window.user = null;
+    let chatAtivoId = null;
 
-    // LOGIN MESTRE OU USUÁRIO COMUM
+    // LOGIN
     window.fazerLogin = async () => {
         const u = document.getElementById('userIn').value;
         const p = document.getElementById('passIn').value;
-
-        // Se for ADM Mestre
         if(u.toUpperCase() === "ADM" && p === "1533") {
-            const master = { nome: "ADM MASTER", cargo: "ADM1", uid: "master", moedasBlue: 999999, status: 'ativo' };
+            const master = { nome: "ADM MASTER", cargo: "ADM1", uid: "master", moedasBlue: 999999, status: 'ativo', foto: 'https://cdn-icons-png.flaticon.com/512/711/711769.png' };
             localStorage.setItem('ice_master', JSON.stringify(master));
             location.reload();
             return;
         }
-
-        // Se for usuário comum tentando entrar/cadastrar
         if(u.includes("@")) {
-            try {
-                await signInWithEmailAndPassword(auth, u, p);
-            } catch (e) {
-                try {
-                    await createUserWithEmailAndPassword(auth, u, p);
-                } catch (err) {
-                    alert("Erro no Login/Cadastro: " + err.message);
-                }
-            }
-        } else {
-            alert("Para cadastro livre, use um E-mail ou clique em Google.");
-        }
+            try { await signInWithEmailAndPassword(auth, u, p); } 
+            catch (e) { try { await createUserWithEmailAndPassword(auth, u, p); } catch (err) { alert(err.message); } }
+        } else { alert("Use um E-mail."); }
     };
     
     window.loginGoogle = () => signInWithPopup(auth, provider);
 
-    // GERENCIADOR DE ESTADO DE USUÁRIO
     onAuthStateChanged(auth, async (u) => {
         const local = localStorage.getItem('ice_master');
-        if (local) { 
-            window.user = JSON.parse(local); 
-            mostrarApp(); 
-        } else if (u) {
+        if (local) { window.user = JSON.parse(local); mostrarApp(); } 
+        else if (u) {
             const snap = await get(ref(db, `usuarios/${u.uid}`));
             let dados = snap.val();
-            
             if(!dados) {
-                // Cadastro automático de novo usuário livre
-                dados = { 
-                    nome: u.displayName || u.email.split('@')[0], 
-                    cargo: 'user', 
-                    moedasBlue: 0, 
-                    uid: u.uid, 
-                    status: 'ativo' 
-                };
+                dados = { nome: u.displayName || "Novo Membro", cargo: 'user', moedasBlue: 0, uid: u.uid, status: 'ativo', foto: u.photoURL || '', bio: 'Olá, vamos trocar!' };
                 await set(ref(db, `usuarios/${u.uid}`), dados);
             }
-            
-            if(dados.status === 'banido') { 
-                alert("CONTA BANIDA!"); 
-                signOut(auth); 
-                return; 
-            }
-            
+            if(dados.status === 'banido') { alert("BANIDO"); signOut(auth); return; }
             window.user = dados; 
             mostrarApp();
         }
@@ -180,15 +185,11 @@
         document.getElementById('telaLogin').style.display = 'none';
         document.getElementById('app').style.display = 'block';
         onValue(ref(db, 'posts'), carregarFeed);
-        onValue(ref(db, 'economia/valor_ice'), s => { 
-            document.getElementById('btcValue').innerText = "ICE: $" + (s.val() || 0.7099).toFixed(4); 
-        });
-        
-        // Listener de saldo em tempo real
+        onValue(ref(db, 'economia/valor_ice'), s => { document.getElementById('btcValue').innerText = "ICE: $" + (s.val() || 0.7099).toFixed(4); });
         if(window.user.uid !== 'master') {
             onValue(ref(db, `usuarios/${window.user.uid}`), s => { 
-                document.getElementById('saldoBlue').innerText = s.val()?.moedasBlue || 0; 
-                window.user = s.val(); // Atualiza cargo se mudar
+                window.user = s.val(); 
+                document.getElementById('saldoBlue').innerText = window.user.moedasBlue || 0; 
             });
         }
     }
@@ -197,84 +198,105 @@
         const f = document.getElementById('feed'); f.innerHTML = "";
         snap.forEach(c => {
             const p = c.val();
-            const pid = c.key;
-            let starClass = p.cargoUser === 'ADM1' ? 'badge-gold' : (p.cargoUser === 'ADM2' ? 'badge-red' : 'badge-blue');
-            let label = p.cargoUser === 'user' ? '' : `<span class="badge ${starClass}"><i class="fas fa-star"></i> ${p.cargoUser}</span>`;
-
+            const starClass = p.cargoUser === 'ADM1' ? 'badge-gold' : (p.cargoUser === 'ADM2' ? 'badge-red' : 'badge-blue');
+            const label = p.cargoUser === 'user' ? '' : `<span class="badge ${starClass}">${p.cargoUser}</span>`;
             const div = document.createElement('div');
             div.className = "card-timeline";
             div.onclick = () => abrirPerfilAlheio(p.uid);
-            div.innerHTML = `
-                <img src="${p.i1}">
-                <div style="padding:15px;">
-                    ${label}
-                    <b>${p.u1}</b><br>
-                    <small style="color:#8b949e;">${p.d1}</small>
-                </div>
-            `;
+            div.innerHTML = `<img src="${p.i1}"><div style="padding:15px;">${label} <b>${p.u1}</b><br><small>${p.d1}</small></div>`;
             f.prepend(div);
         });
     }
 
-    // ABRIR PERFIL COM PAINEL ADM SE TIVER PERMISSÃO
+    // SISTEMA DE PERFIL ESTILO INSTAGRAM
+    window.abrirMeuPerfil = () => abrirPerfilAlheio(window.user.uid);
+
     window.abrirPerfilAlheio = async (targetUid) => {
         const snap = await get(ref(db, `usuarios/${targetUid}`));
         const target = snap.val();
         if(!target) return;
 
-        let painelControle = "";
-        // Só mostra o painel se quem está vendo for ADM ou MOD
-        if(window.user.cargo !== 'user') {
-            painelControle = `
-                <div class="painel-adm">
-                    <h3 style="margin:0; color:var(--blue);">Moderar Usuário</h3>
-                    <p>Cargo: <b>${target.cargo}</b> | Saldo: <b>${target.moedasBlue || 0} BLUE</b></p>
-                    <div class="adm-grid">
-                        <button onclick="mudarCargo('${target.uid}', 1)" style="background:var(--green); border:none; color:white; padding:10px; border-radius:5px; font-weight:bold;">↑ SUBIR</button>
-                        <button onclick="mudarCargo('${target.uid}', -1)" style="background:orange; border:none; color:white; padding:10px; border-radius:5px; font-weight:bold;">↓ BAIXAR</button>
-                        ${window.user.cargo === 'ADM1' ? `<button onclick="gerirMoeda('${target.uid}')" style="background:var(--blue); border:none; color:white; padding:10px; border-radius:5px; font-weight:bold;">+ MOEDAS</button>` : ''}
-                        <button onclick="banirUsuario('${target.uid}')" style="background:var(--red); border:none; color:white; padding:10px; border-radius:5px; font-weight:bold;">BANIR</button>
-                    </div>
-                </div>`;
-        }
+        const eMeuPerfil = window.user.uid === targetUid;
+        const btnAcao = eMeuPerfil 
+            ? `<button class="btn-action" style="background:var(--gray);" onclick="document.getElementById('telaEditPerfil').style.display='block'">EDITAR PERFIL</button>`
+            : `<button class="btn-action" onclick="abrirChat('${target.uid}', '${target.nome}')"><i class="fab fa-whatsapp"></i> NEGOCIAR AGORA</button>`;
 
         document.getElementById('perfilConteudo').innerHTML = `
-            <div style="text-align:center;">
-                <i class="fas fa-user-circle" style="font-size:70px; color:var(--blue); margin-top:20px;"></i>
-                <h2>${target.nome}</h2>
-                <span class="badge badge-blue">${target.cargo}</span>
-                <p>Status: <span style="color:var(--green)">${target.status}</span></p>
-                <button class="btn-action" onclick="window.open('https://wa.me/5511983602504?text=Olá, quero negociar a troca do seu item no ICE!')">
-                    <i class="fab fa-whatsapp"></i> CHAMAR PARA TROCA
-                </button>
+            <div class="profile-header">
+                <img src="${target.foto || 'https://www.w3schools.com/howto/img_avatar.png'}" class="profile-img">
+                <h2>${target.nome} <span style="font-size:12px; vertical-align:middle;">${target.cargo !== 'user' ? '✔️' : ''}</span></h2>
+                <p style="font-size:14px; color:#8b949e;">${target.bio || 'Sem bio.'}</p>
+                ${btnAcao}
             </div>
-            ${painelControle}
+            <div class="profile-stats">
+                <div><b>${target.moedasBlue || 0}</b><br><small>BLUE</small></div>
+                <div><b>${target.cargo}</b><br><small>CARGO</small></div>
+                <div><b>Ativo</b><br><small>STATUS</small></div>
+            </div>
         `;
+        
+        // Carregar fotos desse usuário específico (Estilo Grade)
+        const postSnap = await get(ref(db, 'posts'));
+        const grid = document.getElementById('minhasPostagens');
+        grid.innerHTML = "";
+        postSnap.forEach(p => {
+            if(p.val().uid === targetUid) {
+                grid.innerHTML += `<img src="${p.val().i1}" style="width:100%; aspect-ratio:1/1; object-fit:cover; border-radius:5px;">`;
+            }
+        });
+
         document.getElementById('telaPerfil').style.display = 'block';
     };
 
-    // FUNÇÕES DE ADM CORRIGIDAS
-    window.gerirMoeda = (uid) => {
-        let v = prompt("Quantas moedas BLUE adicionar? (ou use - para tirar)");
-        if(v) {
-            runTransaction(ref(db, `usuarios/${uid}/moedasBlue`), val => (val || 0) + parseInt(v))
-            .then(() => { alert("Moedas enviadas!"); abrirPerfilAlheio(uid); });
-        }
+    // EDITAR E SALVAR PERFIL
+    window.salvarPerfil = () => {
+        const fotoFile = document.getElementById('editFoto').files[0];
+        const novoNome = document.getElementById('editNome').value;
+        const novaBio = document.getElementById('editBio').value;
+
+        const atualizar = (fotoBase64 = null) => {
+            const updates = { nome: novoNome || window.user.nome, bio: novaBio || window.user.bio };
+            if(fotoBase64) updates.foto = fotoBase64;
+            update(ref(db, `usuarios/${window.user.uid}`), updates).then(() => {
+                alert("Perfil atualizado!");
+                location.reload();
+            });
+        };
+
+        if(fotoFile) {
+            const r = new FileReader();
+            r.onload = (e) => atualizar(e.target.result);
+            r.readAsDataURL(fotoFile);
+        } else { atualizar(); }
     };
 
-    window.mudarCargo = async (uid, dir) => {
-        const cargos = ["user", "MOD", "ADM2", "ADM1"];
-        const s = await get(ref(db, `usuarios/${uid}`));
-        let index = cargos.indexOf(s.val().cargo) + dir;
-        if(index >= 0 && index < cargos.length) {
-            await update(ref(db, `usuarios/${uid}`), { cargo: cargos[index] });
-            alert("Cargo Atualizado!");
-            abrirPerfilAlheio(uid);
-        }
+    // SISTEMA DE CHAT ABERTO
+    window.abrirChat = (targetUid, targetNome) => {
+        chatAtivoId = [window.user.uid, targetUid].sort().join("_");
+        document.getElementById('chatTitle').innerText = "Chat com " + targetNome;
+        document.getElementById('telaChat').style.display = 'block';
+        onValue(ref(db, `chats/${chatAtivoId}`), (snap) => {
+            const box = document.getElementById('chatBox');
+            box.innerHTML = "";
+            snap.forEach(m => {
+                const msg = m.val();
+                const classe = msg.uid === window.user.uid ? 'msg-me' : 'msg-them';
+                box.innerHTML += `<div class="msg ${classe}">${msg.texto}</div>`;
+            });
+            box.scrollTop = box.scrollHeight;
+        });
     };
 
-    window.banirUsuario = (uid) => { if(confirm("Deseja banir permanentemente?")) update(ref(db, `usuarios/${uid}`), {status:'banido'}); };
+    window.enviarMensagem = () => {
+        const txt = document.getElementById('msgIn').value;
+        if(!txt) return;
+        push(ref(db, `chats/${chatAtivoId}`), { uid: window.user.uid, texto: txt, timestamp: Date.now() });
+        document.getElementById('msgIn').value = "";
+    };
 
+    window.fecharChat = () => { document.getElementById('telaChat').style.display = 'none'; };
+
+    // POSTAGEM
     window.enviarPost = () => {
         const file = document.getElementById('filePost').files[0];
         if(!file) return alert("Selecione uma imagem!");
@@ -286,12 +308,8 @@
         r.readAsDataURL(file);
     };
 
-    window.comprarCargo = (c, p) => { 
-        navigator.clipboard.writeText("thiago00dudu@gmail.com");
-        alert("PIX COPIADO!\nCargo: " + c); 
-        window.open("https://wa.me/5511983602504"); 
-    };
-    
+    // UTILS
+    window.comprarCargo = (c, p) => { alert("PIX: thiago00dudu@gmail.com\nChame no Whats após pagar."); window.open("https://wa.me/5511983602504"); };
     window.fecharTelas = () => { document.querySelectorAll('.tela-full').forEach(t=>t.style.display='none'); };
     window.abrirPostar = () => document.getElementById('telaPostar').style.display='block';
     window.abrirCarteira = () => document.getElementById('telaCarteira').style.display='block';
