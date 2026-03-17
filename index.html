@@ -24,9 +24,6 @@
 
         header { padding:15px; background: #161b22; display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid #30363d; position: sticky; top:0; z-index:100; }
         
-        .perfil-icon-container { position: relative; cursor: pointer; z-index: 101; }
-        .notificacao-balao { position: absolute; top: -5px; right: -5px; background: var(--red); width: 12px; height: 12px; border-radius: 50%; border: 2px solid #161b22; display: none; }
-
         .card-timeline { background: #161b22; border-radius: 15px; overflow: hidden; margin: 15px; border: 1px solid #30363d; position: relative; }
         .card-timeline img { width: 100%; height: 320px; object-fit: cover; }
         .card-info { padding: 15px; }
@@ -43,7 +40,7 @@
         .grid-postagens { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; margin-top: 15px; }
         .grid-postagens img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 5px; }
         
-        .painel-adm { background: rgba(255, 215, 0, 0.05); border: 2px solid var(--gold); padding: 15px; border-radius: 15px; margin-top: 15px; }
+        .painel-adm { background: rgba(255, 215, 0, 0.05); border: 2px solid var(--gold); padding: 15px; border-radius: 15px; margin: 15px 0; }
         .user-photo { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 3px solid var(--blue); margin-bottom: 10px; background: #161b22; }
         .file-label { display: block; background: #30363d; color: white; padding: 10px; border-radius: 5px; cursor: pointer; margin-bottom: 10px; font-size: 12px; text-align: center; }
     </style>
@@ -71,10 +68,7 @@
         <b>ICE TROCAS</b> 
         <div style="display: flex; gap: 15px; align-items: center;">
             <i class="fas fa-share-nodes" style="font-size:22px; color:white; cursor:pointer;" onclick="compartilharSite()"></i>
-            <div class="perfil-icon-container" onclick="abrirMeuPerfil()">
-                <i class="fas fa-user-circle" style="font-size:26px; color:var(--blue);"></i>
-                <div id="balaoAlerta" class="notificacao-balao"></div>
-            </div>
+            <div onclick="abrirMeuPerfil()"><i class="fas fa-user-circle" style="font-size:26px; color:var(--blue); cursor:pointer;"></i></div>
         </div>
     </header>
     <div id="feed"></div>
@@ -88,6 +82,13 @@
 <div id="telaPerfil" class="tela-full">
     <div id="perfilConteudo" style="text-align:center;"></div>
     
+    <div id="areaEditarPerfil" style="display:none; margin:15px 0; background: #161b22; padding: 15px; border-radius: 15px; border: 1px solid #333;">
+        <label for="editFotoFile" class="file-label">Trocar Foto de Perfil</label>
+        <input type="file" id="editFotoFile" accept="image/*" style="display:none;" onchange="prepararFotoPerfil(this)">
+        <input type="text" id="editBio" placeholder="Escreva sua bio..." style="width:100%; padding:10px; border-radius:5px; border:none; background:#30363d; color:white; box-sizing:border-box;">
+        <button class="btn-action" style="background:var(--green);" onclick="salvarPerfil()">SALVAR ALTERAÇÕES</button>
+    </div>
+
     <div id="painelAdmControle" class="painel-adm" style="display:none;">
         <h4 style="color:var(--gold); text-align:center; margin-top:0;">👑 MASTER CONTROL</h4>
         <div style="display:flex; gap:5px;">
@@ -95,7 +96,6 @@
             <button class="btn-action" style="background:var(--red); font-size:10px;" onclick="mudarCargo('ADM2')">ADM2</button>
             <button class="btn-action" style="background:var(--mod-blue); font-size:10px;" onclick="mudarCargo('MOD')">MOD</button>
         </div>
-        <button class="btn-action" style="background:var(--gray); width:100%; margin-top:10px; color:var(--red);" onclick="bloquearUsuario()"><i class="fas fa-ban"></i> BLOQUEAR</button>
     </div>
 
     <h4>Postagens</h4>
@@ -113,6 +113,15 @@
     <button class="btn-action" style="margin-top:20px;" onclick="fecharTelas()">VOLTAR</button>
 </div>
 
+<div id="telaPostar" class="tela-full">
+    <h2>Nova Postagem</h2>
+    <input type="file" id="filePost" accept="image/*" style="display:none;" onchange="prepararFotoPost(this)">
+    <label for="filePost" class="file-label">Escolher Foto</label>
+    <input type="text" id="descPost" placeholder="Descrição do item...">
+    <button class="btn-action" onclick="enviarPost()">POSTAR AGORA</button>
+    <button class="btn-action" style="background:none" onclick="fecharTelas()">CANCELAR</button>
+</div>
+
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getDatabase, ref, onValue, update, set, push, get, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -126,6 +135,8 @@
     window.user = null;
     let targetUid = null;
     let idDoChatAtual = null;
+    let fotoPerfilBase64 = null;
+    let fotoPostBase64 = null;
 
     function getBadge(cargo) {
         if(cargo === 'ADM1') return '<div class="badge-star star-adm1"><i class="fas fa-star"></i><i class="fas fa-crown"></i></div>';
@@ -154,11 +165,11 @@
     };
 
     onAuthStateChanged(auth, async (u) => {
-        const local = localStorage.getItem('ice_user');
-        if (local) { window.user = JSON.parse(local); showApp(); }
-        else if (u) {
-            const s = await get(ref(db, `usuarios/${u.uid}`));
-            window.user = s.val(); showApp();
+        if (u) {
+            onValue(ref(db, `usuarios/${u.uid}`), s => {
+                window.user = s.val();
+                showApp();
+            });
         }
     });
 
@@ -187,6 +198,41 @@
         });
     }
 
+    window.abrirPerfil = async (uid) => {
+        targetUid = uid;
+        const s = await get(ref(db, `usuarios/${uid}`));
+        const t = s.val();
+        const ehMeu = window.user.uid === uid;
+        const souMestre = window.user.cargo === 'ADM1';
+
+        document.getElementById('areaEditarPerfil').style.display = ehMeu ? 'block' : 'none';
+        document.getElementById('painelAdmControle').style.display = (souMestre && !ehMeu) ? 'block' : 'none';
+        
+        document.getElementById('perfilConteudo').innerHTML = `
+            <img src="${t.foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}" class="user-photo">
+            ${getBadge(t.cargo)}
+            <h2>${t.nome}</h2>
+            <p style="color:#8b949e; font-size:14px; margin-top:-10px;">${t.bio || 'Sem bio.'}</p>
+        `;
+        document.getElementById('telaPerfil').style.display = 'block';
+    };
+
+    window.prepararFotoPerfil = (i) => {
+        const r = new FileReader();
+        r.onload = (e) => { fotoPerfilBase64 = e.target.result; };
+        r.readAsDataURL(i.files[0]);
+    };
+
+    window.salvarPerfil = async () => {
+        const bio = document.getElementById('editBio').value;
+        const updates = {};
+        if(bio) updates.bio = bio;
+        if(fotoPerfilBase64) updates.foto = fotoPerfilBase64;
+        await update(ref(db, `usuarios/${window.user.uid}`), updates);
+        alert("Perfil atualizado!");
+        fotoPerfilBase64 = null;
+    };
+
     window.abrirChat = (alvoUid, n) => { 
         if(alvoUid === window.user.uid) return;
         document.getElementById('chatTitle').innerText = "Chat com " + n; 
@@ -210,21 +256,14 @@
         document.getElementById('chatMsg').value = "";
     };
 
-    window.abrirPerfil = async (uid) => {
-        targetUid = uid;
-        const s = await get(ref(db, `usuarios/${uid}`));
-        const t = s.val();
-        const souMestre = window.user.cargo === 'ADM1';
-        document.getElementById('painelAdmControle').style.display = (souMestre && window.user.uid !== uid) ? 'block' : 'none';
-        document.getElementById('perfilConteudo').innerHTML = `<img src="${t.foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}" class="user-photo">${getBadge(t.cargo)}<h2>${t.nome}</h2>`;
-        document.getElementById('telaPerfil').style.display = 'block';
-    };
-
-    window.mudarCargo = async (novo) => { await update(ref(db, `usuarios/${targetUid}`), { cargo: novo }); alert("Cargo alterado!"); };
-    window.removerPost = async (id) => { if(confirm("Apagar post?")) await remove(ref(db, `posts/${id}`)); };
     window.abrirMeuPerfil = () => { if(window.user) abrirPerfil(window.user.uid); };
     window.fecharTelas = () => { document.querySelectorAll('.tela-full').forEach(t => t.style.display = 'none'); };
-    window.compartilharSite = () => { navigator.clipboard.writeText("https://iceeeee.vercel.app/"); alert("Copiado!"); };
+    window.abrirPostar = () => { document.getElementById('telaPostar').style.display='block'; };
+    window.prepararFotoPost = (i) => { const r = new FileReader(); r.onload=(e)=>{ fotoPostBase64=e.target.result; }; r.readAsDataURL(i.files[0]); };
+    window.enviarPost = async () => { if(fotoPostBase64) await push(ref(db, 'posts'), { u1: window.user.nome, uid: window.user.uid, i1: fotoPostBase64, d1: document.getElementById('descPost').value, cargo: window.user.cargo }); fecharTelas(); };
+    window.mudarCargo = async (novo) => { await update(ref(db, `usuarios/${targetUid}`), { cargo: novo }); alert("Cargo alterado!"); };
+    window.removerPost = async (id) => { if(confirm("Apagar post?")) await remove(ref(db, `posts/${id}`)); };
+    window.compartilharSite = () => { navigator.clipboard.writeText("https://iceeeee.vercel.app/"); alert("Link copiado!"); };
 </script>
 </body>
 </html>
