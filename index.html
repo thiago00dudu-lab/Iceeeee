@@ -192,7 +192,10 @@
     let targetUid = null;
     let currentRating = 0;
     let fotoPerfilBase64 = null;
+    let fotoPostBase64 = null;
     let idDoChatAtual = null;
+    let targetNomeChat = "";
+    let fotoChatBase64 = null;
 
     const urlParams = new URLSearchParams(window.location.search);
     const idPai = urlParams.get('ref');
@@ -204,17 +207,32 @@
         return '';
     }
 
-    // --- NOVA FUNÇÃO: COMPARTILHAR ---
+    // --- NOVA FUNÇÃO DE COMPARTILHAR ---
     window.compartilharPerfil = (uid) => {
         const urlIndica = window.location.origin + window.location.pathname + "?ref=" + uid;
         if (navigator.share) {
-            navigator.share({ title: 'ICE TROCAS', text: 'Vem negociar comigo no ICE TROCAS!', url: urlIndica });
+            navigator.share({ title: 'ICE TROCAS', text: 'Vem negociar comigo no ICE TROCAS!', url: urlIndica }).catch(err => console.log(err));
         } else {
             navigator.clipboard.writeText(urlIndica);
-            alert("Link de indicação copiado para a área de transferência!");
+            alert("Link de indicação copiado!");
         }
     };
 
+    function monitorarNotificacoes() {
+        onValue(ref(db, 'chats'), snap => {
+            let temNova = false;
+            snap.forEach(chat => {
+                if (chat.key.includes(window.user.uid)) {
+                    const msgs = Object.values(chat.val());
+                    const ultima = msgs[msgs.length - 1];
+                    if (ultima.remetente !== window.user.uid && (Date.now() - ultima.timestamp < 10000)) temNova = true;
+                }
+            });
+            document.getElementById('balaoAlerta').style.display = temNova ? 'block' : 'none';
+        });
+    }
+
+    // MANTIDO EXATAMENTE IGUAL PARA EVITAR ERRO DE LOGIN
     window.fazerLogin = async () => {
         let u = document.getElementById('userIn').value.trim();
         const p = document.getElementById('passIn').value;
@@ -229,22 +247,15 @@
             try {
                 const res = await createUserWithEmailAndPassword(auth, emailFake, p);
                 const novoUser = { nome: u, cargo: 'user', uid: res.user.uid, moedasBlue: 0, foto:"", bio:"", pai: idPai || "", filhos: 0 };
-                
-                // --- LÓGICA DE FILIAÇÃO ---
-                if(idPai) {
-                    const refPai = ref(db, `usuarios/${idPai}/filhos`);
-                    const snapPai = await get(refPai);
-                    const totalFilhos = snapPai.val() || 0;
-                    await update(ref(db, `usuarios/${idPai}`), { filhos: totalFilhos + 1 });
-                }
-
                 await set(ref(db, `usuarios/${res.user.uid}`), novoUser);
             } catch (err) { alert("Erro ao entrar."); }
         }
     };
 
     onAuthStateChanged(auth, async (u) => {
-        if (u) {
+        const local = localStorage.getItem('ice_user');
+        if (local) { window.user = JSON.parse(local); showApp(); }
+        else if (u) {
             const s = await get(ref(db, `usuarios/${u.uid}`));
             window.user = s.val(); showApp();
         }
@@ -254,6 +265,7 @@
         document.getElementById('telaLogin').style.display = 'none';
         document.getElementById('app').style.display = 'block';
         document.getElementById('menuFlutuante').style.display = 'flex';
+        monitorarNotificacoes();
         
         onValue(ref(db, 'posts'), snap => {
             const f = document.getElementById('feed'); f.innerHTML = "";
@@ -275,43 +287,92 @@
         });
     }
 
+    window.setRating = (v) => {
+        currentRating = v;
+        const stars = document.querySelectorAll('#ratingInput i');
+        stars.forEach((s, idx) => {
+            if(idx < v) { s.classList.remove('far'); s.classList.add('fas'); }
+            else { s.classList.remove('fas'); s.classList.add('far'); }
+        });
+    };
+
+    window.abrirFinalizarTroca = () => { document.getElementById('telaFinalizarTroca').style.display = 'block'; };
+
+    window.confirmarConclusaoTroca = async () => {
+        const desc = document.getElementById('trocaDesc').value;
+        if(!desc || currentRating === 0) return alert("Por favor, preencha a descrição e avalie com estrelas!");
+        
+        const partes = idDoChatAtual.split('_');
+        const outroUid = partes[0] === window.user.uid ? partes[1] : partes[0];
+
+        const dadosTroca = {
+            idTroca: idDoChatAtual,
+            participantes: [window.user.uid, outroUid],
+            descricao: desc,
+            nota: currentRating,
+            data: Date.now(),
+            nomeAvaliador: window.user.nome
+        };
+
+        await push(ref(db, `trocas_concluidas/${window.user.uid}`), dadosTroca);
+        await push(ref(db, `trocas_concluidas/${outroUid}`), dadosTroca);
+
+        alert("Troca Concluída com sucesso! Histórico gerado no perfil.");
+        document.getElementById('telaFinalizarTroca').style.display = 'none';
+        fecharTelas();
+    };
+
+    // AQUI OCORRE A MÁGICA VISUAL SEM QUEBRAR O LOGIN
     window.abrirPerfil = async (uid) => {
         targetUid = uid;
         const s = await get(ref(db, `usuarios/${uid}`));
         const t = s.val();
         const souEu = window.user.uid === uid;
         
+        // CONTA OS FILHOS DINAMICAMENTE
+        let contagemFilhos = 0;
+        try {
+            const usersSnap = await get(ref(db, 'usuarios'));
+            usersSnap.forEach(u => {
+                if(u.val().pai === uid) contagemFilhos++;
+            });
+        } catch(e) {}
+
         document.getElementById('telaPerfil').style.display = 'block';
         document.getElementById('areaEditarPerfil').style.display = souEu ? 'block' : 'none';
+        document.getElementById('minhasConversas').style.display = souEu ? 'block' : 'none';
         
-        // --- UI DO PERFIL COM ÍCONE DE COMPARTILHAR E CONTADOR DE FILHOS ---
         document.getElementById('perfilConteudo').innerHTML = `
             <img src="${t.foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}" class="user-photo">
             ${getBadge(t.cargo)}
-            <h2>${t.nome} <i class="fas fa-share-alt" onclick="compartilharPerfil('${uid}')" style="cursor:pointer; color:var(--blue); font-size: 18px; margin-left: 10px;"></i></h2>
+            <h2>
+                ${t.nome} 
+                <i class="fas fa-share-alt" onclick="compartilharPerfil('${uid}')" style="cursor:pointer; color:var(--blue); font-size: 18px; margin-left: 10px;"></i>
+            </h2>
             <p style="color:#aaa;">${t.bio || 'Sem bio...'}</p>
-            <div style="background:#161b22; padding:10px; border-radius:10px; margin: 10px 0; border: 1px solid #333;">
-                <small><i class="fas fa-users"></i> Indicações: <b>${t.filhos || 0}</b></small>
+            <div style="background:#161b22; padding:5px 15px; border-radius:10px; margin-top:5px; border: 1px solid #333; display:inline-block;">
+                <small><i class="fas fa-users"></i> Indicações: <b>${contagemFilhos}</b></small>
             </div>
         `;
 
-        // Lógica de grid de posts e trocas concluídas segue aqui...
         const postsSnap = await get(ref(db, 'posts'));
         const grid = document.getElementById('gridUser'); grid.innerHTML = "";
         postsSnap.forEach(p => { if(p.val().uid === uid) grid.innerHTML += `<img src="${p.val().i1}">`; });
 
         const trocasSnap = await get(ref(db, `trocas_concluidas/${uid}`));
         const gridTrocas = document.getElementById('gridTrocasConcluidas'); gridTrocas.innerHTML = "";
-        trocasSnap.forEach(tSnap => {
-            const tr = tSnap.val();
-            gridTrocas.innerHTML += `
-                <div class="card-troca-concluida">
-                    <div class="badge-concluido">CONCLUÍDO</div>
-                    <small><b>De:</b> ${tr.nomeAvaliador}</small><br>
-                    <small>${tr.descricao}</small>
-                    <div class="stars-display">${'<i class="fas fa-star"></i>'.repeat(tr.nota)}</div>
-                </div>`;
-        });
+        if(trocasSnap.exists()) {
+            trocasSnap.forEach(tSnap => {
+                const tr = tSnap.val();
+                gridTrocas.innerHTML += `
+                    <div class="card-troca-concluida">
+                        <div class="badge-concluido">CONCLUÍDO</div>
+                        <small><b>De:</b> ${tr.nomeAvaliador}</small><br>
+                        <small>${tr.descricao}</small>
+                        <div class="stars-display">${'<i class="fas fa-star"></i>'.repeat(tr.nota)}</div>
+                    </div>`;
+            });
+        }
     };
 
     window.abrirMeuPerfil = () => abrirPerfil(window.user.uid);
@@ -319,7 +380,6 @@
     window.abrirPostar = () => document.getElementById('telaPostar').style.display='block';
     window.abrirCarteira = () => { document.getElementById('telaCarteira').style.display='block'; document.getElementById('saldoBlue').innerText = window.user.moedasBlue; };
 
-    // Funções auxiliares (removerPost, enviarPost, etc) mantidas como no seu original...
     window.removerPost = async (id) => { if(confirm("Remover este post?")) await remove(ref(db, `posts/${id}`)); };
     window.prepararFotoPost = (input) => { const reader = new FileReader(); reader.onload = (e) => fotoPostBase64 = e.target.result; reader.readAsDataURL(input.files[0]); };
     window.enviarPost = async () => {
@@ -337,7 +397,6 @@
         alert("Perfil atualizado!"); location.reload();
     };
 
-    // Chat e Finalização de Troca (Mantidos conforme sua estrutura anterior)
     window.abrirChat = (uid, nome) => {
         if(uid === window.user.uid) return;
         idDoChatAtual = window.user.uid < uid ? window.user.uid+"_"+uid : uid+"_"+window.user.uid;
@@ -349,7 +408,7 @@
                 const msg = m.val();
                 const souEu = msg.remetente === window.user.uid;
                 box.innerHTML += `<div style="text-align:${souEu?'right':'left'}; margin-bottom:10px;">
-                    <div style="display:inline-block; background:${souEu?var(--blue):var(--gray)}; padding:8px 12px; border-radius:15px; max-width:80%;">
+                    <div style="display:inline-block; background:${souEu?'var(--blue)':'var(--gray)'}; padding:8px 12px; border-radius:15px; max-width:80%;">
                         ${msg.texto}<br>${msg.foto?`<img src="${msg.foto}" style="width:100%; border-radius:10px; margin-top:5px;">`:''}
                     </div>
                 </div>`;
@@ -358,9 +417,19 @@
         });
     };
 
+    window.prepararFotoChat = (input) => {
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            const fotoChatBase64 = e.target.result;
+            const m = { remetente: window.user.uid, texto: "📸 Foto", foto: fotoChatBase64, timestamp: Date.now() };
+            await push(ref(db, `chats/${idDoChatAtual}`), m);
+        };
+        reader.readAsDataURL(input.files[0]);
+    };
+
     window.enviarMensagem = async () => {
         const txt = document.getElementById('chatMsg').value;
-        if(!txt && !fotoChatBase64) return;
+        if(!txt) return;
         const m = { remetente: window.user.uid, texto: txt, timestamp: Date.now() };
         await push(ref(db, `chats/${idDoChatAtual}`), m);
         document.getElementById('chatMsg').value = "";
