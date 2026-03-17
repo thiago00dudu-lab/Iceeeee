@@ -1,9 +1,17 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="google-site-verification" content="VYruh3znNDFAefM5Rn82etwaMrQLV0m2JvXM7-8HHUw" />
+    
+    <meta name="robots" content="index, follow">
+    <meta name="description" content="ICE TROCAS - Global platform for trading, negotiations and BLUE coins. A plataforma oficial de trocas.">
+    <meta name="keywords" content="trade, exchange, trocas, marketplace, crypto, blue coins, negociação, world trade">
+    <link rel="canonical" href="https://iceeeee.vercel.app/">
+    <meta property="og:title" content="ICE TROCAS - Oficial">
+    <meta property="og:description" content="Trade anything, anywhere. Global trading platform.">
+    <meta property="og:type" content="website">
     <title>ICE TROCAS - Oficial</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <style>
@@ -26,9 +34,13 @@
         .btn-float { width: 42px; height: 42px; border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center; color: white; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.4); font-size: 16px; }
 
         header { padding:15px; background: #161b22; display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid #30363d; position: sticky; top:0; z-index:100; }
-        .card-timeline { background: #161b22; border-radius: 15px; overflow: hidden; margin: 15px; border: 1px solid #30363d; }
+        
+        .card-timeline { background: #161b22; border-radius: 15px; overflow: hidden; margin: 15px; border: 1px solid #30363d; position: relative; }
         .card-timeline img { width: 100%; height: 320px; object-fit: cover; }
         .card-info { padding: 15px; }
+
+        /* BOTAO DE APAGAR POST (ADM) */
+        .btn-delete-post { position: absolute; top: 10px; right: 10px; background: rgba(255, 77, 77, 0.8); color: white; border: none; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; font-size: 14px; }
 
         .nav { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background: #161b22; border: 1px solid #30363d; display: flex; gap: 25px; padding: 12px 30px; border-radius: 40px; z-index: 3000; }
         .nav i { color: #8b949e; font-size: 22px; cursor: pointer; }
@@ -105,28 +117,18 @@
 
 <div id="telaChat" class="tela-full">
     <h2 id="chatTitle" style="margin-top:0;">Negociação</h2>
-    
     <div id="chatBox" style="height:350px; background:#161b22; border-radius:15px; padding:15px; overflow-y:auto;"></div>
-    
     <div style="display:flex; gap:8px; margin-top:15px; align-items:center;">
-        <label for="fileChat" class="btn-action" style="width:auto; margin:0; padding:12px 15px; background:var(--gray); cursor:pointer;">
-            <i class="fas fa-camera"></i>
-        </label>
+        <label for="fileChat" class="btn-action" style="width:auto; margin:0; padding:12px 15px; background:var(--gray); cursor:pointer;"><i class="fas fa-camera"></i></label>
         <input type="file" id="fileChat" accept="image/*" style="display:none;" onchange="prepararFotoChat(this)">
-        
         <input type="text" id="chatMsg" placeholder="Digite uma mensagem..." style="flex:1; padding:12px; border-radius:8px; border:none; box-sizing:border-box;">
-        
-        <button class="btn-action" style="width:auto; margin:0; padding:12px 15px; background:var(--green);" onclick="enviarMensagem()">
-            <i class="fas fa-paper-plane"></i>
-        </button>
+        <button class="btn-action" style="width:auto; margin:0; padding:12px 15px; background:var(--green);" onclick="enviarMensagem()"><i class="fas fa-paper-plane"></i></button>
     </div>
-
     <button class="btn-action" style="margin-top:20px;" onclick="fecharTelas()">VOLTAR</button>
 </div>
+
 <div id="telaCarteira" class="tela-full">
-    <div style="background:var(--sea); padding:30px; border-radius:20px; text-align:center;">
-        <p>Saldo BLUE</p><h1 id="saldoBlue">0</h1>
-    </div>
+    <div style="background:var(--sea); padding:30px; border-radius:20px; text-align:center;"><p>Saldo BLUE</p><h1 id="saldoBlue">0</h1></div>
     <button class="btn-action" onclick="fecharTelas()">VOLTAR</button>
 </div>
 
@@ -141,7 +143,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, onValue, update, set, push, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, onValue, update, set, push, get, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
     import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
     const firebaseConfig = { apiKey: "AIzaSyDM5M1_O-wfcBDGYJIiYgiHVbqhiKC-0dw", databaseURL: "https://icek-9cdd7-default-rtdb.firebaseio.com", projectId: "icek-9cdd7" };
@@ -153,12 +155,9 @@
     let targetUid = null;
     let fotoPerfilBase64 = null;
     let fotoPostBase64 = null;
-    
-    // Variáveis do Chat
     let idDoChatAtual = null;
     let fotoChatBase64 = null;
 
-    // PEGAR PAI PELA URL
     const urlParams = new URLSearchParams(window.location.search);
     const idPai = urlParams.get('ref');
 
@@ -169,43 +168,29 @@
         return '';
     }
 
-    /* === FUNÇÃO DE LOGIN ARRUMADA === */
     window.fazerLogin = async () => {
         let u = document.getElementById('userIn').value.trim();
         const p = document.getElementById('passIn').value;
-        
-        // Verifica se é o Master ADM
         if(u.toUpperCase() === "ADM" && p === "1533") {
             const m = { nome: "MASTER ADM1", cargo: "ADM1", uid: "master_ice", moedasBlue: 1000000, foto: "", bio: "", pai: "", filhos: 0 };
             await set(ref(db, `usuarios/master_ice`), m);
             localStorage.setItem('ice_user', JSON.stringify(m));
             location.reload(); return;
         }
-
-        // Truque para o Firebase aceitar só nome de usuário: adiciona @ice.com escondido
         const emailFake = u.includes('@') ? u : u + "@ice.com";
-        const nomeExibicao = u.split('@')[0]; // Pega só o nome para salvar no banco
-
-        try { 
-            // Tenta fazer login
-            await signInWithEmailAndPassword(auth, emailFake, p); 
-        } catch (e) { 
+        const nomeExibicao = u.split('@')[0];
+        try { await signInWithEmailAndPassword(auth, emailFake, p); } catch (e) { 
             try {
-                // Se falhar o login, tenta criar a conta
                 const res = await createUserWithEmailAndPassword(auth, emailFake, p);
                 const novoUser = { nome: nomeExibicao, cargo: 'user', uid: res.user.uid, moedasBlue: 0, foto:"", bio:"", pai: idPai || "", filhos: 0 };
                 await set(ref(db, `usuarios/${res.user.uid}`), novoUser);
-                
                 if(idPai) {
                     const sPai = await get(ref(db, `usuarios/${idPai}`));
                     if(sPai.exists()) update(ref(db, `usuarios/${idPai}`), { filhos: (sPai.val().filhos || 0) + 1 });
                 }
-            } catch (err) {
-                alert("Erro ao entrar. Se for usuário novo, verifique se a opção 'E-mail e Senha' está ativada no menu Authentication do Firebase.");
-            }
+            } catch (err) { alert("Erro ao entrar. Verifique sua conexão."); }
         }
     };
-    /* ================================= */
 
     onAuthStateChanged(auth, async (u) => {
         const local = localStorage.getItem('ice_user');
@@ -220,24 +205,47 @@
         document.getElementById('telaLogin').style.display = 'none';
         document.getElementById('app').style.display = 'block';
         document.getElementById('menuFlutuante').style.display = 'flex';
+        
         onValue(ref(db, 'posts'), snap => {
             const f = document.getElementById('feed'); f.innerHTML = "";
-            snap.forEach(p => { const pt = p.val();
-                f.innerHTML = `<div class="card-timeline"><img src="${pt.i1}" onclick="abrirPerfil('${pt.uid}')"><div class="card-info">${getBadge(pt.cargo)} <b>${pt.u1}</b><br><small>${pt.d1}</small><button class="btn-action" onclick="abrirChat('${pt.uid}', '${pt.u1}')">NEGOCIAR</button></div></div>` + f.innerHTML;
+            snap.forEach(p => { 
+                const pt = p.val();
+                const postId = p.key;
+                
+                // VERIFICA SE O USUARIO LOGADO É ADM PARA MOSTRAR LIXEIRA
+                const ehAdm = window.user && (window.user.cargo === 'ADM1' || window.user.cargo === 'ADM2');
+                const btnDel = ehAdm ? `<button class="btn-delete-post" onclick="removerPost('${postId}')"><i class="fas fa-trash"></i></button>` : "";
+
+                f.innerHTML = `
+                <div class="card-timeline">
+                    ${btnDel}
+                    <img src="${pt.i1}" onclick="abrirPerfil('${pt.uid}')">
+                    <div class="card-info">
+                        ${getBadge(pt.cargo)} <b>${pt.u1}</b><br>
+                        <small>${pt.d1}</small>
+                        <button class="btn-action" onclick="abrirChat('${pt.uid}', '${pt.u1}')">NEGOCIAR</button>
+                    </div>
+                </div>` + f.innerHTML;
             });
         });
         onValue(ref(db, `usuarios/${window.user.uid}`), s => { if(s.exists()){ window.user = s.val(); document.getElementById('saldoBlue').innerText = s.val().moedasBlue; }});
     }
+
+    // FUNÇÃO PARA ADM APAGAR POST
+    window.removerPost = async (id) => {
+        if(confirm("Deseja realmente apagar este post indevido?")) {
+            await remove(ref(db, `posts/${id}`));
+            alert("Post removido com sucesso!");
+        }
+    };
 
     window.abrirPerfil = async (uid) => {
         targetUid = uid;
         const s = await get(ref(db, `usuarios/${uid}`));
         const t = s.val();
         const souEu = window.user.uid === uid;
-        
         const temPermissao = window.user.cargo === 'ADM1' || window.user.cargo === 'ADM2' || window.user.cargo === 'MOD';
         document.getElementById('painelAdmControle').style.display = (temPermissao && !souEu) ? 'block' : 'none';
-        
         document.getElementById('areaEditarPerfil').style.display = souEu ? 'block' : 'none';
         const fotoUrl = t.foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
         document.getElementById('perfilConteudo').innerHTML = `<img src="${fotoUrl}" class="user-photo">${getBadge(t.cargo)}<h2>${t.nome}</h2><p style="color:#aaa;">${t.bio || 'Sem bio...'}</p><p style="color:var(--green); font-weight:bold;">🧔 Pai de: ${t.filhos || 0} pessoas</p><div style="background:#161b22; padding:10px; border-radius:10px;"><b>SALDO: ${t.moedasBlue || 0} BLUE</b></div>`;
@@ -250,7 +258,7 @@
     window.compartilharID = () => {
         const link = window.location.origin + window.location.pathname + "?ref=" + window.user.uid;
         navigator.clipboard.writeText(link);
-        alert("Link de convite copiado! Envie para seus amigos e torne-se Pai deles no ICE.");
+        alert("Link de convite copiado!");
     };
 
     window.prepararFotoPerfil = (i) => { const r = new FileReader(); r.onload=(e)=>{ fotoPerfilBase64=e.target.result; }; r.readAsDataURL(i.files[0]); };
@@ -263,96 +271,61 @@
 
     window.prepararFotoPost = (i) => { const r = new FileReader(); r.onload=(e)=>{ fotoPostBase64=e.target.result; }; r.readAsDataURL(i.files[0]); };
     window.enviarPost = async () => {
+        if(!fotoPostBase64) return alert("Selecione uma foto!");
         await push(ref(db, 'posts'), { u1: window.user.nome, uid: window.user.uid, cargo: window.user.cargo, i1: fotoPostBase64, d1: document.getElementById('descPost').value });
         fecharTelas();
     };
 
     window.abrirChat = (alvoUid, n) => { 
-        if(alvoUid === window.user.uid) {
-            alert("Você não pode negociar consigo mesmo!");
-            return;
-        }
-
+        if(alvoUid === window.user.uid) return alert("Você não pode negociar consigo mesmo!");
         document.getElementById('chatTitle').innerText = "Chat com " + n; 
         document.getElementById('telaChat').style.display='block'; 
-        
         const meuUid = window.user.uid;
         idDoChatAtual = meuUid < alvoUid ? meuUid + "_" + alvoUid : alvoUid + "_" + meuUid;
-
         onValue(ref(db, `chats/${idDoChatAtual}`), snap => {
-            const cb = document.getElementById('chatBox');
-            cb.innerHTML = "";
-            cb.style.display = "flex";
-            cb.style.flexDirection = "column";
-            cb.style.gap = "10px";
-
+            const cb = document.getElementById('chatBox'); cb.innerHTML = "";
+            cb.style.display = "flex"; cb.style.flexDirection = "column"; cb.style.gap = "10px";
             if(snap.exists()){
                 snap.forEach(m => {
                     const msg = m.val();
                     const souEu = msg.remetente === window.user.uid;
                     const align = souEu ? "flex-end" : "flex-start";
                     const bg = souEu ? "var(--sea)" : "var(--gray)";
-                    
-                    let conteudoHTML = "";
-                    if(msg.texto) conteudoHTML += `<p style="margin:0; word-wrap:break-word;">${msg.texto}</p>`;
-                    if(msg.imagem) conteudoHTML += `<img src="${msg.imagem}" style="width:100%; max-width:200px; border-radius:8px; margin-top:5px;">`;
-
-                    cb.innerHTML += `
-                    <div style="align-self:${align}; background:${bg}; padding:10px; border-radius:12px; max-width:80%;">
-                        <small style="color:var(--gold); font-size:10px; display:block; margin-bottom:5px;">${msg.nomeRemetente}</small>
-                        ${conteudoHTML}
-                    </div>`;
+                    let c = "";
+                    if(msg.texto) c += `<p style="margin:0;">${msg.texto}</p>`;
+                    if(msg.imagem) c += `<img src="${msg.imagem}" style="width:100%; max-width:200px; border-radius:8px; margin-top:5px;">`;
+                    cb.innerHTML += `<div style="align-self:${align}; background:${bg}; padding:10px; border-radius:12px; max-width:80%;"><small style="color:var(--gold); font-size:10px;">${msg.nomeRemetente}</small>${c}</div>`;
                 });
                 cb.scrollTop = cb.scrollHeight; 
-            } else {
-                cb.innerHTML = "<p style='text-align:center; color:#8b949e; width:100%;'>Envie a primeira mensagem para negociar.</p>";
             }
         });
     };
 
     window.prepararFotoChat = async (i) => { 
         if(!i.files[0]) return;
-        const r = new FileReader(); 
-        r.onload = async (e) => { 
-            fotoChatBase64 = e.target.result; 
-            await enviarMensagem(); 
-        }; 
-        r.readAsDataURL(i.files[0]); 
+        const r = new FileReader(); r.onload = async (e) => { fotoChatBase64 = e.target.result; await enviarMensagem(); }; r.readAsDataURL(i.files[0]); 
     };
 
     window.enviarMensagem = async () => {
         const textoIn = document.getElementById('chatMsg').value;
         if(!textoIn.trim() && !fotoChatBase64) return;
-
-        await push(ref(db, `chats/${idDoChatAtual}`), {
-            remetente: window.user.uid,
-            nomeRemetente: window.user.nome,
-            texto: textoIn,
-            imagem: fotoChatBase64 || null,
-            timestamp: Date.now()
-        });
-
-        document.getElementById('chatMsg').value = "";
-        fotoChatBase64 = null;
-        document.getElementById('fileChat').value = "";
+        await push(ref(db, `chats/${idDoChatAtual}`), { remetente: window.user.uid, nomeRemetente: window.user.nome, texto: textoIn, imagem: fotoChatBase64 || null, timestamp: Date.now() });
+        document.getElementById('chatMsg').value = ""; fotoChatBase64 = null;
     };
 
     window.mudarCargo = async (c) => { await update(ref(db, `usuarios/${targetUid}`), { cargo: c }); abrirPerfil(targetUid); };
-    
-    window.bloquearUsuario = async () => { 
-        if(confirm("Tem certeza que deseja bloquear este usuário?")) { 
-            await update(ref(db, `usuarios/${targetUid}`), { cargo: 'BLOQUEADO' }); 
-            alert("Usuário bloqueado com sucesso!");
-            abrirPerfil(targetUid); 
-        } 
+    window.bloquearUsuario = async () => { if(confirm("Bloquear?")) { await update(ref(db, `usuarios/${targetUid}`), { cargo: 'BLOQUEADO' }); abrirPerfil(targetUid); } };
+    window.addMoedas = async (s) => { 
+        const v = prompt("Qtd?"); if(!v || isNaN(v)) return;
+        const sn = await get(ref(db, `usuarios/${targetUid}`)); 
+        const n = s ? (sn.val().moedasBlue + parseInt(v)) : (sn.val().moedasBlue - parseInt(v));
+        await update(ref(db, `usuarios/${targetUid}`), { moedasBlue: n }); abrirPerfil(targetUid);
     };
 
-    window.addMoedas = async (s) => { const v = prompt("Qtd?"); const sn = await get(ref(db, `usuarios/${targetUid}`)); const n = s ? (sn.val().moedasBlue + parseInt(v)) : (sn.val().moedasBlue - parseInt(v)); await update(ref(db, `usuarios/${targetUid}`), { moedasBlue: Math.max(0, n) }); abrirPerfil(targetUid); };
-    window.comprar = (c, v) => alert(`PIX: thiago00dudu@gmail.com\nValor: ${v}\nZap: 11983602504`);
-    window.fecharTelas = () => { document.querySelectorAll('.tela-full').forEach(t=>t.style.display='none'); };
+    window.fecharTelas = () => { document.querySelectorAll('.tela-full').forEach(t => t.style.display = 'none'); };
     window.abrirMeuPerfil = () => abrirPerfil(window.user.uid);
-    window.abrirPostar = () => document.getElementById('telaPostar').style.display='block';
-    window.abrirCarteira = () => document.getElementById('telaCarteira').style.display='block';
+    window.abrirPostar = () => { document.getElementById('telaPostar').style.display='block'; };
+    window.abrirCarteira = () => { document.getElementById('telaCarteira').style.display='block'; };
 </script>
 </body>
 </html>
