@@ -3,334 +3,244 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="google-site-verification" content="VYruh3znNDFAefM5Rn82etwaMrQLV0m2JvXM7-8HHUw" />   
+    <meta name="description" content="ICE TROCAS - Plataforma oficial de trocas.">
     <title>ICE TROCAS - Oficial</title>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <style>
         :root { --bg: #0d1117; --sea: #0f3452; --blue: #1877f2; --gold: #FFD700; --white: #fff; --green: #25d366; --red: #ff4d4d; --mod-blue: #00BFFF; --gray: #30363d; }
-        body { margin:0; font-family: sans-serif; background: var(--bg); color: white; padding-bottom: 90px; overflow-x: hidden; }
+        body { margin: 0; font-family: sans-serif; background: var(--bg); color: white; padding-bottom: 90px; overflow-x: hidden; }
         
         /* LOGIN */
         #telaLogin { position: fixed; inset: 0; background: var(--sea); z-index: 5000; display: flex; align-items: center; justify-content: center; }
-        .login-box { background: white; padding: 30px; border-radius: 20px; width: 85%; max-width: 350px; text-align: center; color: black; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .login-box { background: white; padding: 30px; border-radius: 20px; width: 85%; max-width: 350px; text-align: center; color: black; }
         .login-box input { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #ddd; box-sizing: border-box; }
 
-        /* NOTIFICAÇÃO TOAST */
+        /* NOTIFICAÇÕES (TOAST) */
         #notification-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; width: 90%; max-width: 400px; pointer-events: none; }
-        .toast { background: #1c2128; border-left: 4px solid var(--blue); color: white; padding: 15px; border-radius: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); margin-bottom: 10px; display: flex; align-items: center; gap: 12px; animation: slideIn 0.4s ease-out; pointer-events: auto; }
+        .toast { background: #1c2128; border-left: 4px solid var(--blue); color: white; padding: 15px; border-radius: 10px; margin-bottom: 10px; animation: slideIn 0.4s ease; pointer-events: auto; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
         @keyframes slideIn { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        /* HEADER E UI */
-        header { padding:15px; background: #161b22; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:100; border-bottom: 1px solid #30363d; }
+        /* HEADER E ÍCONES */
+        header { padding: 15px; background: #161b22; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #30363d; position: sticky; top: 0; z-index: 100; }
         .perfil-icon-container { position: relative; cursor: pointer; }
-        .notificacao-balao { position: absolute; top: -2px; right: -2px; background: var(--red); width: 10px; height: 10px; border-radius: 50%; border: 2px solid #161b22; display: none; }
+        .notificacao-balao { position: absolute; top: -5px; right: -5px; background: var(--red); width: 12px; height: 12px; border-radius: 50%; border: 2px solid #161b22; display: none; }
 
+        /* BADGES */
+        .badge-star { font-size: 14px; display: flex; gap: 4px; align-items: center; margin-bottom: 5px; }
+        .star-mod { color: var(--mod-blue); }
+        .star-adm2 { color: var(--red); }
+        .star-adm1 { color: var(--gold); }
+
+        /* BOTÕES FLUTUANTES */
         .side-menu { position: fixed; right: 15px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 10px; z-index: 4000; }
-        .btn-float { width: 42px; height: 42px; border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center; color: white; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.4); font-size: 16px; transition: 0.3s; }
-        
+        .btn-float { width: 42px; height: 42px; border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center; color: white; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.4); font-size: 16px; }
+
+        /* FEED E CARDS */
         .card-timeline { background: #161b22; border-radius: 15px; overflow: hidden; margin: 15px; border: 1px solid #30363d; position: relative; }
         .card-timeline img { width: 100%; height: 320px; object-fit: cover; }
-        .btn-delete-post { position: absolute; top: 10px; right: 10px; background: rgba(255, 77, 77, 0.8); color: white; border: none; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .card-info { padding: 15px; }
+        .btn-delete-post { position: absolute; top: 10px; right: 10px; background: rgba(255, 77, 77, 0.8); color: white; border: none; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; font-size: 14px; }
 
-        .nav { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background: #161b22; border: 1px solid #30363d; display: flex; gap: 25px; padding: 12px 30px; border-radius: 40px; z-index: 3000; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
-        .nav i { color: #8b949e; font-size: 22px; cursor: pointer; }
-        .nav i.active { color: var(--blue); }
-
-        .tela-full { display: none; position: fixed; inset: 0; background: var(--bg); z-index: 2000; overflow-y: auto; padding: 20px; box-sizing: border-box; }
-        .btn-action { background: var(--blue); color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; font-weight: bold; margin-top: 10px; cursor: pointer; }
+        /* TELAS E NAV */
+        .tela-full { display: none; position: fixed; inset: 0; background: var(--bg); z-index: 2000; overflow-y: auto; padding: 20px; }
+        .nav { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background: #161b22; display: flex; gap: 30px; padding: 12px 30px; border-radius: 40px; border: 1px solid #30363d; z-index: 3000; }
+        .nav i { color: #8b949e; font-size: 22px; }
+        .btn-action { background: var(--blue); color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; font-weight: bold; margin-top: 10px; }
         
-        #chatBox { height: 60vh; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 10px; background: rgba(0,0,0,0.1); border-radius: 10px; }
-        .msg { padding: 10px; border-radius: 10px; max-width: 85%; word-wrap: break-word; }
+        #chatBox { height: 60vh; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px; }
+        .msg { padding: 10px; border-radius: 10px; max-width: 80%; }
         .msg-me { background: var(--blue); align-self: flex-end; }
         .msg-them { background: var(--gray); align-self: flex-start; }
-        .grid-postagens { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; margin-top: 15px; }
-        .grid-postagens img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 5px; }
     </style>
 </head>
 <body>
 
 <div id="notification-container"></div>
 
-<div class="side-menu" id="menuFlutuante" style="display:none;">
-    <button class="btn-float" style="background: var(--mod-blue);" onclick="instrucaoCompra('MOD', '20 Blues')"><i class="fas fa-star"></i></button>
-    <button class="btn-float" style="background: var(--red);" onclick="instrucaoCompra('ADM2', '1000 Blues')"><i class="fas fa-crown"></i></button>
-    <button class="btn-float" style="background: var(--gold); color:black;" onclick="verBolsa()"><i class="fas fa-chart-line"></i></button>
-    <button class="btn-float" style="background: var(--green);" onclick="compartilharLink()"><i class="fas fa-share-alt"></i></button>
-</div>
-
 <div id="telaLogin">
     <div class="login-box">
-        <h2 style="margin-top:0">ICE TROCAS</h2>
+        <h2>ICE TROCAS</h2>
         <input type="text" id="userIn" placeholder="E-mail">
         <input type="password" id="passIn" placeholder="Senha">
-        <button class="btn-action" onclick="fazerLogin()">ENTRAR / CADASTRAR</button>
+        <button class="btn-action" onclick="fazerLogin()">ENTRAR</button>
     </div>
 </div>
 
 <div id="app" style="display:none;">
     <header>
         <b>ICE TROCAS</b>
-        <div style="display:flex; gap:15px; align-items:center;">
-            <i class="fas fa-share-nodes" onclick="compartilharLink()" style="color:var(--green); font-size:20px;"></i>
-            <div class="perfil-icon-container" onclick="abrirMeuPerfil()">
-                <div class="notificacao-balao" id="alertaPerfil"></div>
-                <i class="fas fa-user-circle" style="font-size:26px; color:var(--blue);"></i>
-            </div>
+        <div class="perfil-icon-container" onclick="abrirMeuPerfil()">
+            <div class="notificacao-balao" id="dotNotificacao"></div>
+            <i class="fas fa-user-circle" style="font-size:26px; color:var(--blue);"></i>
         </div>
     </header>
+
     <div id="feed"></div>
+
+    <div class="side-menu">
+        <button class="btn-float" style="background:var(--gold)" onclick="verBolsa()"><i class="fas fa-chart-line"></i></button>
+        <button class="btn-float" style="background:var(--green)" onclick="compartilhar()"><i class="fas fa-share-alt"></i></button>
+    </div>
+
     <div class="nav">
-        <i class="fas fa-home active" onclick="fecharTelas()"></i>
-        <i class="fas fa-plus-circle" onclick="abrirPostar()" style="color:var(--blue); font-size: 28px;"></i>
+        <i class="fas fa-home" onclick="fecharTelas()"></i>
+        <i class="fas fa-plus-circle" onclick="abrirPostar()" style="color:var(--blue); font-size:28px"></i>
         <i class="fas fa-wallet" onclick="abrirCarteira()"></i>
     </div>
-</div>
-
-<div id="telaPerfil" class="tela-full">
-    <div id="perfilConteudo"></div>
-    <div id="painelAdmControle" style="display:none; background:rgba(255,215,0,0.1); border:1px solid var(--gold); padding:15px; border-radius:15px; margin-top:15px;">
-        <h4 style="color:var(--gold); margin:0 0 10px 0;">GESTÃO MASTER</h4>
-        <button class="btn-action" style="font-size:11px; width:auto; padding:8px;" onclick="admAlterarCargo('MOD')">DAR MOD</button>
-        <button class="btn-action" style="font-size:11px; width:auto; padding:8px; background:var(--red);" onclick="admAlterarCargo('ADM2')">DAR ADM2</button>
-        <button class="btn-action" style="font-size:11px; width:auto; padding:8px; background:var(--gold); color:black;" onclick="admAlterarSaldo()">ADD BLUES</button>
-    </div>
-    <h4 style="margin:20px 0 10px 0; border-bottom:1px solid #30363d; padding-bottom:5px;">Minhas Fotos</h4>
-    <div id="minhasPostagens" class="grid-postagens"></div>
-    <button class="btn-action" style="background:var(--gray); margin-top:30px;" onclick="fecharTelas()">VOLTAR</button>
 </div>
 
 <div id="telaChat" class="tela-full">
     <h3 id="chatTitle">Chat</h3>
     <div id="chatBox"></div>
-    <div style="display:flex; gap:8px; margin-top:10px;">
-        <input type="text" id="msgIn" placeholder="Mensagem..." style="flex:1; padding:12px; border-radius:8px; border:none; background:#161b22; color:white;">
-        <button onclick="enviarMensagem()" style="background:var(--blue); border:none; color:white; width:50px; border-radius:8px;"><i class="fas fa-paper-plane"></i></button>
+    <div style="display:flex; gap:5px;">
+        <input type="text" id="msgIn" style="flex:1; padding:10px; border-radius:5px; border:none;">
+        <button onclick="enviarMensagem()" style="padding:10px; background:var(--blue); border:none; color:white; border-radius:5px;"><i class="fas fa-paper-plane"></i></button>
     </div>
-    <button class="btn-action" style="background:none" onclick="fecharTelas()">FECHAR</button>
-</div>
-
-<div id="telaCarteira" class="tela-full">
-    <div style="background:linear-gradient(135deg, var(--sea), var(--blue)); padding:40px; border-radius:20px; text-align:center;">
-        <p>Meu Saldo</p>
-        <h1 id="saldoBlue">0</h1>
-        <small>BLUE COINS</small>
-        <p style="margin-top:20px; font-size:12px;">ID:<br><span id="userIdDisplay">---</span></p>
-    </div>
-    <button class="btn-action" style="margin-top:20px;" onclick="fecharTelas()">VOLTAR</button>
+    <button class="btn-action" onclick="fecharTelas()" style="background:none">Voltar</button>
 </div>
 
 <div id="telaPostar" class="tela-full">
-    <h2>Nova Troca</h2>
+    <h2>Novo Post</h2>
     <input type="file" id="filePost" accept="image/*">
-    <input type="text" id="descPost" placeholder="O que quer trocar?" style="width:100%; padding:15px; margin-top:10px; background:#161b22; color:white; border:1px solid #30363d; box-sizing:border-box">
-    <button class="btn-action" onclick="enviarPost()">PUBLICAR</button>
-    <button class="btn-action" style="background:none" onclick="fecharTelas()">CANCELAR</button>
+    <input type="text" id="descPost" placeholder="Descrição...">
+    <button class="btn-action" onclick="enviarPost()">Publicar</button>
+    <button class="btn-action" onclick="fecharTelas()" style="background:none">Cancelar</button>
 </div>
 
-<div id="telaOferta" class="tela-full">
-    <h2 id="ofertaTitle">Fazer Proposta</h2>
-    <div style="background:#161b22; padding:15px; border-radius:15px;">
-        <input type="file" id="fileOferta" accept="image/*">
-        <textarea id="descOferta" placeholder="Detalhes da sua oferta..." style="width:100%; height:100px; margin-top:10px; background:#0d1117; color:white; border:1px solid var(--gray); padding:10px; border-radius:8px;"></textarea>
-        <button class="btn-action" style="background:var(--green);" onclick="enviarProposta()">ENVIAR PROPOSTA</button>
+<div id="telaCarteira" class="tela-full">
+    <h2>Minha Carteira</h2>
+    <div style="background:var(--sea); padding:20px; border-radius:15px; text-align:center;">
+        <h1 id="saldoBlue">0</h1>
+        <p>BLUE COINS</p>
     </div>
-    <button class="btn-action" style="background:none;" onclick="fecharTelas()">Cancelar</button>
+    <button class="btn-action" onclick="fecharTelas()">Voltar</button>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, onValue, update, set, push, get, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-    import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getDatabase, ref, onValue, push, set, get, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
     const firebaseConfig = { apiKey: "AIzaSyDM5M1_O-wfcBDGYJIiYgiHVbqhiKC-0dw", databaseURL: "https://icek-9cdd7-default-rtdb.firebaseio.com", projectId: "icek-9cdd7" };
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
     const auth = getAuth(app);
 
-    window.user = null;
-    let targetUidGlobal = null;
-    let chatAtivoId = null;
-    const notificacaoSom = new Audio('https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3');
+    let usuarioAtivo = null;
+    let chatIdAtual = null;
+    let receptorId = null;
 
-    // --- FUNÇÕES DE NOTIFICAÇÃO ---
-    function dispararNotificacao(titulo, texto, deUid) {
-        if (document.getElementById('telaChat').style.display === 'block' && chatAtivoId.includes(deUid)) return;
-        
-        notificacaoSom.play();
-        document.getElementById('alertaPerfil').style.display = 'block';
+    // LOGIN
+    window.fazerLogin = () => {
+        const email = document.getElementById('userIn').value;
+        const pass = document.getElementById('passIn').value;
+        signInWithEmailAndPassword(auth, email, pass).catch(err => alert("Erro: " + err.message));
+    };
 
-        const container = document.getElementById('notification-container');
-        const toast = document.createElement('div');
-        toast.className = 'toast';
-        toast.innerHTML = `<div><b>${titulo}</b><p>${texto.substring(0,35)}...</p></div>`;
-        toast.onclick = () => { abrirChat(deUid, titulo); toast.remove(); };
-        container.appendChild(toast);
-        setTimeout(() => toast.remove(), 5000);
-    }
+    onAuthStateChanged(auth, async (u) => {
+        if(u) {
+            const snap = await get(ref(db, `usuarios/${u.uid}`));
+            usuarioAtivo = snap.val() || { nome: u.email.split('@')[0], uid: u.uid, moedasBlue: 0 };
+            document.getElementById('telaLogin').style.display = 'none';
+            document.getElementById('app').style.display = 'block';
+            carregarFeed();
+            escutarNotificacoes();
+        }
+    });
 
-    function enviarAlertaDB(paraUid, texto) {
-        push(ref(db, `notificacoes/${paraUid}`), { de: window.user.uid, nome: window.user.nome, texto: texto });
-    }
-
-    function escutarAlertas(uid) {
-        onValue(ref(db, `notificacoes/${uid}`), snap => {
-            if (snap.exists()) {
+    // NOTIFICAÇÕES
+    function escutarNotificacoes() {
+        onValue(ref(db, `notificacoes/${usuarioAtivo.uid}`), snap => {
+            if(snap.exists()) {
+                document.getElementById('dotNotificacao').style.display = 'block';
                 snap.forEach(n => {
-                    dispararNotificacao(n.val().nome, n.val().texto, n.val().de);
-                    remove(ref(db, `notificacoes/${uid}/${n.key}`));
+                    mostrarToast(n.val().nome, n.val().texto, n.val().de);
+                    remove(ref(db, `notificacoes/${usuarioAtivo.uid}/${n.key}`));
                 });
             }
         });
     }
 
-    // --- LÓGICA CORE ---
-    function getBadge(cargo) {
-        if(cargo === 'MOD') return '<div class="badge-star star-mod"><i class="fas fa-star"></i></div>';
-        if(cargo === 'ADM2') return '<div class="badge-star star-adm2"><i class="fas fa-star"></i></div>';
-        if(cargo === 'ADM1') return '<div class="badge-star star-adm1"><i class="fas fa-star"></i></div>';
-        return '';
+    function mostrarToast(nome, msg, de) {
+        const container = document.getElementById('notification-container');
+        const t = document.createElement('div');
+        t.className = 'toast';
+        t.innerHTML = `<b>${nome}</b><br>${msg}`;
+        t.onclick = () => abrirChat(de, nome);
+        container.appendChild(t);
+        setTimeout(() => t.remove(), 5000);
     }
 
-    window.fazerLogin = async () => {
-        const u = document.getElementById('userIn').value;
-        const p = document.getElementById('passIn').value;
-        if(u.toUpperCase() === "ADM" && p === "1533") {
-            window.user = { nome: "ADM MASTER", cargo: "ADM1", uid: "master", moedasBlue: 999999 };
-            localStorage.setItem('ice_master', JSON.stringify(window.user));
-            location.reload(); return;
-        }
-        try { await signInWithEmailAndPassword(auth, u, p); } catch (e) { 
-            const res = await createUserWithEmailAndPassword(auth, u, p);
-            await set(ref(db, `usuarios/${res.user.uid}`), { nome: u.split('@')[0], cargo: 'user', uid: res.user.uid, moedasBlue: 0 });
-        }
-    };
-
-    onAuthStateChanged(auth, async (u) => {
-        const local = localStorage.getItem('ice_master');
-        if (local) { window.user = JSON.parse(local); entrarNoApp(); } 
-        else if (u) {
-            const snap = await get(ref(db, `usuarios/${u.uid}`));
-            window.user = snap.val();
-            entrarNoApp();
-        }
-    });
-
-    function entrarNoApp() {
-        document.getElementById('telaLogin').style.display = 'none';
-        document.getElementById('app').style.display = 'block';
-        document.getElementById('menuFlutuante').style.display = 'flex';
-        document.getElementById('userIdDisplay').innerText = window.user.uid;
-        
-        escutarAlertas(window.user.uid);
-
+    // FEED
+    function carregarFeed() {
         onValue(ref(db, 'posts'), snap => {
-            const feed = document.getElementById('feed'); feed.innerHTML = "";
+            const feed = document.getElementById('feed');
+            feed.innerHTML = "";
             snap.forEach(p => {
                 const post = p.val();
-                const isAdm = window.user.cargo === 'ADM1';
-                feed.innerHTML = `<div class="card-timeline" id="post-${p.key}">
-                    ${isAdm ? `<button class="btn-delete-post" onclick="excluirPost('${p.key}')"><i class="fas fa-trash"></i></button>` : ''}
-                    <img src="${post.i1}" onclick="abrirPerfilAlheio('${post.uid}')">
+                feed.innerHTML = `
+                <div class="card-timeline">
+                    <img src="${post.img}">
                     <div class="card-info">
-                        <div style="display:flex; align-items:center; gap:5px">${getBadge(post.cargo)}<b>${post.u1}</b></div>
-                        <small>${post.d1}</small>
-                        <button class="btn-action" onclick="abrirTelaOferta('${post.uid}', '${post.u1}')">NEGOCIAR</button>
+                        <b>${post.autor}</b><br>
+                        <small>${post.desc}</small>
+                        <button class="btn-action" onclick="abrirChat('${post.uid}', '${post.autor}')">NEGOCIAR</button>
                     </div>
                 </div>` + feed.innerHTML;
             });
         });
-
-        onValue(ref(db, `usuarios/${window.user.uid}`), s => { 
-            if(s.exists()){ window.user = s.val(); document.getElementById('saldoBlue').innerText = s.val().moedasBlue || 0; } 
-        });
     }
 
-    // --- CHAT E PROPOSTAS ---
-    document.getElementById('msgIn').onkeypress = (e) => { if(e.key === 'Enter') enviarMensagem(); };
-
+    // CHAT
     window.abrirChat = (uid, nome) => {
-        chatAtivoId = [window.user.uid, uid].sort().join("_");
-        targetUidGlobal = uid;
+        receptorId = uid;
+        chatIdAtual = [usuarioAtivo.uid, uid].sort().join("_");
         document.getElementById('chatTitle').innerText = nome;
         document.getElementById('telaChat').style.display = 'block';
-        document.getElementById('alertaPerfil').style.display = 'none';
+        document.getElementById('dotNotificacao').style.display = 'none';
         
-        onValue(ref(db, `chats/${chatAtivoId}`), s => {
-            const b = document.getElementById('chatBox'); b.innerHTML = "";
-            s.forEach(m => { 
-                const msg = m.val(); 
-                b.innerHTML += `<div class="msg ${msg.uid === window.user.uid ? 'msg-me':'msg-them'}"><b>${msg.u}:</b><br>${msg.t}${msg.img ? '<img src="'+msg.img+'" style="width:100%; border-radius:8px; margin-top:5px">' : ''}</div>`; 
+        onValue(ref(db, `chats/${chatIdAtual}`), snap => {
+            const box = document.getElementById('chatBox');
+            box.innerHTML = "";
+            snap.forEach(m => {
+                const msg = m.val();
+                box.innerHTML += `<div class="msg ${msg.uid === usuarioAtivo.uid ? 'msg-me':'msg-them'}">${msg.texto}</div>`;
             });
-            b.scrollTop = b.scrollHeight;
+            box.scrollTop = box.scrollHeight;
         });
     };
 
     window.enviarMensagem = () => {
-        const input = document.getElementById('msgIn');
-        if(!input.value.trim()) return;
-        push(ref(db, `chats/${chatAtivoId}`), { uid: window.user.uid, u: window.user.nome, t: input.value });
-        enviarAlertaDB(targetUidGlobal, input.value);
-        input.value = "";
+        const txt = document.getElementById('msgIn').value;
+        if(!txt) return;
+        push(ref(db, `chats/${chatIdAtual}`), { uid: usuarioAtivo.uid, texto: txt });
+        push(ref(db, `notificacoes/${receptorId}`), { de: usuarioAtivo.uid, nome: usuarioAtivo.nome, texto: txt });
+        document.getElementById('msgIn').value = "";
     };
 
-    window.enviarProposta = () => {
-        const desc = document.getElementById('descOferta').value;
-        const file = document.getElementById('fileOferta').files[0];
-        const r = new FileReader();
-        r.onload = (e) => {
-            chatAtivoId = [window.user.uid, targetUidGlobal].sort().join("_");
-            push(ref(db, `chats/${chatAtivoId}`), { uid: window.user.uid, u: window.user.nome, t: "📦 PROPOSTA: " + desc, img: file ? e.target.result : null });
-            enviarAlertaDB(targetUidGlobal, "Fez uma proposta para você!");
-            fecharTelas();
-            abrirChat(targetUidGlobal, "Negociação");
-        };
-        if(file) r.readAsDataURL(file); else r.onload({target:{result:null}});
-    };
-
-    // --- UTILITÁRIOS ---
+    // POSTAR
     window.enviarPost = () => {
-        const f = document.getElementById('filePost').files[0];
-        if(!f) return alert("Selecione uma imagem");
-        const r = new FileReader();
-        r.onload = (e) => {
-            push(ref(db, 'posts'), { u1: window.user.nome, uid: window.user.uid, cargo: window.user.cargo, i1: e.target.result, d1: document.getElementById('descPost').value });
+        const file = document.getElementById('filePost').files[0];
+        const desc = document.getElementById('descPost').value;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            push(ref(db, 'posts'), { autor: usuarioAtivo.nome, uid: usuarioAtivo.uid, img: e.target.result, desc: desc });
             fecharTelas();
         };
-        r.readAsDataURL(f);
+        reader.readAsDataURL(file);
     };
 
-    window.excluirPost = (key) => { if(confirm("Apagar este post?")) remove(ref(db, `posts/${key}`)); };
-    window.compartilharLink = () => {
-        const url = window.location.href + "?ref=" + window.user.uid;
-        if(navigator.share) navigator.share({title: 'ICE TROCAS', url: url});
-        else prompt("Copie seu link:", url);
+    // FUNÇÕES DE TELA
+    window.fecharTelas = () => { document.querySelectorAll('.tela-full').forEach(t => t.style.display = 'none'); };
+    window.abrirPostar = () => document.getElementById('telaPostar').style.display = 'block';
+    window.abrirCarteira = () => {
+        document.getElementById('saldoBlue').innerText = usuarioAtivo.moedasBlue;
+        document.getElementById('telaCarteira').style.display = 'block';
     };
-
-    window.abrirPerfilAlheio = async (uid) => {
-        targetUidGlobal = uid;
-        const snap = await get(ref(db, `usuarios/${uid}`));
-        const t = snap.val();
-        document.getElementById('perfilConteudo').innerHTML = `
-            <div style="text-align:center; padding:20px;">
-                <img src="${t.foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}" style="width:100px; height:100px; border-radius:50%; border:3px solid var(--blue); object-fit:cover;">
-                <div style="display:flex; flex-direction:column; align-items:center; margin-top:10px;">
-                    ${getBadge(t.cargo)}
-                    <h2 style="margin:0;">${t.nome}</h2>
-                </div>
-                ${window.user.uid !== uid ? `<button class="btn-action" onclick="abrirChat('${t.uid}', '${t.nome}')">ABRIR CHAT</button>` : ''}
-            </div>`;
-        document.getElementById('telaPerfil').style.display = 'block';
-    };
-
-    window.fecharTelas = () => { document.querySelectorAll('.tela-full').forEach(t=>t.style.display='none'); };
-    window.abrirMeuPerfil = () => abrirPerfilAlheio(window.user.uid);
-    window.abrirPostar = () => document.getElementById('telaPostar').style.display='block';
-    window.abrirCarteira = () => document.getElementById('telaCarteira').style.display='block';
-    window.abrirTelaOferta = (uid, nome) => { targetUidGlobal = uid; document.getElementById('ofertaTitle').innerText = "Oferta para " + nome; document.getElementById('telaOferta').style.display = 'block'; };
-    window.verBolsa = async () => {
-        const snap = await get(ref(db, 'usuarios'));
-        let total = 0; snap.forEach(u => { total += (u.val().moedasBlue || 0); });
-        alert(`📊 MARKET CAP ICE: R$ ${(22000000 + (total * 100)).toLocaleString('pt-BR')}`);
-    };
+    window.compartilhar = () => { navigator.share({ title: 'ICE TROCAS', url: window.location.href }); };
 </script>
+
 </body>
 </html>
