@@ -33,6 +33,10 @@
 
         header { padding:15px; background: #161b22; display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid #30363d; position: sticky; top:0; z-index:100; }
         
+        /* BALÃO DE NOTIFICAÇÃO NO ÍCONE DO PERFIL */
+        .perfil-icon-container { position: relative; cursor: pointer; }
+        .notificacao-balao { position: absolute; top: -5px; right: -5px; background: var(--red); width: 12px; height: 12px; border-radius: 50%; border: 2px solid #161b22; display: none; }
+
         .card-timeline { background: #161b22; border-radius: 15px; overflow: hidden; margin: 15px; border: 1px solid #30363d; position: relative; }
         .card-timeline img { width: 100%; height: 320px; object-fit: cover; }
         .card-info { padding: 15px; }
@@ -49,6 +53,9 @@
         .grid-postagens { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; margin-top: 15px; }
         .grid-postagens img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 5px; }
         
+        /* ESTILO PARA A LISTA DE CONVERSAS NO PERFIL */
+        .conversa-item { background: #161b22; padding: 12px; border-radius: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #30363d; }
+
         .painel-adm { background: rgba(255, 215, 0, 0.05); border: 2px solid var(--gold); padding: 15px; border-radius: 15px; margin-top: 15px; }
         .user-photo { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 3px solid var(--blue); margin-bottom: 10px; background: #161b22; }
         .file-label { display: block; background: #30363d; color: white; padding: 10px; border-radius: 5px; cursor: pointer; margin-bottom: 10px; font-size: 12px; text-align: center; }
@@ -73,7 +80,13 @@
 </div>
 
 <div id="app" style="display:none;">
-    <header><b>ICE TROCAS</b> <i class="fas fa-user-circle" onclick="abrirMeuPerfil()" style="font-size:26px; color:var(--blue);"></i></header>
+    <header>
+        <b>ICE TROCAS</b> 
+        <div class="perfil-icon-container" onclick="abrirMeuPerfil()">
+            <i class="fas fa-user-circle" style="font-size:26px; color:var(--blue);"></i>
+            <div id="balaoAlerta" class="notificacao-balao"></div>
+        </div>
+    </header>
     <div id="feed"></div>
     <div class="nav">
         <i class="fas fa-home active" onclick="fecharTelas()"></i>
@@ -84,6 +97,12 @@
 
 <div id="telaPerfil" class="tela-full">
     <div id="perfilConteudo" style="text-align:center;"></div>
+    
+    <div id="minhasConversas" style="margin-top: 20px; display:none;">
+        <h4 style="color:var(--blue); border-bottom: 1px solid #333; padding-bottom: 5px;"><i class="fas fa-comments"></i> Minhas Negociações</h4>
+        <div id="listaConversas"></div>
+    </div>
+
     <div id="areaEditarPerfil" style="display:none; margin-top:15px; background: #161b22; padding: 15px; border-radius: 15px;">
         <label for="editFotoFile" class="file-label"><i class="fas fa-image"></i> Alterar Foto da Galeria</label>
         <input type="file" id="editFotoFile" accept="image/*" style="display:none;" onchange="prepararFotoPerfil(this)">
@@ -91,6 +110,7 @@
         <button class="btn-action" style="background:var(--green); margin-bottom:10px;" onclick="salvarPerfil()">SALVAR PERFIL</button>
         <button class="btn-action" style="background:var(--blue);" onclick="compartilharID()"><i class="fas fa-share-alt"></i> CONVIDAR AMIGOS</button>
     </div>
+
     <div id="painelAdmControle" class="painel-adm" style="display:none;">
         <h4 style="color:var(--gold); text-align:center; margin-top:0;">👑 MASTER CONTROL</h4>
         <div style="display:flex; gap:5px;">
@@ -104,6 +124,7 @@
         </div>
         <button class="btn-action" style="background:var(--gray); width:100%; margin-top:10px; color:var(--red);" onclick="bloquearUsuario()"><i class="fas fa-ban"></i> BLOQUEAR USUÁRIO</button>
     </div>
+
     <h4>Postagens</h4>
     <div id="gridUser" class="grid-postagens"></div>
     <button class="btn-action" style="background:var(--gray); margin-top:20px;" onclick="fecharTelas()">VOLTAR</button>
@@ -162,28 +183,24 @@
         return '';
     }
 
-    // NOVA FUNÇÃO: SISTEMA DE NOTIFICAÇÕES EM TEMPO REAL
+    // MONITORAR MENSAGENS E MOSTRAR BALÃO NO TOPO
     function monitorarNotificacoes() {
-        if (!("Notification" in window)) return;
-        Notification.requestPermission();
-
         const chatsRef = ref(db, 'chats');
-        // Ouve todas as conversas para ver se chegou algo para você
         onValue(chatsRef, (snapshot) => {
+            let temNova = false;
             snapshot.forEach((chat) => {
                 if (chat.key.includes(window.user.uid)) {
                     const mensagens = Object.values(chat.val());
                     const ultima = mensagens[mensagens.length - 1];
-                    
-                    // Se a mensagem não for sua e for recente (últimos 10 seg)
                     if (ultima.remetente !== window.user.uid && (Date.now() - ultima.timestamp < 10000)) {
-                        new Notification("ICE TROCAS - Nova Mensagem", {
-                            body: `${ultima.nomeRemetente}: ${ultima.texto || 'Enviou uma foto'}`,
-                            icon: 'https://cdn-icons-png.flaticon.com/512/149/149071.png'
-                        });
+                        temNova = true;
+                        if ("Notification" in window && Notification.permission === "granted") {
+                            new Notification("ICE TROCAS", { body: `Mensagem de ${ultima.nomeRemetente}` });
+                        }
                     }
                 }
             });
+            document.getElementById('balaoAlerta').style.display = temNova ? 'block' : 'none';
         });
     }
 
@@ -203,11 +220,7 @@
                 const res = await createUserWithEmailAndPassword(auth, emailFake, p);
                 const novoUser = { nome: nomeExibicao, cargo: 'user', uid: res.user.uid, moedasBlue: 0, foto:"", bio:"", pai: idPai || "", filhos: 0 };
                 await set(ref(db, `usuarios/${res.user.uid}`), novoUser);
-                if(idPai) {
-                    const sPai = await get(ref(db, `usuarios/${idPai}`));
-                    if(sPai.exists()) update(ref(db, `usuarios/${idPai}`), { filhos: (sPai.val().filhos || 0) + 1 });
-                }
-            } catch (err) { alert("Erro ao entrar. Verifique sua conexão."); }
+            } catch (err) { alert("Erro ao entrar."); }
         }
     };
 
@@ -224,10 +237,8 @@
         document.getElementById('telaLogin').style.display = 'none';
         document.getElementById('app').style.display = 'block';
         document.getElementById('menuFlutuante').style.display = 'flex';
-        
-        // Ativa o monitor de mensagens em segundo plano
         monitorarNotificacoes();
-
+        
         onValue(ref(db, 'posts'), snap => {
             const f = document.getElementById('feed'); f.innerHTML = "";
             snap.forEach(p => { 
@@ -251,12 +262,36 @@
         onValue(ref(db, `usuarios/${window.user.uid}`), s => { if(s.exists()){ window.user = s.val(); document.getElementById('saldoBlue').innerText = s.val().moedasBlue; }});
     }
 
-    window.removerPost = async (id) => {
-        if(confirm("Deseja realmente apagar este post indevido?")) {
-            await remove(ref(db, `posts/${id}`));
-            alert("Post removido!");
-        }
+    // LISTAR CONVERSAS NO PERFIL PARA O DONO DO POST RESPONDER
+    window.abrirMeuPerfil = () => {
+        abrirPerfil(window.user.uid);
+        document.getElementById('minhasConversas').style.display = 'block';
+        const lista = document.getElementById('listaConversas');
+        lista.innerHTML = "<small style='color:#666'>Carregando conversas...</small>";
+        
+        get(ref(db, 'chats')).then(snap => {
+            lista.innerHTML = "";
+            let encontrou = false;
+            snap.forEach(chat => {
+                if(chat.key.includes(window.user.uid)) {
+                    encontrou = true;
+                    const partes = chat.key.split('_');
+                    const outroUid = partes[0] === window.user.uid ? partes[1] : partes[0];
+                    get(ref(db, `usuarios/${outroUid}`)).then(uSnap => {
+                        const outroUser = uSnap.val();
+                        lista.innerHTML += `
+                        <div class="conversa-item">
+                            <span><b>${outroUser.nome}</b></span>
+                            <button class="btn-action" style="width:auto; padding:5px 15px; margin:0; font-size:12px;" onclick="abrirChat('${outroUser.uid}', '${outroUser.nome}')">ABRIR CHAT</button>
+                        </div>`;
+                    });
+                }
+            });
+            if(!encontrou) lista.innerHTML = "<small style='color:#666'>Nenhuma negociação ativa ainda.</small>";
+        });
     };
+
+    window.removerPost = async (id) => { if(confirm("Apagar post?")) await remove(ref(db, `posts/${id}`)); };
 
     window.abrirPerfil = async (uid) => {
         targetUid = uid;
@@ -266,6 +301,7 @@
         const temPermissao = window.user.cargo === 'ADM1' || window.user.cargo === 'ADM2' || window.user.cargo === 'MOD';
         document.getElementById('painelAdmControle').style.display = (temPermissao && !souEu) ? 'block' : 'none';
         document.getElementById('areaEditarPerfil').style.display = souEu ? 'block' : 'none';
+        document.getElementById('minhasConversas').style.display = souEu ? 'block' : 'none';
         const fotoUrl = t.foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
         document.getElementById('perfilConteudo').innerHTML = `<img src="${fotoUrl}" class="user-photo">${getBadge(t.cargo)}<h2>${t.nome}</h2><p style="color:#aaa;">${t.bio || 'Sem bio...'}</p><p style="color:var(--green); font-weight:bold;">🧔 Pai de: ${t.filhos || 0} pessoas</p><div style="background:#161b22; padding:10px; border-radius:10px;"><b>SALDO: ${t.moedasBlue || 0} BLUE</b></div>`;
         const grid = document.getElementById('gridUser'); grid.innerHTML = "";
@@ -277,7 +313,7 @@
     window.compartilharID = () => {
         const link = window.location.origin + window.location.pathname + "?ref=" + window.user.uid;
         navigator.clipboard.writeText(link);
-        alert("Link de convite copiado!");
+        alert("Link copiado!");
     };
 
     window.prepararFotoPerfil = (i) => { const r = new FileReader(); r.onload=(e)=>{ fotoPerfilBase64=e.target.result; }; r.readAsDataURL(i.files[0]); };
@@ -296,7 +332,7 @@
     };
 
     window.abrirChat = (alvoUid, n) => { 
-        if(alvoUid === window.user.uid) return alert("Você não pode negociar consigo mesmo!");
+        if(alvoUid === window.user.uid) return alert("Use a lista de conversas no seu perfil para falar com quem te chamou!");
         document.getElementById('chatTitle').innerText = "Chat com " + n; 
         document.getElementById('telaChat').style.display='block'; 
         const meuUid = window.user.uid;
@@ -328,7 +364,6 @@
     window.enviarMensagem = async () => {
         const textoIn = document.getElementById('chatMsg').value;
         if(!textoIn.trim() && !fotoChatBase64) return;
-        // Adicionando timestamp para as notificações saberem o que é novo
         await push(ref(db, `chats/${idDoChatAtual}`), { remetente: window.user.uid, nomeRemetente: window.user.nome, texto: textoIn, imagem: fotoChatBase64 || null, timestamp: Date.now() });
         document.getElementById('chatMsg').value = ""; fotoChatBase64 = null;
     };
@@ -343,7 +378,6 @@
     };
 
     window.fecharTelas = () => { document.querySelectorAll('.tela-full').forEach(t => t.style.display = 'none'); };
-    window.abrirMeuPerfil = () => abrirPerfil(window.user.uid);
     window.abrirPostar = () => { document.getElementById('telaPostar').style.display='block'; };
     window.abrirCarteira = () => { document.getElementById('telaCarteira').style.display='block'; };
 </script>
