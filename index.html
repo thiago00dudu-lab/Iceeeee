@@ -12,24 +12,22 @@
     <meta property="og:title" content="ICE TROCAS - Oficial">
     <meta property="og:description" content="Trade anything, anywhere. Global trading platform.">
     <meta property="og:type" content="website">
+
     <title>ICE TROCAS - Oficial</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <style>
         :root { --bg: #0d1117; --sea: #0f3452; --blue: #1877f2; --gold: #FFD700; --white: #fff; --green: #25d366; --red: #ff4d4d; --mod-blue: #00BFFF; --gray: #30363d; }
         body { margin:0; font-family: sans-serif; background: var(--bg); color: white; padding-bottom: 90px; overflow-x: hidden; }
         
-        /* LOGIN */
         #telaLogin { position: fixed; inset: 0; background: var(--sea); z-index: 5000; display: flex; align-items: center; justify-content: center; }
         .login-box { background: white; padding: 30px; border-radius: 20px; width: 85%; max-width: 350px; text-align: center; color: black; }
         .login-box input { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #ddd; box-sizing: border-box; }
 
-        /* ESTRELAS */
         .badge-star { font-size: 14px; display: flex; gap: 4px; align-items: center; justify-content: center; margin-bottom: 5px; }
         .star-mod { color: var(--mod-blue); }
         .star-adm2 { color: var(--red); }
         .star-adm1 { color: var(--gold); }
 
-        /* MENU LATERAL */
         .side-menu { position: fixed; right: 15px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 10px; z-index: 4000; }
         .btn-float { width: 42px; height: 42px; border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center; color: white; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.4); font-size: 16px; }
 
@@ -39,7 +37,6 @@
         .card-timeline img { width: 100%; height: 320px; object-fit: cover; }
         .card-info { padding: 15px; }
 
-        /* BOTAO DE APAGAR POST (ADM) */
         .btn-delete-post { position: absolute; top: 10px; right: 10px; background: rgba(255, 77, 77, 0.8); color: white; border: none; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; font-size: 14px; }
 
         .nav { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); background: #161b22; border: 1px solid #30363d; display: flex; gap: 25px; padding: 12px 30px; border-radius: 40px; z-index: 3000; }
@@ -87,7 +84,6 @@
 
 <div id="telaPerfil" class="tela-full">
     <div id="perfilConteudo" style="text-align:center;"></div>
-    
     <div id="areaEditarPerfil" style="display:none; margin-top:15px; background: #161b22; padding: 15px; border-radius: 15px;">
         <label for="editFotoFile" class="file-label"><i class="fas fa-image"></i> Alterar Foto da Galeria</label>
         <input type="file" id="editFotoFile" accept="image/*" style="display:none;" onchange="prepararFotoPerfil(this)">
@@ -95,7 +91,6 @@
         <button class="btn-action" style="background:var(--green); margin-bottom:10px;" onclick="salvarPerfil()">SALVAR PERFIL</button>
         <button class="btn-action" style="background:var(--blue);" onclick="compartilharID()"><i class="fas fa-share-alt"></i> CONVIDAR AMIGOS</button>
     </div>
-
     <div id="painelAdmControle" class="painel-adm" style="display:none;">
         <h4 style="color:var(--gold); text-align:center; margin-top:0;">👑 MASTER CONTROL</h4>
         <div style="display:flex; gap:5px;">
@@ -109,7 +104,6 @@
         </div>
         <button class="btn-action" style="background:var(--gray); width:100%; margin-top:10px; color:var(--red);" onclick="bloquearUsuario()"><i class="fas fa-ban"></i> BLOQUEAR USUÁRIO</button>
     </div>
-
     <h4>Postagens</h4>
     <div id="gridUser" class="grid-postagens"></div>
     <button class="btn-action" style="background:var(--gray); margin-top:20px;" onclick="fecharTelas()">VOLTAR</button>
@@ -168,6 +162,31 @@
         return '';
     }
 
+    // NOVA FUNÇÃO: SISTEMA DE NOTIFICAÇÕES EM TEMPO REAL
+    function monitorarNotificacoes() {
+        if (!("Notification" in window)) return;
+        Notification.requestPermission();
+
+        const chatsRef = ref(db, 'chats');
+        // Ouve todas as conversas para ver se chegou algo para você
+        onValue(chatsRef, (snapshot) => {
+            snapshot.forEach((chat) => {
+                if (chat.key.includes(window.user.uid)) {
+                    const mensagens = Object.values(chat.val());
+                    const ultima = mensagens[mensagens.length - 1];
+                    
+                    // Se a mensagem não for sua e for recente (últimos 10 seg)
+                    if (ultima.remetente !== window.user.uid && (Date.now() - ultima.timestamp < 10000)) {
+                        new Notification("ICE TROCAS - Nova Mensagem", {
+                            body: `${ultima.nomeRemetente}: ${ultima.texto || 'Enviou uma foto'}`,
+                            icon: 'https://cdn-icons-png.flaticon.com/512/149/149071.png'
+                        });
+                    }
+                }
+            });
+        });
+    }
+
     window.fazerLogin = async () => {
         let u = document.getElementById('userIn').value.trim();
         const p = document.getElementById('passIn').value;
@@ -206,13 +225,14 @@
         document.getElementById('app').style.display = 'block';
         document.getElementById('menuFlutuante').style.display = 'flex';
         
+        // Ativa o monitor de mensagens em segundo plano
+        monitorarNotificacoes();
+
         onValue(ref(db, 'posts'), snap => {
             const f = document.getElementById('feed'); f.innerHTML = "";
             snap.forEach(p => { 
                 const pt = p.val();
                 const postId = p.key;
-                
-                // VERIFICA SE O USUARIO LOGADO É ADM PARA MOSTRAR LIXEIRA
                 const ehAdm = window.user && (window.user.cargo === 'ADM1' || window.user.cargo === 'ADM2');
                 const btnDel = ehAdm ? `<button class="btn-delete-post" onclick="removerPost('${postId}')"><i class="fas fa-trash"></i></button>` : "";
 
@@ -231,11 +251,10 @@
         onValue(ref(db, `usuarios/${window.user.uid}`), s => { if(s.exists()){ window.user = s.val(); document.getElementById('saldoBlue').innerText = s.val().moedasBlue; }});
     }
 
-    // FUNÇÃO PARA ADM APAGAR POST
     window.removerPost = async (id) => {
         if(confirm("Deseja realmente apagar este post indevido?")) {
             await remove(ref(db, `posts/${id}`));
-            alert("Post removido com sucesso!");
+            alert("Post removido!");
         }
     };
 
@@ -309,6 +328,7 @@
     window.enviarMensagem = async () => {
         const textoIn = document.getElementById('chatMsg').value;
         if(!textoIn.trim() && !fotoChatBase64) return;
+        // Adicionando timestamp para as notificações saberem o que é novo
         await push(ref(db, `chats/${idDoChatAtual}`), { remetente: window.user.uid, nomeRemetente: window.user.nome, texto: textoIn, imagem: fotoChatBase64 || null, timestamp: Date.now() });
         document.getElementById('chatMsg').value = ""; fotoChatBase64 = null;
     };
