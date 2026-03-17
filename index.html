@@ -58,12 +58,11 @@
         .user-photo { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 3px solid var(--blue); margin-bottom: 10px; background: #161b22; }
         .file-label { display: block; background: #30363d; color: white; padding: 10px; border-radius: 5px; cursor: pointer; margin-bottom: 10px; font-size: 12px; text-align: center; }
 
+        /* NOVO: ESTILO PARA TROCAS CONCLUÍDAS E AVALIAÇÃO */
         .card-troca-concluida { background: #1c2128; border: 1px solid var(--green); border-radius: 10px; padding: 10px; margin-top: 10px; text-align: left; position: relative; }
+        .card-troca-concluida img { width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 5px; }
         .stars-display { color: var(--gold); font-size: 12px; }
         .badge-concluido { position: absolute; top: 5px; right: 5px; background: var(--green); font-size: 10px; padding: 2px 6px; border-radius: 5px; }
-        
-        /* ESTILO DO BOTÃO DE COMPARTILHAR NO PERFIL */
-        .btn-share-profile { position: absolute; top: 20px; right: 20px; background: var(--blue); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
     </style>
 </head>
 <body>
@@ -101,8 +100,6 @@
 </div>
 
 <div id="telaPerfil" class="tela-full">
-    <button class="btn-share-profile" onclick="compartilharID()"><i class="fas fa-share-alt"></i></button>
-    
     <div id="perfilConteudo" style="text-align:center;"></div>
     
     <div id="minhasConversas" style="margin-top: 20px; display:none;">
@@ -139,18 +136,24 @@
 
 <div id="telaFinalizarTroca" class="tela-full" style="z-index: 3500;">
     <h2>Finalizar Troca</h2>
-    <input type="text" id="trocaDesc" placeholder="Descrição da troca..." style="width:100%; padding:12px; margin-bottom:15px; border-radius:8px; border:none; box-sizing:border-box; background:#161b22; color:white;">
+    <p><small>Descreva o que foi trocado para evitar fraudes e avalie o usuário.</small></p>
+    <input type="text" id="trocaDesc" placeholder="Ex: Trocamos um Celular por Blue Coins" style="width:100%; padding:12px; margin-bottom:15px; border-radius:8px; border:none; box-sizing:border-box; background:#161b22; color:white;">
+    <p>Sua Avaliação:</p>
     <div id="ratingInput" style="font-size:30px; color:var(--gold); display:flex; gap:10px; justify-content:center; margin-bottom:20px;">
-        <i class="far fa-star" onclick="setRating(1)"></i><i class="far fa-star" onclick="setRating(2)"></i><i class="far fa-star" onclick="setRating(3)"></i><i class="far fa-star" onclick="setRating(4)"></i><i class="far fa-star" onclick="setRating(5)"></i>
+        <i class="far fa-star" onclick="setRating(1)" data-val="1"></i>
+        <i class="far fa-star" onclick="setRating(2)" data-val="2"></i>
+        <i class="far fa-star" onclick="setRating(3)" data-val="3"></i>
+        <i class="far fa-star" onclick="setRating(4)" data-val="4"></i>
+        <i class="far fa-star" onclick="setRating(5)" data-val="5"></i>
     </div>
-    <button class="btn-action" style="background:var(--green);" onclick="confirmarConclusaoTroca()">CONCLUIR TROCA</button>
+    <button class="btn-action" style="background:var(--green);" onclick="confirmarConclusaoTroca()">CONCLUIR E CONGELAR NO PERFIL</button>
     <button class="btn-action" style="background:none;" onclick="document.getElementById('telaFinalizarTroca').style.display='none'">CANCELAR</button>
 </div>
 
 <div id="telaChat" class="tela-full">
     <div style="display:flex; justify-content:space-between; align-items:center;">
         <h2 id="chatTitle" style="margin:0;">Negociação</h2>
-        <button onclick="abrirFinalizarTroca()" style="background:var(--green); border:none; color:white; padding:5px 10px; border-radius:5px; font-size:10px; font-weight:bold;"><i class="fas fa-check-circle"></i> FINALIZAR</button>
+        <button onclick="abrirFinalizarTroca()" style="background:var(--green); border:none; color:white; padding:5px 10px; border-radius:5px; font-size:10px; font-weight:bold;"><i class="fas fa-check-circle"></i> FINALIZAR TROCA</button>
     </div>
     <div id="chatBox" style="height:350px; background:#161b22; border-radius:15px; padding:15px; overflow-y:auto; margin-top:10px;"></div>
     <div style="display:flex; gap:8px; margin-top:15px; align-items:center;">
@@ -192,10 +195,11 @@
     let fotoPerfilBase64 = null;
     let fotoPostBase64 = null;
     let idDoChatAtual = null;
+    let targetNomeChat = "";
     let fotoChatBase64 = null;
 
     const urlParams = new URLSearchParams(window.location.search);
-    const idPaiReferencia = urlParams.get('ref');
+    const idPai = urlParams.get('ref');
 
     function getBadge(cargo) {
         if(cargo === 'ADM1') return '<div class="badge-star star-adm1"><i class="fas fa-star"></i><i class="fas fa-crown"></i></div>';
@@ -204,37 +208,43 @@
         return '';
     }
 
-    // SISTEMA DE INDICAÇÃO: ATUALIZA O PAI QUANDO UM FILHO CADASTRA
+    function monitorarNotificacoes() {
+        onValue(ref(db, 'chats'), snap => {
+            let temNova = false;
+            snap.forEach(chat => {
+                if (chat.key.includes(window.user.uid)) {
+                    const msgs = Object.values(chat.val());
+                    const ultima = msgs[msgs.length - 1];
+                    if (ultima.remetente !== window.user.uid && (Date.now() - ultima.timestamp < 10000)) temNova = true;
+                }
+            });
+            document.getElementById('balaoAlerta').style.display = temNova ? 'block' : 'none';
+        });
+    }
+
     window.fazerLogin = async () => {
         let u = document.getElementById('userIn').value.trim();
         const p = document.getElementById('passIn').value;
         if(u.toUpperCase() === "ADM" && p === "1533") {
-            const m = { nome: "MASTER ADM1", cargo: "ADM1", uid: "master_ice", moedasBlue: 1000000, filhos: 0 };
+            const m = { nome: "MASTER ADM1", cargo: "ADM1", uid: "master_ice", moedasBlue: 1000000, foto: "", bio: "", pai: "", filhos: 0 };
             await set(ref(db, `usuarios/master_ice`), m);
             localStorage.setItem('ice_user', JSON.stringify(m));
             location.reload(); return;
         }
-        const emailFake = u + "@ice.com";
+        const emailFake = u.includes('@') ? u : u + "@ice.com";
         try { await signInWithEmailAndPassword(auth, emailFake, p); } catch (e) { 
             try {
                 const res = await createUserWithEmailAndPassword(auth, emailFake, p);
-                const novoUser = { nome: u, cargo: 'user', uid: res.user.uid, moedasBlue: 0, foto:"", bio:"", pai: idPaiReferencia || "", filhos: 0 };
+                const novoUser = { nome: u, cargo: 'user', uid: res.user.uid, moedasBlue: 0, foto:"", bio:"", pai: idPai || "", filhos: 0 };
                 await set(ref(db, `usuarios/${res.user.uid}`), novoUser);
-                
-                // SE TIVER PAI, AUMENTA O CONTADOR DELE
-                if(idPaiReferencia) {
-                    const snapPai = await get(ref(db, `usuarios/${idPaiReferencia}`));
-                    if(snapPai.exists()) {
-                        const totalFilhos = (snapPai.val().filhos || 0) + 1;
-                        await update(ref(db, `usuarios/${idPaiReferencia}`), { filhos: totalFilhos });
-                    }
-                }
             } catch (err) { alert("Erro ao entrar."); }
         }
     };
 
     onAuthStateChanged(auth, async (u) => {
-        if (u) {
+        const local = localStorage.getItem('ice_user');
+        if (local) { window.user = JSON.parse(local); showApp(); }
+        else if (u) {
             const s = await get(ref(db, `usuarios/${u.uid}`));
             window.user = s.val(); showApp();
         }
@@ -244,27 +254,63 @@
         document.getElementById('telaLogin').style.display = 'none';
         document.getElementById('app').style.display = 'block';
         document.getElementById('menuFlutuante').style.display = 'flex';
+        monitorarNotificacoes();
         
         onValue(ref(db, 'posts'), snap => {
             const f = document.getElementById('feed'); f.innerHTML = "";
             snap.forEach(p => { 
                 const pt = p.val();
-                f.innerHTML = `<div class="card-timeline"><img src="${pt.i1}" onclick="abrirPerfil('${pt.uid}')"><div class="card-info">${getBadge(pt.cargo)} <b>${pt.u1}</b><br><small>${pt.d1}</small><button class="btn-action" onclick="abrirChat('${pt.uid}', '${pt.u1}')">NEGOCIAR</button></div></div>` + f.innerHTML;
+                const postId = p.key;
+                const ehAdm = window.user && (window.user.cargo === 'ADM1' || window.user.cargo === 'ADM2');
+                f.innerHTML = `
+                <div class="card-timeline">
+                    ${ehAdm ? `<button class="btn-delete-post" onclick="removerPost('${postId}')"><i class="fas fa-trash"></i></button>` : ""}
+                    <img src="${pt.i1}" onclick="abrirPerfil('${pt.uid}')">
+                    <div class="card-info">
+                        ${getBadge(pt.cargo)} <b>${pt.u1}</b><br>
+                        <small>${pt.d1}</small>
+                        <button class="btn-action" onclick="abrirChat('${pt.uid}', '${pt.u1}')">NEGOCIAR</button>
+                    </div>
+                </div>` + f.innerHTML;
             });
         });
     }
 
-    // FUNÇÃO DE COMPARTILHAR O ID (LINK DE REFERÊNCIA)
-    window.compartilharID = async () => {
-        const shareData = {
-            title: 'ICE TROCAS',
-            text: `Ei! Entre no ICE TROCAS pelo meu convite e vamos negociar!`,
-            url: window.location.origin + window.location.pathname + "?ref=" + window.user.uid
+    // NOVO: SISTEMA DE FINALIZAÇÃO E AVALIAÇÃO
+    window.setRating = (v) => {
+        currentRating = v;
+        const stars = document.querySelectorAll('#ratingInput i');
+        stars.forEach((s, idx) => {
+            if(idx < v) { s.classList.remove('far'); s.classList.add('fas'); }
+            else { s.classList.remove('fas'); s.classList.add('far'); }
+        });
+    };
+
+    window.abrirFinalizarTroca = () => { document.getElementById('telaFinalizarTroca').style.display = 'block'; };
+
+    window.confirmarConclusaoTroca = async () => {
+        const desc = document.getElementById('trocaDesc').value;
+        if(!desc || currentRating === 0) return alert("Por favor, preencha a descrição e avalie com estrelas!");
+        
+        const partes = idDoChatAtual.split('_');
+        const outroUid = partes[0] === window.user.uid ? partes[1] : partes[0];
+
+        const dadosTroca = {
+            idTroca: idDoChatAtual,
+            participantes: [window.user.uid, outroUid],
+            descricao: desc,
+            nota: currentRating,
+            data: Date.now(),
+            nomeAvaliador: window.user.nome
         };
-        try {
-            if (navigator.share) { await navigator.share(shareData); } 
-            else { await navigator.clipboard.writeText(shareData.url); alert("Link de convite copiado!"); }
-        } catch (err) { console.log(err); }
+
+        // Salva nos dois perfis para ficar "congelado" no mural de cada um
+        await push(ref(db, `trocas_concluidas/${window.user.uid}`), dadosTroca);
+        await push(ref(db, `trocas_concluidas/${outroUid}`), dadosTroca);
+
+        alert("Troca Concluída com sucesso! Histórico gerado no perfil.");
+        document.getElementById('telaFinalizarTroca').style.display = 'none';
+        fecharTelas();
     };
 
     window.abrirPerfil = async (uid) => {
@@ -272,55 +318,57 @@
         const s = await get(ref(db, `usuarios/${uid}`));
         const t = s.val();
         const souEu = window.user.uid === uid;
+        
         document.getElementById('areaEditarPerfil').style.display = souEu ? 'block' : 'none';
         document.getElementById('minhasConversas').style.display = souEu ? 'block' : 'none';
+        document.getElementById('perfilConteudo').innerHTML = `<img src="${t.foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}" class="user-photo">${getBadge(t.cargo)}<h2>${t.nome}</h2><p style="color:#aaa;">${t.bio || 'Sem bio...'}</p><div style="background:#161b22; padding:10px; border-radius:10px;"><b>SALDO: ${t.moedasBlue || 0} BLUE</b></div>`;
         
-        // MOSTRAR "PAI DE X PESSOAS"
-        document.getElementById('perfilConteudo').innerHTML = `
-            <img src="${t.foto || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}" class="user-photo">
-            ${getBadge(t.cargo)}
-            <h2>${t.nome}</h2>
-            <p style="color:var(--green); font-weight:bold;"><i class="fas fa-users"></i> Pai de: ${t.filhos || 0} pessoas</p>
-            <p style="color:#aaa;">${t.bio || 'Sem bio...'}</p>
-            <div style="background:#161b22; padding:10px; border-radius:10px;"><b>SALDO: ${t.moedasBlue || 0} BLUE</b></div>
-        `;
-        
+        // CARREGAR POSTS
         const grid = document.getElementById('gridUser'); grid.innerHTML = "";
         const allPosts = await get(ref(db, 'posts'));
         allPosts.forEach(p => { if(p.val().uid === uid) grid.innerHTML += `<img src="${p.val().i1}">`; });
 
+        // CARREGAR TROCAS CONCLUÍDAS (O MURAL "CONGELADO")
         const gridConcluidas = document.getElementById('gridTrocasConcluidas');
         gridConcluidas.innerHTML = "";
         const sConcluidas = await get(ref(db, `trocas_concluidas/${uid}`));
         if(sConcluidas.exists()){
             sConcluidas.forEach(tr => {
                 const troca = tr.val();
-                gridConcluidas.innerHTML += `<div class="card-troca-concluida"><div class="badge-concluido">CONCLUÍDO</div><p style="font-size:10px; margin:5px 0;"><b>${troca.nomeAvaliador}:</b> ${troca.descricao}</p></div>`;
+                let estrelas = "";
+                for(let i=0; i<5; i++) estrelas += `<i class="${i < troca.nota ? 'fas' : 'far'} fa-star"></i>`;
+                gridConcluidas.innerHTML += `
+                <div class="card-troca-concluida">
+                    <div class="badge-concluido">CONCLUÍDO</div>
+                    <div class="stars-display">${estrelas}</div>
+                    <p style="font-size:10px; margin:5px 0;"><b>${troca.nomeAvaliador}:</b> ${troca.descricao}</p>
+                </div>`;
             });
-        }
+        } else { gridConcluidas.innerHTML = "<small style='color:#666'>Nenhuma troca oficial registrada.</small>"; }
+
         document.getElementById('telaPerfil').style.display = 'block';
     };
 
-    window.abrirMeuPerfil = () => { abrirPerfil(window.user.uid); };
+    window.abrirMeuPerfil = () => {
+        abrirPerfil(window.user.uid);
+        const lista = document.getElementById('listaConversas');
+        lista.innerHTML = "";
+        get(ref(db, 'chats')).then(snap => {
+            snap.forEach(chat => {
+                if(chat.key.includes(window.user.uid)) {
+                    const outroUid = chat.key.split('_').find(id => id !== window.user.uid);
+                    get(ref(db, `usuarios/${outroUid}`)).then(uSnap => {
+                        const ou = uSnap.val();
+                        lista.innerHTML += `<div class="conversa-item"><span><b>${ou.nome}</b></span><button class="btn-action" style="width:auto; padding:5px 15px; margin:0; font-size:12px;" onclick="abrirChat('${ou.uid}', '${ou.nome}')">CHAT</button></div>`;
+                    });
+                }
+            });
+        });
+    };
 
-    // FUNÇÕES DE SUPORTE
-    window.setRating = (v) => {
-        currentRating = v;
-        const stars = document.querySelectorAll('#ratingInput i');
-        stars.forEach((s, idx) => { if(idx < v) { s.classList.replace('far', 'fas'); } else { s.classList.replace('fas', 'far'); }});
-    };
-    window.abrirFinalizarTroca = () => { document.getElementById('telaFinalizarTroca').style.display = 'block'; };
-    window.confirmarConclusaoTroca = async () => {
-        const desc = document.getElementById('trocaDesc').value;
-        const partes = idDoChatAtual.split('_');
-        const outroUid = partes[0] === window.user.uid ? partes[1] : partes[0];
-        const dados = { idTroca: idDoChatAtual, descricao: desc, nota: currentRating, nomeAvaliador: window.user.nome };
-        await push(ref(db, `trocas_concluidas/${window.user.uid}`), dados);
-        await push(ref(db, `trocas_concluidas/${outroUid}`), dados);
-        alert("Troca finalizada!"); fecharTelas();
-    };
     window.abrirChat = (alvoUid, n) => { 
         if(alvoUid === window.user.uid) return;
+        targetNomeChat = n;
         document.getElementById('chatTitle').innerText = "Chat com " + n; 
         document.getElementById('telaChat').style.display='block'; 
         idDoChatAtual = window.user.uid < alvoUid ? window.user.uid + "_" + alvoUid : alvoUid + "_" + window.user.uid;
@@ -330,27 +378,39 @@
                 snap.forEach(m => {
                     const msg = m.val();
                     const souEu = msg.remetente === window.user.uid;
-                    cb.innerHTML += `<div style="align-self:${souEu?'flex-end':'flex-start'}; background:${souEu?'var(--sea)':'var(--gray)'}; padding:10px; border-radius:12px; max-width:80%; margin-bottom:10px;"><small style="color:var(--gold); font-size:10px;">${msg.nomeRemetente}</small><p style="margin:0;">${msg.texto || ''}</p></div>`;
+                    cb.innerHTML += `<div style="align-self:${souEu?'flex-end':'flex-start'}; background:${souEu?'var(--sea)':'var(--gray)'}; padding:10px; border-radius:12px; max-width:80%; margin-bottom:10px;"><small style="color:var(--gold); font-size:10px;">${msg.nomeRemetente}</small><p style="margin:0;">${msg.texto || ''}</p>${msg.imagem ? `<img src="${msg.imagem}" style="width:100%; border-radius:8px; margin-top:5px;">` : ''}</div>`;
                 });
                 cb.scrollTop = cb.scrollHeight; 
             }
         });
     };
+
     window.enviarMensagem = async () => {
         const t = document.getElementById('chatMsg').value;
-        if(!t.trim()) return;
-        await push(ref(db, `chats/${idDoChatAtual}`), { remetente: window.user.uid, nomeRemetente: window.user.nome, texto: t, timestamp: Date.now() });
-        document.getElementById('chatMsg').value = "";
+        if(!t.trim() && !fotoChatBase64) return;
+        await push(ref(db, `chats/${idDoChatAtual}`), { remetente: window.user.uid, nomeRemetente: window.user.nome, texto: t, imagem: fotoChatBase64, timestamp: Date.now() });
+        document.getElementById('chatMsg').value = ""; fotoChatBase64 = null;
     };
-    window.fecharTelas = () => { document.querySelectorAll('.tela-full').forEach(t => t.style.display = 'none'); };
-    window.abrirPostar = () => { document.getElementById('telaPostar').style.display='block'; };
-    window.abrirCarteira = () => { document.getElementById('telaCarteira').style.display='block'; };
+
+    window.prepararFotoChat = (i) => { const r = new FileReader(); r.onload=(e)=>{ fotoChatBase64=e.target.result; enviarMensagem(); }; r.readAsDataURL(i.files[0]); };
+    window.prepararFotoPerfil = (i) => { const r = new FileReader(); r.onload=(e)=>{ fotoPerfilBase64=e.target.result; }; r.readAsDataURL(i.files[0]); };
+    window.salvarPerfil = async () => {
+        const up = { bio: document.getElementById('editBio').value };
+        if(fotoPerfilBase64) up.foto = fotoPerfilBase64;
+        await update(ref(db, `usuarios/${window.user.uid}`), up);
+        alert("Salvo!"); abrirPerfil(window.user.uid);
+    };
     window.prepararFotoPost = (i) => { const r = new FileReader(); r.onload=(e)=>{ fotoPostBase64=e.target.result; }; r.readAsDataURL(i.files[0]); };
     window.enviarPost = async () => {
         if(!fotoPostBase64) return;
         await push(ref(db, 'posts'), { u1: window.user.nome, uid: window.user.uid, cargo: window.user.cargo, i1: fotoPostBase64, d1: document.getElementById('descPost').value });
         fecharTelas();
     };
+
+    window.fecharTelas = () => { document.querySelectorAll('.tela-full').forEach(t => t.style.display = 'none'); };
+    window.abrirPostar = () => { document.getElementById('telaPostar').style.display='block'; };
+    window.abrirCarteira = () => { document.getElementById('telaCarteira').style.display='block'; };
+    window.removerPost = async (id) => { if(confirm("Apagar post?")) await remove(ref(db, `posts/${id}`)); };
 </script>
 </body>
 </html>
