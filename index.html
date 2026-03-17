@@ -14,7 +14,16 @@
         .login-box { background: white; padding: 30px; border-radius: 20px; width: 85%; max-width: 350px; text-align: center; color: black; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .login-box input { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #ddd; box-sizing: border-box; }
 
-        /* ESTRELAS EM CIMA */
+        /* NOTIFICAÇÃO TOAST */
+        #notification-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; width: 90%; max-width: 400px; pointer-events: none; }
+        .toast { background: #1c2128; border-left: 4px solid var(--blue); color: white; padding: 15px; border-radius: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); margin-bottom: 10px; display: flex; align-items: center; gap: 12px; animation: slideIn 0.4s ease-out; pointer-events: auto; }
+        @keyframes slideIn { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .toast i { color: var(--blue); font-size: 20px; }
+        .toast-content { flex: 1; }
+        .toast-content b { display: block; font-size: 14px; color: var(--blue); }
+        .toast-content p { margin: 0; font-size: 13px; color: #adbac7; }
+
+        /* ESTRELAS */
         .badge-container { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; }
         .badge-star { font-size: 14px; margin-bottom: 2px; }
         .star-mod { color: var(--mod-blue); }
@@ -25,8 +34,9 @@
         .side-menu { position: fixed; right: 15px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 15px; z-index: 4000; }
         .btn-float { width: 45px; height: 45px; border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center; color: white; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.4); font-size: 18px; transition: 0.3s; }
         
-        /* LAYOUT FEED */
+        /* FEED */
         header { padding:15px; background: #161b22; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:100; border-bottom: 1px solid #30363d; }
+        .header-actions { display: flex; gap: 15px; align-items: center; }
         .card-timeline { background: #161b22; border-radius: 15px; overflow: hidden; margin: 15px; border: 1px solid #30363d; }
         .card-timeline img { width: 100%; height: 320px; object-fit: cover; }
         .card-info { padding: 15px; }
@@ -39,14 +49,16 @@
         .btn-action { background: var(--blue); color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; font-weight: bold; margin-top: 10px; cursor: pointer; }
         
         #chatBox { height: 60vh; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 10px; }
-        .msg { padding: 10px; border-radius: 10px; max-width: 85%; }
+        .msg { padding: 10px; border-radius: 10px; max-width: 85%; word-wrap: break-word; }
         .msg-me { background: var(--blue); align-self: flex-end; }
         .msg-them { background: var(--gray); align-self: flex-start; }
         .grid-postagens { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px; margin-top: 15px; }
-        .grid-postagens img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 5px; background: #161b22; }
+        .grid-postagens img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 5px; }
     </style>
 </head>
 <body>
+
+<div id="notification-container"></div>
 
 <div class="side-menu" id="menuFlutuante" style="display:none;">
     <button class="btn-float" style="background: var(--mod-blue);" onclick="instrucaoCompra('MOD', '20 Blues')"><i class="fas fa-star"></i></button>
@@ -67,7 +79,10 @@
 <div id="app" style="display:none;">
     <header>
         <b>ICE TROCAS</b>
-        <div onclick="abrirMeuPerfil()"><i class="fas fa-user-circle" style="font-size:26px; color:var(--blue);"></i></div>
+        <div class="header-actions">
+            <i class="fas fa-share-nodes" onclick="compartilharLink()" style="font-size:20px; color:var(--green);"></i>
+            <div onclick="abrirMeuPerfil()"><i class="fas fa-user-circle" style="font-size:26px; color:var(--blue);"></i></div>
+        </div>
     </header>
     <div id="feed"></div>
     <div class="nav">
@@ -97,7 +112,7 @@
         <textarea id="descOferta" placeholder="Sua oferta..." style="width:100%; height:100px; margin-top:10px; background:#0d1117; color:white; border:1px solid var(--gray); padding:10px; border-radius:8px;"></textarea>
         <button class="btn-action" style="background:var(--green);" onclick="enviarProposta()">ENVIAR PROPOSTA</button>
     </div>
-    <button class="btn-action" style="background:none;" onclick="document.getElementById('telaOferta').style.display='none'">Cancelar</button>
+    <button class="btn-action" style="background:none;" onclick="fecharTelas()">Cancelar</button>
 </div>
 
 <div id="telaChat" class="tela-full">
@@ -130,7 +145,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, onValue, update, set, push, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, onValue, update, set, push, get, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
     import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
     const firebaseConfig = { apiKey: "AIzaSyDM5M1_O-wfcBDGYJIiYgiHVbqhiKC-0dw", databaseURL: "https://icek-9cdd7-default-rtdb.firebaseio.com", projectId: "icek-9cdd7" };
@@ -141,6 +156,48 @@
     window.user = null;
     let targetUidGlobal = null;
     let chatAtivoId = null;
+
+    // --- SISTEMA DE NOTIFICAÇÃO ---
+    function mostrarNotificacao(titulo, msg, deUid) {
+        // Se já estiver no chat com a pessoa, não precisa de toast
+        if (document.getElementById('telaChat').style.display === 'block' && chatAtivoId.includes(deUid)) return;
+
+        const container = document.getElementById('notification-container');
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.innerHTML = `
+            <i class="fas fa-comment-dots"></i>
+            <div class="toast-content">
+                <b>${titulo}</b>
+                <p>${msg.substring(0, 45)}${msg.length > 45 ? '...' : ''}</p>
+            </div>
+        `;
+        toast.onclick = () => { abrirChat(deUid, titulo); toast.remove(); };
+        container.appendChild(toast);
+        setTimeout(() => toast.remove(), 5000);
+    }
+
+    function escutarNotificacoes(uid) {
+        onValue(ref(db, `notificacoes/${uid}`), snap => {
+            if (snap.exists()) {
+                snap.forEach(n => {
+                    const data = n.val();
+                    mostrarNotificacao(data.nome, data.texto, data.de);
+                    remove(ref(db, `notificacoes/${uid}/${n.key}`)); // Limpa após mostrar
+                });
+            }
+        });
+    }
+
+    function enviarAlerta(paraUid, texto) {
+        push(ref(db, `notificacoes/${paraUid}`), {
+            de: window.user.uid,
+            nome: window.user.nome,
+            texto: texto,
+            timestamp: Date.now()
+        });
+    }
+    // ------------------------------
 
     function getBadge(cargo) {
         if(cargo === 'MOD') return '<div class="badge-star star-mod"><i class="fas fa-star"></i></div>';
@@ -185,6 +242,8 @@
         document.getElementById('menuFlutuante').style.display = 'flex';
         document.getElementById('userIdDisplay').innerText = window.user.uid;
         
+        escutarNotificacoes(window.user.uid);
+
         onValue(ref(db, 'posts'), snap => {
             const feed = document.getElementById('feed'); feed.innerHTML = "";
             snap.forEach(p => {
@@ -201,6 +260,9 @@
         });
         onValue(ref(db, `usuarios/${window.user.uid}`), s => { if(s.exists()){ window.user = s.val(); document.getElementById('saldoBlue').innerText = s.val().moedasBlue || 0; } });
     }
+
+    // LISTENER PARA ENTER
+    document.getElementById('msgIn').onkeypress = (e) => { if(e.key === 'Enter') enviarMensagem(); };
 
     window.abrirPerfilAlheio = async (uid) => {
         targetUidGlobal = uid;
@@ -223,11 +285,9 @@
                 ${!eMeu ? `<button class="btn-action" onclick="abrirChat('${t.uid}', '${t.nome}')">ABRIR CHAT</button>` : ''}
             </div>`;
 
-        // Carregar posts desse usuário específico
         const grid = document.getElementById('minhasPostagens'); grid.innerHTML = "";
         const allPosts = await get(ref(db, 'posts'));
         allPosts.forEach(p => { if(p.val().uid === uid) grid.innerHTML += `<img src="${p.val().i1}">`; });
-        
         document.getElementById('telaPerfil').style.display = 'block';
     };
 
@@ -237,7 +297,14 @@
         alert(`📊 MARKET CAP ICE\nR$ ${(22000000 + (total * 100)).toLocaleString('pt-BR')}`);
     };
 
-    window.compartilharLink = () => prompt("Seu link de filiação:", window.location.origin + "?ref=" + window.user.uid);
+    window.compartilharLink = () => {
+        const link = window.location.origin + window.location.pathname + "?ref=" + window.user.uid;
+        if(navigator.share) {
+            navigator.share({ title: 'ICE TROCAS', url: link });
+        } else {
+            prompt("Seu link:", link);
+        }
+    };
 
     window.abrirTelaOferta = (uid, nome) => { targetUidGlobal = uid; document.getElementById('ofertaTitle').innerText = "Oferta para " + nome; document.getElementById('telaOferta').style.display = 'block'; };
 
@@ -248,6 +315,7 @@
         r.onload = (e) => {
             chatAtivoId = [window.user.uid, targetUidGlobal].sort().join("_");
             push(ref(db, `chats/${chatAtivoId}`), { uid: window.user.uid, u: window.user.nome, t: "📦 PROPOSTA: " + desc, img: file ? e.target.result : null });
+            enviarAlerta(targetUidGlobal, "📦 Nova Proposta: " + desc);
             document.getElementById('telaOferta').style.display = 'none';
             abrirChat(targetUidGlobal, "Negociando...");
         };
@@ -256,6 +324,7 @@
 
     window.abrirChat = (uid, nome) => {
         chatAtivoId = [window.user.uid, uid].sort().join("_");
+        targetUidGlobal = uid;
         document.getElementById('chatTitle').innerText = nome;
         document.getElementById('telaChat').style.display = 'block';
         onValue(ref(db, `chats/${chatAtivoId}`), s => {
@@ -266,10 +335,12 @@
     };
 
     window.enviarMensagem = () => {
-        const t = document.getElementById('msgIn').value;
+        const input = document.getElementById('msgIn');
+        const t = input.value;
         if(!t) return;
         push(ref(db, `chats/${chatAtivoId}`), { uid: window.user.uid, u: window.user.nome, t: t });
-        document.getElementById('msgIn').value = "";
+        enviarAlerta(targetUidGlobal, t);
+        input.value = "";
     };
 
     window.enviarPost = () => {
