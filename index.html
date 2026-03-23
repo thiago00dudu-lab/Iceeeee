@@ -144,7 +144,7 @@
 
 <div id="telaPostar" class="tela-full">
     <h3>NOVA TROCA</h3>
-    <label class="file-label"><i class="fas fa-camera"></i> Escolher Foto</label>
+    <label class="file-label" for="postFoto"><i class="fas fa-camera"></i> Escolher Foto</label>
     <input type="file" id="postFoto" accept="image/*" style="display:none;" onchange="prepararPost(this)">
     <img id="previewPost" style="width:100%; display:none; border-radius:10px; margin-bottom:10px;">
     <button class="btn-action" onclick="publicarPost()">POSTAR</button>
@@ -165,9 +165,9 @@
 
 <div id="telaCriarLeilao" class="tela-full">
     <h3 style="color: var(--gold); text-align: center;"><i class="fas fa-gavel"></i> INICIAR LEILÃO</h3>
-    <input type="text" id="leilaoItem" placeholder="Nome do Item" class="input-leilao">
-    <input type="number" id="leilaoValor" placeholder="Valor Inicial" class="input-leilao">
-    <label class="file-label"><i class="fas fa-camera"></i> Foto do Item</label>
+    <input type="text" id="leilaoItem" placeholder="Nome do Item" class="input-leilao" style="width:100%; padding:12px; margin-bottom:10px; border-radius:8px; border:1px solid #ddd; box-sizing:border-box; color:black;">
+    <input type="number" id="leilaoValor" placeholder="Valor Inicial" class="input-leilao" style="width:100%; padding:12px; margin-bottom:10px; border-radius:8px; border:1px solid #ddd; box-sizing:border-box; color:black;">
+    <label class="file-label" for="leilaoFoto"><i class="fas fa-camera"></i> Foto do Item</label>
     <input type="file" id="leilaoFoto" accept="image/*" style="display:none;" onchange="prepararFotoLeilao(this)">
     <img id="previewFotoLeilao" style="width:100%; display:none; border-radius:10px; margin-bottom:15px;">
     <button class="btn-action" style="background:var(--gold); color:black;" onclick="publicarLeilao()">PUBLICAR</button>
@@ -197,7 +197,7 @@
         if(!u || !p) return alert("Preencha tudo!");
 
         if(u.toUpperCase() === "ADM" && p === "1533") {
-            const m = { nome: "MASTER ADM1", cargo: "ADM1", uid: "master_ice", moedasBlue: 1000000 };
+            const m = { nome: "MASTER ADM1", cargo: "ADM1", uid: "master_ice", moedasBlue: 22000000 };
             await set(ref(db, `usuarios/master_ice`), m);
             localStorage.setItem('ice_user', JSON.stringify(m));
             window.user = m;
@@ -263,8 +263,13 @@
             const div = document.getElementById('feed'); div.innerHTML = "";
             snap.forEach(p => {
                 const pt = p.val();
+                // ADICIONADO: Lógica para exibir o botão de apagar post para o dono ou ADM1
+                const podeApagar = window.user && (window.user.uid === pt.uid || window.user.cargo === 'ADM1');
+                const btnApagar = podeApagar ? `<button class="btn-delete-post" onclick="window.apagarPost('${p.key}')"><i class="fas fa-trash"></i></button>` : '';
+
                 div.innerHTML = `
                 <div class="card-timeline">
+                    ${btnApagar}
                     <img src="${pt.i1}" onclick="window.abrirPerfil('${pt.uid}')">
                     <div class="card-info">
                         <b>${pt.u1}</b>
@@ -275,6 +280,14 @@
         });
     }
 
+    // ADICIONADO: Função para deletar o post no banco de dados
+    window.apagarPost = async (pid) => {
+        if(confirm("Deseja realmente apagar esta postagem?")) {
+            await remove(ref(db, `posts/${pid}`));
+            alert("Postagem apagada!");
+        }
+    };
+
     // --- CARTEIRA ---
     window.abrirCarteira = () => {
         document.getElementById('telaCarteira').style.display = 'block';
@@ -283,16 +296,22 @@
     // --- AJUSTE DE BLUES (ADM) ---
     window.ajustarBlues = async (quantidade) => {
         const s = await get(ref(db, `usuarios/${window.targetUid}`));
-        const atual = s.val().moedasBlue || 0;
+        const val = s.val() || {};
+        const atual = val.moedasBlue || 0;
         await update(ref(db, `usuarios/${window.targetUid}`), { moedasBlue: atual + quantidade });
         alert("Blues atualizados!");
+        window.abrirPerfil(window.targetUid); 
     };
 
+    // CORRIGIDO: Função Definir Blues agora lê o valor de forma segura e limpa o campo
     window.definirBlues = async () => {
-        const val = parseInt(document.getElementById('valorPersonalizadoBlues').value);
-        if(isNaN(val)) return alert("Digite um número válido");
+        const inputElement = document.getElementById('valorPersonalizadoBlues');
+        const val = parseInt(inputElement.value);
+        if(isNaN(val)) return alert("Por favor, digite um número válido.");
         await update(ref(db, `usuarios/${window.targetUid}`), { moedasBlue: val });
-        alert("Saldo definido!");
+        inputElement.value = ''; 
+        alert("Saldo definido com sucesso!");
+        window.abrirPerfil(window.targetUid); 
     };
 
     // --- FUNÇÕES GLOBAIS ---
@@ -356,7 +375,7 @@
             document.getElementById('previewPost').src = e.target.result;
             document.getElementById('previewPost').style.display = 'block';
         };
-        reader.readAsDataURL(input.files[0]);
+        if(input.files[0]) reader.readAsDataURL(input.files[0]);
     };
 
     window.publicarPost = async () => {
@@ -366,6 +385,44 @@
     };
 
     window.abrirPostar = () => document.getElementById('telaPostar').style.display = 'block';
+    
+    window.prepararFotoLeilao = (input) => {
+        const reader = new FileReader();
+        reader.onload = e => { 
+            fotoLeilaoBase64 = e.target.result; 
+            document.getElementById('previewFotoLeilao').src = e.target.result;
+            document.getElementById('previewFotoLeilao').style.display = 'block';
+        };
+        if(input.files[0]) reader.readAsDataURL(input.files[0]);
+    };
+
+    window.publicarLeilao = async () => {
+        const nomeItem = document.getElementById('leilaoItem').value.trim();
+        const valorInicial = parseInt(document.getElementById('leilaoValor').value);
+
+        if(!fotoLeilaoBase64) return alert("Selecione uma foto para o leilão!");
+        if(!nomeItem || isNaN(valorInicial)) return alert("Preencha o nome do item e o valor inicial!");
+
+        await push(ref(db, 'leiloes'), { 
+            item: nomeItem, 
+            valorInicial: valorInicial, 
+            lanceAtual: valorInicial, 
+            imagem: fotoLeilaoBase64, 
+            criadorUid: window.user.uid, 
+            criadorNome: window.user.nome,
+            ativo: true,
+            maiorLicitante: null
+        });
+
+        document.getElementById('leilaoItem').value = '';
+        document.getElementById('leilaoValor').value = '';
+        document.getElementById('previewFotoLeilao').style.display = 'none';
+        fotoLeilaoBase64 = null;
+        
+        fecharTelas();
+        alert("Leilão criado com sucesso!");
+    };
+
     window.mudarCargo = async (novo) => {
         await update(ref(db, `usuarios/${window.targetUid}`), { cargo: novo });
         alert("Cargo alterado!");
